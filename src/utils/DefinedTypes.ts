@@ -1,7 +1,7 @@
 import * as dayjs from 'dayjs'
 
 //region Defined Types
-export type methodChoice = "Course" | "TD" | "TP" | "DS"
+type methodChoice = "Course" | "TD" | "TP" | "DS"
 
 export type Classroom = {
     "room_id": number,
@@ -25,7 +25,7 @@ export type Course = {
     "en_name": string | null,
     "fr_name": string | null,
     "method": methodChoice,
-    "group_ids": string | null,
+    "group_ids": string,
     "teacher_name": string | null,
     "room_name": string | null
 }
@@ -50,11 +50,7 @@ export type CourseChangeLog = {
 
 export type CourseInfo = {
     "info_id": number,
-    "type": {
-        "type_id": number,
-        "name": string,
-        "color": string
-    },
+    "type": number,
     "period": number,
     "semester": number,
     "code": string | null,

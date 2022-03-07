@@ -3,17 +3,20 @@
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import HelloWorld from './components/HelloWorld.vue'
 
-import {useCounterStore, useApiToolkit} from "./store/counter";
+import {useCounterStore} from "./store/counter";
 
+import LoadingMask from "./components/loadingMask.vue";
+import apiToolkit from "./utils/ApiToolkit";
+
+console.log(apiToolkit);
 const store = useCounterStore()
-const apiToolkit = useApiToolkit()
 console.log(store)
-console.log(apiToolkit)
 </script>
 
 <template>
   <img alt="Vue logo" src="./assets/logo.png"/>
   <HelloWorld msg="Hello Vue 3 + TypeScript + Vite"/>
+  <loading-mask></loading-mask>
 </template>
 
 <style>
