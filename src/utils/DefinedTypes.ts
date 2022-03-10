@@ -56,7 +56,8 @@ export type CourseInfo = {
     "code": string | null,
     "ch_name": string | null,
     "en_name": string | null,
-    "fr_name": string | null
+    "fr_name": string | null,
+    "color": string
 }
 
 export type CoursePlan = {
@@ -64,7 +65,8 @@ export type CoursePlan = {
     "teacher": number,
     "info": number,
     "groups": number[],
-    "method": methodChoice
+    "method": methodChoice,
+    "teacher_name": string
 }
 
 export type CourseType = {

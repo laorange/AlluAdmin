@@ -139,8 +139,6 @@ onMounted(() => {
 
 
 <template>
-  <div>loading</div>
-
   <div v-show="data.isLoading">
     <div class="Mask"></div>
     <div id="canvasContainer"></div>
@@ -159,6 +157,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   right: 0;
+  z-index:99999
 }
 
 #canvasContainer {
