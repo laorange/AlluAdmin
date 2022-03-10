@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {useCounterStore} from "./useCounterStore";
 
-import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, Group, Notice, SemesterConfig, Teacher} from "../utils/DefinedTypes";
+import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, Group, Notice, SemesterConfig, Teacher} from "../types/api";
 
 let SAME_SITE_AS_DJANGO = false;
 
@@ -17,6 +17,10 @@ class ApiRequester<T> {
     requestData(): void {
         let store = useCounterStore()
         store.axiosGet<T>(this._apiUrl).then(response => this._data = response)
+    }
+
+    first(): T {
+        return this._data[0]
     }
 
     filter(predicate: (item: T) => boolean): T[] {

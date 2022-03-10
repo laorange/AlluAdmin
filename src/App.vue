@@ -9,13 +9,17 @@ import {onMounted} from "vue";
 // const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 
+// --------------
+import CourseAdminBody from "./components/CourseAdmin/CourseAdmin.vue";
+
+
 onMounted(() => {
   apiToolkit.requestData()
 })
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png"/>
+  <course-admin-body></course-admin-body>
   <loading-mask></loading-mask>
 </template>
 

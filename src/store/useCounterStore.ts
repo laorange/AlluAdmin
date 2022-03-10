@@ -1,10 +1,40 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 
+type CounterStoreState = {
+    isLoading: boolean,
+    courseAdmin: {
+        weekSelected: number[],
+        planIdSelected: number[],
+        courseIdSelected: number[],
+        courseIdCopying: number[],
+        courseIdCutting: number[],
+        courseIdAdding: number[],
+        courseIdDeleting: number[],
+        whetherShowDeletingDialog: boolean,
+        whetherShowAddingDialog: boolean,
+        whatDay: 1 | 2 | 3 | 4 | 5 | 6 | 7,
+        whichLesson: 1 | 2 | 3 | 4 | 5,
+    }
+}
+
 export const useCounterStore = defineStore("counter", {
-    state: () => {
+    state: (): CounterStoreState => {
         return {
             isLoading: false,
+            courseAdmin: {
+                weekSelected: [],
+                planIdSelected: [],
+                courseIdSelected: [],
+                courseIdCopying: [],
+                courseIdCutting: [],
+                courseIdAdding: [],
+                courseIdDeleting: [],
+                whetherShowDeletingDialog: false,
+                whetherShowAddingDialog: false,
+                whatDay: 1,
+                whichLesson: 1,
+            }
         };
     },
     actions: {
