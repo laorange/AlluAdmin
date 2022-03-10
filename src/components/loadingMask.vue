@@ -33,13 +33,13 @@ function addCanvas() {
   let canvasObj = {};
 
   canvasObj.Particle = function (opt) {
-    this.radius = 10;
+    this.radius = 15;
     this.x = opt.x;
     this.y = opt.y;
     this.angle = opt.angle;
     this.speed = opt.speed;
     this.accel = opt.accel;
-    this.decay = 0.009;
+    this.decay = 0.007;
     this.life = 0.7;
   };
 
@@ -57,7 +57,7 @@ function addCanvas() {
   };
 
   canvasObj.Particle.prototype.draw = function (i) {
-    canvasObj.ctx.fillStyle = canvasObj.ctx.strokeStyle = "hsla(" + (canvasObj.tick + (this.life * 120)) + ", 100%, 35%, " + this.life + ")";
+    canvasObj.ctx.fillStyle = canvasObj.ctx.strokeStyle = "hsla(" + (canvasObj.tick + (this.life * 1200)) + ", 100%, 50%, " + this.life + ")";
     canvasObj.ctx.beginPath();
     if (canvasObj.particles[i - 1]) {
       canvasObj.ctx.moveTo(this.x, this.y);
@@ -74,7 +74,7 @@ function addCanvas() {
   };
 
   canvasObj.step = function () {
-    let rotateSpeed = 0.13;
+    let rotateSpeed = 0.17;
     canvasObj.particles.push(new canvasObj.Particle({
       x: canvasObj.width / 2 + Math.cos(canvasObj.tick * rotateSpeed) * canvasObj.min / 2,
       y: canvasObj.height / 2 + Math.sin(canvasObj.tick * rotateSpeed) * canvasObj.min / 2,
@@ -87,8 +87,8 @@ function addCanvas() {
       elem.step(index);
     });
 
-    canvasObj.globalRotation += canvasObj.PI / 6;
-    canvasObj.globalAngle += canvasObj.PI / 6;
+    canvasObj.globalRotation += canvasObj.PI / 3;
+    canvasObj.globalAngle += canvasObj.PI / 3;
   };
 
   canvasObj.draw = function () {
@@ -157,7 +157,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   right: 0;
-  z-index:99999
+  z-index: 99999
 }
 
 #canvasContainer {
@@ -173,7 +173,4 @@ onMounted(() => {
   align-items: center;
 }
 
-canvas {
-  display: flex;
-}
 </style>
