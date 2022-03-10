@@ -108,3 +108,5 @@ dist
 dist-ssr
 *.local
 /.vscode/
+*.py
+dist/
