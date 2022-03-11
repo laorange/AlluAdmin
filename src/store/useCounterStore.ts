@@ -15,6 +15,10 @@ type CounterStoreState = {
         whetherShowAddingDialog: boolean,
         whatDay: 1 | 2 | 3 | 4 | 5 | 6 | 7,
         whichLesson: 1 | 2 | 3 | 4 | 5,
+    },
+    coursePlanAdmin: {
+        period: number | undefined,
+        semester: number | undefined,
     }
 }
 
@@ -34,6 +38,10 @@ export const useCounterStore = defineStore("counter", {
                 whetherShowAddingDialog: false,
                 whatDay: 1,
                 whichLesson: 1,
+            },
+            coursePlanAdmin: {
+                period: undefined,
+                semester: undefined,
             }
         };
     },
