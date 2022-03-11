@@ -4,6 +4,7 @@ import axios from "axios";
 type CounterStoreState = {
     isLoading: boolean,
     courseAdmin: {
+        semesterSelected: number,
         weekSelected: number[],
         planIdSelected: number[],
         courseIdSelected: number[],
@@ -27,6 +28,7 @@ export const useCounterStore = defineStore("counter", {
         return {
             isLoading: false,
             courseAdmin: {
+                semesterSelected: 0,
                 weekSelected: [],
                 planIdSelected: [],
                 courseIdSelected: [],

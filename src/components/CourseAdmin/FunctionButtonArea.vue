@@ -4,6 +4,8 @@ import {computed, ref} from "vue";
 
 import {Delete, CirclePlus, DocumentCopy, Scissor, Edit} from "@element-plus/icons-vue";
 
+import GradeSelector from "./GradeSelector.vue";
+
 
 const store = useCounterStore();
 
@@ -19,6 +21,8 @@ const whetherShowOtherCourseFunctionalButton = computed((): boolean => AmountOfS
 
 <template>
   <div class="FunctionButtonArea">
+    <grade-selector></grade-selector>
+
     <template v-if="whetherShowAddPlanButton">
       <el-button plain type="primary" :icon="CirclePlus">选择教学计划</el-button>
       <span v-if="AmountOfSelectedPlan">当前选择了{{ AmountOfSelectedPlan }}个教学计划</span>
