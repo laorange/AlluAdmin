@@ -13,13 +13,14 @@ const apiToolkit = useApiToolkit()
 import CourseAdminBody from "./components/CourseAdmin/CourseAdmin.vue";
 
 
-onMounted(() => {
-  apiToolkit.requestData()
+onMounted(async () => {
+  await apiToolkit.requestSemesterConfig()
+  apiToolkit.requestData(apiToolkit.semesterConfig.first()?.current_period)
 })
 </script>
 
 <template>
-  <course-admin-body></course-admin-body>
+  <router-view></router-view>
   <loading-mask></loading-mask>
 </template>
 

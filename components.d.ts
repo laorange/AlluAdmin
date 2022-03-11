@@ -4,14 +4,19 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddingCourseDialog: typeof import('./src/components/CourseAdmin/Dialog/AddingCourseDialog.vue')['default']
+    AddingDialog: typeof import('./src/components/CourseAdmin/Dialog/AddingDialog.vue')['default']
     CourseAdmin: typeof import('./src/components/CourseAdmin/CourseAdmin.vue')['default']
     CourseAdminBody: typeof import('./src/components/CourseAdmin/CourseAdminBody.vue')['default']
+    DeletingCourseDialog: typeof import('./src/components/CourseAdmin/Dialog/DeletingCourseDialog.vue')['default']
+    DeletingDialog: typeof import('./src/components/CourseAdmin/Dialog/DeletingDialog.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElTransfer: typeof import('element-plus/es')['ElTransfer']
     FunctionButtonArea: typeof import('./src/components/CourseAdmin/FunctionButtonArea.vue')['default']
     LoadingMask: typeof import('./src/components/loadingMask.vue')['default']
+    SelectPlanDialog: typeof import('./src/components/CourseAdmin/Dialog/SelectPlanDialog.vue')['default']
     TimetableBlock: typeof import('./src/components/CourseAdmin/WeeklyTimetable/TimetableBlock.vue')['default']
     WeeklyTimetable: typeof import('./src/components/CourseAdmin/WeeklyTimetable/WeeklyTimetable.vue')['default']
     WeekSelectBar: typeof import('./src/components/CourseAdmin/WeekSelectBar.vue')['default']

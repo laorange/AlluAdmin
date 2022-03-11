@@ -31,12 +31,14 @@ import 'element-plus/theme-chalk/display.css'
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 100%;
 }
 
 .CourseAdminVertical {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .LeftPart {

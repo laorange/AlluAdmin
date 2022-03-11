@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import {useCounterStore} from "./useCounterStore";
 
 import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, Group, Notice, SemesterConfig, Teacher} from "../types/api";
+import dayjs from "dayjs";
 
 let SAME_SITE_AS_DJANGO = false;
 
@@ -14,9 +15,9 @@ class ApiRequester<T> {
         this._apiUrl = apiUrl
     }
 
-    requestData(): void {
+    async requestData(parameters: { [key: string]: (string | number | undefined) } = {}) {
         let store = useCounterStore()
-        store.axiosGet<T>(this._apiUrl).then(response => this._data = response)
+        await store.axiosGet<T>(this._apiUrl, parameters).then(response => this._data = response)
     }
 
     first(): T {
@@ -56,16 +57,18 @@ export const useApiToolkit = defineStore("apiToolkit", {
         };
     },
     actions: {
-        requestData() {
+        async requestSemesterConfig() {
+            await this.semesterConfig.requestData()
+        },
+        requestData(period?: number) {
             this.classroom.requestData()
-            this.course.requestData()
-            this.courseChangeLog.requestData()
-            this.courseInfo.requestData()
-            this.coursePlan.requestData()
+            this.course.requestData({period: period})
+            this.courseChangeLog.requestData({after: dayjs().add(-3, 'day').format("YYYY-MM-DD")})
+            this.courseInfo.requestData({period: period})
+            this.coursePlan.requestData({period: period})
             this.courseType.requestData()
-            this.group.requestData()
+            this.group.requestData({period: period})
             this.notice.requestData()
-            this.semesterConfig.requestData()
             this.teacher.requestData()
         },
     },

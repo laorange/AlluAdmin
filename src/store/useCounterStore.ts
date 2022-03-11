@@ -38,7 +38,7 @@ export const useCounterStore = defineStore("counter", {
         };
     },
     actions: {
-        async axiosGet<T>(url: string, parameters: { [key: string]: string | number } = {}) {
+        async axiosGet<T>(url: string, parameters: { [key: string]: (string | number | undefined) } = {}) {
             this.isLoading = true;
             let response = await axios({
                 method: 'get',
