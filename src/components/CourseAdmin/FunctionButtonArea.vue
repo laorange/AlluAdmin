@@ -39,6 +39,8 @@ const whetherShowOtherCourseFunctionalButton = computed((): boolean => AmountOfS
 .FunctionButtonArea {
   background-color: #efefef;
   width: 100%;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
 .FunctionButtonArea > * {

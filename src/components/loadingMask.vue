@@ -148,8 +148,8 @@ onMounted(() => {
 
 <style scoped>
 .Mask {
-  background-color: #111;
-  opacity: 25%;
+  background-color: grey;
+  opacity: 10%;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -157,7 +157,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 99999
+  z-index: 998
 }
 
 #canvasContainer {
@@ -171,6 +171,7 @@ onMounted(() => {
   right: 0;
   justify-content: center;
   align-items: center;
+  z-index: 999
 }
 
 </style>

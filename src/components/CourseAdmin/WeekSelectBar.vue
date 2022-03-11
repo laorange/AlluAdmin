@@ -2,6 +2,13 @@
 import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {computed} from "vue";
 
+defineProps({
+  verticallyDisplay: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const apiToolkit = useApiToolkit();
 const store = useCounterStore();
 const maxWeek = computed(() => apiToolkit.semesterConfig.first()?.max_week)
@@ -27,7 +34,7 @@ const weekCandidates = computed(() => {
 </script>
 
 <template>
-  <div class="TransferContainer">
+  <div :class="verticallyDisplay?'MinContentTransferContainer':'TransferContainer'">
     <el-transfer
         v-model="store.courseAdmin.weekSelected"
         :props="{key: 'value', label: 'description'}"
@@ -38,7 +45,11 @@ const weekCandidates = computed(() => {
 </template>
 
 <style scoped>
-.TransferContainer{
+.TransferContainer {
+  width: max-content;
+}
+
+.MinContentTransferContainer {
   width: min-content;
 }
 </style>

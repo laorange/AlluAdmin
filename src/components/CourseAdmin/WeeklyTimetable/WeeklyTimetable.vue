@@ -1,16 +1,35 @@
 <script setup lang="ts">
+import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import TimetableBlock from "./TimetableBlock.vue";
+
+
+const apiToolkit = useApiToolkit()
+const store = useCounterStore()
 
 </script>
 
 <template>
   <div class="WeeklyTimetableBody">
-    &nbsp;
+    <template v-for="whatDay in 7">
+      <div class="TimetableBlock" v-for="whichLesson in 5">
+        <timetable-block :what-day="whatDay" :which-lesson="whichLesson"></timetable-block>
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
 .WeeklyTimetableBody {
   background-color: skyblue;
-  width: 100%;
+  /*width: 100%;*/
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.TimetableBlock {
+  width: 10%;
+  flex: 0 0 14%;
+  border: #efefef dashed 1px;
 }
 </style>
