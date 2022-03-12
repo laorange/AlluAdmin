@@ -4,7 +4,7 @@ import {useCounterStore} from "./useCounterStore";
 import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, Group, Notice, SemesterConfig, Teacher} from "../types/api";
 import dayjs from "dayjs";
 
-let SAME_SITE_AS_DJANGO = false;
+import urls from "../utils/urls";
 
 
 class ApiRequester<T> {
@@ -33,27 +33,19 @@ class ApiRequester<T> {
     }
 }
 
-function getUrlCommon(relativeUrl: string): string {
-    if (SAME_SITE_AS_DJANGO) {
-        return relativeUrl
-    } else {
-        return "https://siae.top" + relativeUrl
-    }
-}
-
 export const useApiToolkit = defineStore("apiToolkit", {
     state: () => {
         return {
-            classroom: new ApiRequester<Classroom>(getUrlCommon("/course/api/Classroom/")),
-            course: new ApiRequester<Course>(getUrlCommon("/course/api/Course/")),
-            courseChangeLog: new ApiRequester<CourseChangeLog>(getUrlCommon("/course/api/CourseChangeLog/")),
-            courseInfo: new ApiRequester<CourseInfo>(getUrlCommon("/course/api/CourseInfo/")),
-            coursePlan: new ApiRequester<CoursePlan>(getUrlCommon("/course/api/CoursePlan/")),
-            courseType: new ApiRequester<CourseType>(getUrlCommon("/course/api/CourseType/")),
-            group: new ApiRequester<Group>(getUrlCommon("/course/api/Group/")),
-            notice: new ApiRequester<Notice>(getUrlCommon("/course/api/Notice/")),
-            semesterConfig: new ApiRequester<SemesterConfig>(getUrlCommon("/course/api/SemesterConfig/")),
-            teacher: new ApiRequester<Teacher>(getUrlCommon("/course/api/Teacher/")),
+            classroom: new ApiRequester<Classroom>(urls.api.classroom),
+            course: new ApiRequester<Course>(urls.api.course),
+            courseChangeLog: new ApiRequester<CourseChangeLog>(urls.api.courseChangeLog),
+            courseInfo: new ApiRequester<CourseInfo>(urls.api.courseInfo),
+            coursePlan: new ApiRequester<CoursePlan>(urls.api.coursePlan),
+            courseType: new ApiRequester<CourseType>(urls.api.courseType),
+            group: new ApiRequester<Group>(urls.api.group),
+            notice: new ApiRequester<Notice>(urls.api.notice),
+            semesterConfig: new ApiRequester<SemesterConfig>(urls.api.semesterConfig),
+            teacher: new ApiRequester<Teacher>(urls.api.teacher),
         };
     },
     actions: {

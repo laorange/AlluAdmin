@@ -1,17 +1,22 @@
 <script setup lang="ts">
+import urls from "../utils/urls";
 
 import {useRoute, useRouter} from "vue-router";
 
 const route = useRoute()
 const router = useRouter()
 
-const selectHandler = (key: string, keyPath: string[]) => {
-  router.push({
-    name: key,
-    query: {
-      ...route.query
-    }
-  })
+const selectHandler = (key: string, keyPath?: string[]) => {
+  if (key === 'docs') {
+    location.href = urls.docs
+  } else {
+    router.push({
+      name: key,
+      query: {
+        ...route.query
+      }
+    })
+  }
 }
 
 </script>
@@ -21,7 +26,8 @@ const selectHandler = (key: string, keyPath: string[]) => {
       :default-active="route.name"
       class="el-menu-demo"
       mode="horizontal"
-      background-color="#666666"
+      background-color="#707070"
+      active-text-color="#64f2ff"
       text-color="white"
       @select="selectHandler"
   >
@@ -29,6 +35,7 @@ const selectHandler = (key: string, keyPath: string[]) => {
     <el-menu-item index="CoursePlanAdmin">教学计划</el-menu-item>
     <el-menu-item index="CourseAdmin">课表编辑</el-menu-item>
     <el-menu-item index="OtherAdmin">其他操作</el-menu-item>
+    <el-menu-item index="docs">帮助文档</el-menu-item>
   </el-menu>
 </template>
 
