@@ -3,7 +3,8 @@ import axios from "axios";
 
 type CounterStoreState = {
     isLoading: boolean,
-    semesterSelected: number,
+    semesterSelected: number[],
+    groupSelected: [number, number][],
     courseAdmin: {
         weekSelected: number[],
         planIdSelected: number[],
@@ -27,7 +28,8 @@ export const useCounterStore = defineStore("counter", {
     state: (): CounterStoreState => {
         return {
             isLoading: false,
-            semesterSelected: 0,
+            semesterSelected: [],
+            groupSelected: [],
             courseAdmin: {
                 weekSelected: [],
                 planIdSelected: [],

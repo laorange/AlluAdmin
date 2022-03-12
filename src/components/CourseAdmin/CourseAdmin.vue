@@ -2,23 +2,24 @@
 import WeekSelectBar from "./WeekSelectBar.vue";
 import FunctionButtonArea from "./FunctionButtonArea.vue";
 import WeeklyTimetable from "./WeeklyTimetable/WeeklyTimetable.vue";
-import 'element-plus/theme-chalk/display.css'
+// import 'element-plus/theme-chalk/display.css'
+
+import GroupSelector from "../GroupSelector.vue";
 
 </script>
 
 <template>
-
   <div class="CourseAdminVertical">
-    <div class="TopPart hidden-md-and-up">
+    <div class="TopPart">
+      <div>
+        <h4>请选择：年级 & 分组 & 周数</h4>
+        <group-selector></group-selector>
+      </div>
       <week-select-bar :vertically-display="false"></week-select-bar>
     </div>
 
     <div class="CourseAdminHorizontal">
-      <div class="LeftPart hidden-sm-and-down">
-        <week-select-bar></week-select-bar>
-      </div>
-
-      <div class="RightPart">
+      <div class="BottomPart">
         <function-button-area></function-button-area>
         <weekly-timetable class="weekly-timetable"></weekly-timetable>
       </div>
@@ -41,11 +42,7 @@ import 'element-plus/theme-chalk/display.css'
   width: 100%;
 }
 
-.LeftPart {
-  margin-right: 5px;
-}
-
-.RightPart {
+.BottomPart {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -55,4 +52,11 @@ import 'element-plus/theme-chalk/display.css'
   flex: 1;
 }
 
+.TopPart {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 10px;
+}
 </style>

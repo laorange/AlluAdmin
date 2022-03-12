@@ -62,9 +62,9 @@ export function getSemesterOptionsByPeriod(periodGiven: number): SemesterOption[
         ]
     }
 
-    _gradeSelectOptions.push({
-        value: 0,
-        label: '不限年级'
-    })
+    // _gradeSelectOptions.push({
+    //     value: 0,
+    //     label: '不限年级'
+    // })
     return _gradeSelectOptions
 }

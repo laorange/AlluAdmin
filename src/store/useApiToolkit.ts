@@ -63,5 +63,13 @@ export const useApiToolkit = defineStore("apiToolkit", {
             this.notice.requestData()
             this.teacher.requestData()
         },
+        getNameOfGroups(groupIds: number[]) {
+            return this.group.filter(
+                item => groupIds.indexOf(item.group_id) > -1
+            ).reduce((output: string[], currentGroup) => {
+                output.push(currentGroup.name)
+                return output
+            }, []).join('&')
+        }
     },
 });

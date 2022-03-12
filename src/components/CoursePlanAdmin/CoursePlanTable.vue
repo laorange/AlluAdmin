@@ -1,17 +1,38 @@
 <script setup lang="ts">
-
 import {computed} from "vue";
-import {useApiToolkit} from "../../store/counter";
+import {useApiToolkit, useCounterStore} from "../../store/counter";
+import {SemesterConfig} from "../../types/api";
+import dayjs from "dayjs";
+import {CourseInfoHandler, CourseInfoContainer} from "./utils/CourseInfoHandler";
 
-
+const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 
-const maxWeek = computed(()=>apiToolkit.semesterConfig.first()?.max_week ?? 20)
+const semesterConfig = computed((): SemesterConfig | undefined => apiToolkit.semesterConfig.first())
+const maxWeek = computed(() => semesterConfig.value?.max_week ?? 20)
+const week1Monday = computed((): dayjs.Dayjs => dayjs(semesterConfig.value?.week1_monday_date));
+const semesterSelected = computed((): number[] => store.semesterSelected)
+const groupSelected = computed((): [number, number][] => store.groupSelected)
 
+const courseInfoContainers = computed((): CourseInfoContainer[] => {
+  let _courseInfoHandler = new CourseInfoHandler()
+
+  _courseInfoHandler.addCourseInfos(apiToolkit.courseInfo.data)
+
+  _courseInfoHandler.addCoursePlans(
+      apiToolkit.coursePlan.data,
+      apiToolkit.course.data,
+      maxWeek.value,
+      week1Monday.value
+  )
+
+  return _courseInfoHandler.infoList
+})
 </script>
 
 <template>
-  <table>
+  <!--   v-if="courseInfoContainers.filter(item=>semesterSelected.indexOf(item.courseInfo.semester)>-1).length || semesterSelected.length === 0"-->
+  <table v-if="courseInfoContainers.filter(item=>semesterSelected.indexOf(item.courseInfo.semester)>-1).length || semesterSelected.length === 0">
     <tr>
       <th>课程名</th>
       <th>类型</th>
@@ -21,41 +42,29 @@ const maxWeek = computed(()=>apiToolkit.semesterConfig.first()?.max_week ?? 20)
       <th class="WeekCol" v-for="week in maxWeek" :key="week">{{ week }}</th>
     </tr>
 
-    <!--    region none     -->
-    <!--    <tr v-for="(item, index) in tableData" :key="index" :style="{backgroundColor:'#'+item.color}">-->
-    <!--      <template v-if="useMenu">-->
-    <!--        <td v-if="item.info" :rowspan="item.rowSpan" v-right-click:[item._data]="menuHandle.courseInfo()">-->
-    <!--          {{ item.info }}-->
-    <!--        </td>-->
+    <template v-for="(infoContainer, InfoIndex) in courseInfoContainers" :key="InfoIndex">
+      <template v-if="semesterSelected.length === 0 || semesterSelected.indexOf(infoContainer.courseInfo.semester)>-1">
+        <tr v-if="infoContainer.coursePlans.length === 0" :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
+          <td>{{ infoContainer.courseInfo.ch_name }}</td>
+          <td colspan="24">无对应教学计划</td>
+        </tr>
 
-    <!--        <template v-if="item.method">-->
-    <!--          <td v-right-click:[item._data]="menuHandle.coursePlan()">{{ item.method }}</td>-->
-    <!--        </template>-->
-    <!--        <template v-else>-->
-    <!--          <td v-right-click:[item._data]="menuHandle.courseInfo()">暂无教学计划</td>-->
-    <!--        </template>-->
-    <!--      </template>-->
-
-    <!--      <template v-if="!useMenu">-->
-    <!--        <td v-if="item.info" :rowspan="item.rowSpan">{{ item.info }}</td>-->
-    <!--        <td>{{ item.method }}</td>-->
-    <!--      </template>-->
-
-    <!--      <td>{{ item.teacher }}</td>-->
-    <!--      <td>{{ item.groups }}</td>-->
-    <!--      <template v-for="(_CourseHourInThisWeek, _index) in item.weekRecord" :key="_index">-->
-    <!--        &lt;!&ndash;        <td v-if="_CourseHourInThisWeek" @dblclick="store.getDataAndShowCourseListDialog(item._data.plan_id, _index)" class="CourseWeeklyHours">&ndash;&gt;-->
-    <!--        &lt;!&ndash;          {{ _CourseHourInThisWeek }}&ndash;&gt;-->
-    <!--        &lt;!&ndash;        </td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;        <td v-else></td>&ndash;&gt;-->
-    <!--        <td @dblclick="store.getDataAndShowCourseListDialog(item._data.plan_id, _index)" class="CourseWeeklyHours">-->
-    <!--          {{ _CourseHourInThisWeek ? _CourseHourInThisWeek : "&nbsp;" }}-->
-    <!--        </td>-->
-    <!--      </template>-->
-    <!--    </tr>-->
-    <!--    endregion-->
-
+        <tr v-for="(planContainer, planIndex) in infoContainer.coursePlans" :key="planIndex">
+          <template
+              v-if="groupSelected.length === 0 || groupSelected.filter(group=>planContainer.coursePlan.groups.indexOf(group[1])>-1).length">
+            <td v-if="planIndex===0" :rowspan="infoContainer.coursePlans.length">{{ infoContainer.courseInfo.ch_name }}</td>
+            <td>{{ planContainer.coursePlan.method }}</td>
+            <td>{{ planContainer.coursePlan.teacher_name }}</td>
+            <td>{{ apiToolkit.getNameOfGroups(planContainer.coursePlan.groups) }}</td>
+            <td><strong>{{ planContainer.totalHours }}</strong></td>
+            <td v-for="weeklyHour in planContainer.weeklyHours" :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour }}</td>
+          </template>
+        </tr>
+      </template>
+    </template>
   </table>
+
+  <!--  <h1 v-else>当前学期暂无教学计划</h1>-->
 </template>
 
 <style scoped>
