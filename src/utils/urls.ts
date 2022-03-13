@@ -1,6 +1,8 @@
+import {methodChoice} from "../types/api";
+
 let SAME_SITE_AS_DJANGO = false;
 
-function getUrlCommon(relativeUrl: string): string {
+function decorateUrl(relativeUrl: string): string {
     if (SAME_SITE_AS_DJANGO) {
         return relativeUrl
     } else {
@@ -10,18 +12,32 @@ function getUrlCommon(relativeUrl: string): string {
 
 const urls = {
     api: {
-        classroom: getUrlCommon("/course/api/Classroom/"),
-        course: getUrlCommon("/course/api/Course/"),
-        courseChangeLog: getUrlCommon("/course/api/CourseChangeLog/"),
-        courseInfo: getUrlCommon("/course/api/CourseInfo/"),
-        coursePlan: getUrlCommon("/course/api/CoursePlan/"),
-        courseType: getUrlCommon("/course/api/CourseType/"),
-        group: getUrlCommon("/course/api/Group/"),
-        notice: getUrlCommon("/course/api/Notice/"),
-        semesterConfig: getUrlCommon("/course/api/SemesterConfig/"),
-        teacher: getUrlCommon("/course/api/Teacher/"),
+        classroom: decorateUrl("/course/api/Classroom/"),
+        course: decorateUrl("/course/api/Course/"),
+        courseChangeLog: decorateUrl("/course/api/CourseChangeLog/"),
+        courseInfo: decorateUrl("/course/api/CourseInfo/"),
+        coursePlan: decorateUrl("/course/api/CoursePlan/"),
+        courseType: decorateUrl("/course/api/CourseType/"),
+        group: decorateUrl("/course/api/Group/"),
+        notice: decorateUrl("/course/api/Notice/"),
+        semesterConfig: decorateUrl("/course/api/SemesterConfig/"),
+        teacher: decorateUrl("/course/api/Teacher/"),
     },
     docs: "https://laorange.gitee.io/alludocs/",
+    admin: {
+        changeCourseInfo(infoId: number): string {
+            return decorateUrl(`/admin/course/courseinfo/${infoId}/change/`)
+        },
+        changeCoursePlan(planId: number): string {
+            return decorateUrl(`/admin/course/courseplan/${planId}/change/`)
+        },
+        addCoursePlan(infoId: number, method: methodChoice): string {
+            return decorateUrl(`/admin/course/courseplan/add/?info=${infoId}&method=${method}`)
+        },
+        changeCourse(courseId: number): string {
+            return decorateUrl(`/admin/course/course/${courseId}/change/`)
+        },
+    },
 }
 
 export default urls

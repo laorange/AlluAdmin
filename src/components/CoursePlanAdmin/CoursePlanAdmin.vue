@@ -18,7 +18,6 @@ const apiToolkit = useApiToolkit();
     <group-selector></group-selector>
   </div>
   <course-plan-table></course-plan-table>
-  <h1>🚧 施工中...</h1>
 
   <!-- Dialogs -->
   <click-course-info-dialog></click-course-info-dialog>

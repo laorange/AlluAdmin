@@ -1,7 +1,7 @@
 import * as dayjs from 'dayjs'
 
 //region Defined Types
-type methodChoice = "Course" | "TD" | "TP" | "DS"
+export type methodChoice = "Course" | "TD" | "TP" | "Exam"
 
 export type Classroom = {
     "room_id": number,
@@ -66,6 +66,7 @@ export type CoursePlan = {
     "info": number,
     "groups": number[],
     "method": methodChoice,
+    "color": string,
     "teacher_name": string
 }
 

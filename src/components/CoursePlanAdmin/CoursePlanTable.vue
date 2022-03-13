@@ -30,7 +30,7 @@ const courseInfoContainers = computed((): CourseInfoContainer[] => {
 })
 
 // 点击CourseInfo后的对话框
-const openClickCourseInfoDialog = (inputedInfo:CourseInfo) => {
+const openClickCourseInfoDialog = (inputedInfo: CourseInfo) => {
   store.coursePlanAdmin.clickCourseInfoDialog.courseInfo = inputedInfo;
   store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = true
 }
@@ -85,7 +85,7 @@ const openClickCourseInfoDialog = (inputedInfo:CourseInfo) => {
     </template>
   </table>
 
-  <!--  <h1 v-else>当前学期暂无教学计划</h1>-->
+  <h1 v-else>在培养方案中，该学期无教学安排</h1>
 </template>
 
 <style scoped>

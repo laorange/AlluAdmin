@@ -9,6 +9,7 @@ import GroupSelector from "../GroupSelector.vue";
 </script>
 
 <template>
+  <h1>🚧 施工中...</h1>
   <div class="CourseAdminVertical">
     <div class="TopPart">
       <div>
