@@ -25,17 +25,26 @@ const urls = {
     },
     docs: "https://laorange.gitee.io/alludocs/",
     admin: {
-        changeCourseInfo(infoId: number): string {
+        changeCourseInfo(infoId?: number): string {
+            if (infoId === undefined) {
+                return decorateUrl(`/admin/course/courseinfo/`)
+            }
             return decorateUrl(`/admin/course/courseinfo/${infoId}/change/`)
         },
-        changeCoursePlan(planId: number): string {
+        changeCoursePlan(planId?: number): string {
+            if (planId === undefined) {
+                return decorateUrl(`/admin/course/courseplan/`)
+            }
             return decorateUrl(`/admin/course/courseplan/${planId}/change/`)
         },
-        addCoursePlan(infoId: number, method: methodChoice): string {
+        addCoursePlan(infoId?: number, method?: methodChoice): string {
             return decorateUrl(`/admin/course/courseplan/add/?info=${infoId}&method=${method}`)
         },
         changeCourse(courseId: number): string {
-            return decorateUrl(`/admin/course/course/${courseId}/change/`)
+            if (courseId === undefined) {
+                return decorateUrl(`/admin/course/course/`);
+            }
+            return decorateUrl(`/admin/course/course/${courseId}/change/`);
         },
     },
 }

@@ -17,7 +17,6 @@ const apiToolkit = useApiToolkit()
 onMounted(async () => {
   await apiToolkit.requestSemesterConfig()
   const _period = apiToolkit.semesterConfig.first()?.current_period
-  store.coursePlanAdmin.period = _period ? _period : undefined
   apiToolkit.requestData(_period)
 })
 </script>
