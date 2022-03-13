@@ -41,12 +41,13 @@ const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: Cours
   store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = true
 }
 
-const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedWeek: number) => {
-  console.log("inputtedPlan", inputtedPlan)
-  store.coursePlanAdmin.clickWeeklyHoursDialog.planContainer = inputtedPlan
-  store.coursePlanAdmin.clickWeeklyHoursDialog.week = inputtedWeek
-  store.coursePlanAdmin.clickWeeklyHoursDialog.groupName = apiToolkit.getNameOfGroups(inputtedPlan.coursePlan.groups);
-  store.coursePlanAdmin.clickWeeklyHoursDialog.whetherShow = true
+const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedWeek: number, weeklyHour: number) => {
+  if (weeklyHour > 0) {
+    store.coursePlanAdmin.clickWeeklyHoursDialog.planContainer = inputtedPlan
+    store.coursePlanAdmin.clickWeeklyHoursDialog.week = inputtedWeek
+    store.coursePlanAdmin.clickWeeklyHoursDialog.groupName = apiToolkit.getNameOfGroups(inputtedPlan.coursePlan.groups);
+    store.coursePlanAdmin.clickWeeklyHoursDialog.whetherShow = true
+  }
 }
 
 const filters = {
@@ -155,10 +156,15 @@ function getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
 
 
           <td class="TotalHours">{{ planContainer.totalHours }}</td>
-          <td v-for="(weeklyHour, weekFrom0) in planContainer.weeklyHours"
-              @click="openClickWeeklyHoursDialog(planContainer, weekFrom0 + 1)"
-              :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour ? weeklyHour : "" }}
-          </td>
+          <template v-for="(weeklyHour, weekFrom0) in planContainer.weeklyHours" :key="weeklyHour">
+            <td v-if="weeklyHour"
+                class="CourseWeeklyHours"
+                @click="openClickWeeklyHoursDialog(planContainer, weekFrom0 + 1, weeklyHour)"
+            >
+              {{ weeklyHour }}
+            </td>
+            <td v-else></td>
+          </template>
         </template>
       </tr>
     </template>
@@ -195,7 +201,7 @@ tr, th, td {
   cursor: pointer;
 }
 
-.CourseWeeklyHours:hover .InfoChName:hover, .CoursePlanClickable:hover, .NoPlanInfo:hover {
+.CourseWeeklyHours:hover, .InfoChName:hover, .CoursePlanClickable:hover, .NoPlanInfo:hover {
   color: white;
   background-color: black;
 }
