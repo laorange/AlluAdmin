@@ -5,6 +5,7 @@ import GroupSelector from "../GroupSelector.vue";
 
 import ClickCourseInfoDialog from "./Dialogs/ClickCourseInfoDialog.vue";
 import ClickCoursePlanDialog from "./Dialogs/ClickCoursePlanDialog.vue";
+import ClickWeeklyHoursDialog from "./Dialogs/ClickWeeklyHoursDialog.vue";
 
 
 const apiToolkit = useApiToolkit();
@@ -23,6 +24,7 @@ const apiToolkit = useApiToolkit();
   <!-- region Dialogs -->
   <click-course-info-dialog></click-course-info-dialog>
   <click-course-plan-dialog></click-course-plan-dialog>
+  <click-weekly-hours-dialog></click-weekly-hours-dialog>
   <!-- endregion -->
 </template>
 

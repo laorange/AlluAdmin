@@ -41,6 +41,14 @@ const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: Cours
   store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = true
 }
 
+const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedWeek: number) => {
+  console.log("inputtedPlan", inputtedPlan)
+  store.coursePlanAdmin.clickWeeklyHoursDialog.planContainer = inputtedPlan
+  store.coursePlanAdmin.clickWeeklyHoursDialog.week = inputtedWeek
+  store.coursePlanAdmin.clickWeeklyHoursDialog.groupName = apiToolkit.getNameOfGroups(inputtedPlan.coursePlan.groups);
+  store.coursePlanAdmin.clickWeeklyHoursDialog.whetherShow = true
+}
+
 const filters = {
   plansForSelectedGroup(inputtedInfoContainer: CourseInfoContainer, getFullWhenSelectNone: boolean = false): CoursePlanContainer[] {
     if (getFullWhenSelectNone || judges.whetherUserDoesNotCareGroup()) return inputtedInfoContainer.coursePlans
@@ -147,7 +155,10 @@ function getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
 
 
           <td class="TotalHours">{{ planContainer.totalHours }}</td>
-          <td v-for="weeklyHour in planContainer.weeklyHours" :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour ? weeklyHour : "" }}</td>
+          <td v-for="(weeklyHour, weekFrom0) in planContainer.weeklyHours"
+              @click="openClickWeeklyHoursDialog(planContainer, weekFrom0 + 1)"
+              :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour ? weeklyHour : "" }}
+          </td>
         </template>
       </tr>
     </template>
@@ -176,11 +187,6 @@ tr, th, td {
   user-select: none;
 }
 
-.CourseWeeklyHours:hover {
-  background-color: black;
-  color: white;
-}
-
 .TotalHours {
   text-shadow: 0 0 2px black
 }
@@ -189,7 +195,7 @@ tr, th, td {
   cursor: pointer;
 }
 
-.InfoChName:hover, .CoursePlanClickable:hover, .NoPlanInfo:hover {
+.CourseWeeklyHours:hover .InfoChName:hover, .CoursePlanClickable:hover, .NoPlanInfo:hover {
   color: white;
   background-color: black;
 }

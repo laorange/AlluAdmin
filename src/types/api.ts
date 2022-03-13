@@ -1,6 +1,9 @@
 import * as dayjs from 'dayjs'
 
 //region Defined Types
+export type WhatDay = 1 | 2 | 3 | 4 | 5 | 6 | 7
+export type WhichLesson =  1 | 2 | 3 | 4 | 5
+
 export type methodChoice = "Course" | "TD" | "TP" | "Exam"
 
 export type Classroom = {

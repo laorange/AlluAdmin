@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import axios from "axios";
-import {CourseInfo} from "../types/api";
+import {CourseInfo, WhatDay, WhichLesson} from "../types/api";
 import {CoursePlanContainer} from "../components/CoursePlanAdmin/utils/CourseInfoHandler";
 
 type CounterStoreState = {
@@ -17,8 +17,8 @@ type CounterStoreState = {
         courseIdDeleting: number[],
         whetherShowDeletingDialog: boolean,
         whetherShowAddingDialog: boolean,
-        whatDay: 1 | 2 | 3 | 4 | 5 | 6 | 7,
-        whichLesson: 1 | 2 | 3 | 4 | 5,
+        whatDay: WhatDay,
+        whichLesson: WhichLesson,
     },
     coursePlanAdmin: {
         clickCourseInfoDialog: {
@@ -29,7 +29,13 @@ type CounterStoreState = {
             whetherShow: boolean,
             courseInfo: CourseInfo | undefined
             coursePlanContainer: CoursePlanContainer | undefined
-        }
+        },
+        clickWeeklyHoursDialog: {
+            whetherShow: boolean,
+            week: number,
+            groupName: string,
+            planContainer: CoursePlanContainer | undefined,
+        },
     }
 }
 
@@ -61,7 +67,13 @@ export const useCounterStore = defineStore("counter", {
                     whetherShow: false,
                     courseInfo: undefined,
                     coursePlanContainer: undefined
-                }
+                },
+                clickWeeklyHoursDialog: {
+                    whetherShow: false,
+                    week: 0,
+                    groupName: '',
+                    planContainer: undefined,
+                },
             },
         };
     },

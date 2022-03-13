@@ -5,6 +5,7 @@ import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, 
 import dayjs from "dayjs";
 
 import urls from "../utils/urls";
+import {formatDate} from "../utils/dateUtils";
 
 
 class ApiRequester<T> {
@@ -55,7 +56,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
         requestData(period?: number) {
             this.classroom.requestData()
             this.course.requestData({period: period})
-            this.courseChangeLog.requestData({after: dayjs().add(-3, 'day').format("YYYY-MM-DD")})
+            this.courseChangeLog.requestData({after: formatDate(dayjs().add(-3, 'day'))})
             this.courseInfo.requestData({period: period})
             this.coursePlan.requestData({period: period})
             this.courseType.requestData()
