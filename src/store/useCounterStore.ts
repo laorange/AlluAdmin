@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import axios from "axios";
+import {CourseInfo} from "../types/api";
 
 type CounterStoreState = {
     isLoading: boolean,
@@ -19,8 +20,10 @@ type CounterStoreState = {
         whichLesson: 1 | 2 | 3 | 4 | 5,
     },
     coursePlanAdmin: {
-        period: number | undefined,
-        semester: number | undefined,
+        clickCourseInfoDialog: {
+            whetherShow: boolean,
+            courseInfo: CourseInfo | undefined
+        }
     }
 }
 
@@ -44,8 +47,10 @@ export const useCounterStore = defineStore("counter", {
                 whichLesson: 1,
             },
             coursePlanAdmin: {
-                period: undefined,
-                semester: undefined,
+                clickCourseInfoDialog: {
+                    whetherShow: false,
+                    courseInfo: undefined
+                }
             }
         };
     },

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {SemesterConfig} from "../../types/api";
+import {CourseInfo, SemesterConfig} from "../../types/api";
 import dayjs from "dayjs";
 import {CourseInfoHandler, CourseInfoContainer} from "./utils/CourseInfoHandler";
 
@@ -28,6 +28,12 @@ const courseInfoContainers = computed((): CourseInfoContainer[] => {
 
   return _courseInfoHandler.infoList
 })
+
+// 点击CourseInfo后的对话框
+const openClickCourseInfoDialog = (inputedInfo:CourseInfo) => {
+  store.coursePlanAdmin.clickCourseInfoDialog.courseInfo = inputedInfo;
+  store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = true
+}
 </script>
 
 <template>
@@ -45,19 +51,34 @@ const courseInfoContainers = computed((): CourseInfoContainer[] => {
     <template v-for="(infoContainer, InfoIndex) in courseInfoContainers" :key="InfoIndex">
       <template v-if="semesterSelected.length === 0 || semesterSelected.indexOf(infoContainer.courseInfo.semester)>-1">
         <tr v-if="infoContainer.coursePlans.length === 0" :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
-          <td>{{ infoContainer.courseInfo.ch_name }}</td>
+
+          <!--课程名称，需要加点击事件-->
+          <td class="InfoChName" @click="openClickCourseInfoDialog(infoContainer.courseInfo)">
+            {{ infoContainer.courseInfo.ch_name }}
+          </td>
+
+
           <td colspan="24">无对应教学计划</td>
         </tr>
 
-        <tr v-for="(planContainer, planIndex) in infoContainer.coursePlans" :key="planIndex">
-          <template
-              v-if="groupSelected.length === 0 || groupSelected.filter(group=>planContainer.coursePlan.groups.indexOf(group[1])>-1).length">
-            <td v-if="planIndex===0" :rowspan="infoContainer.coursePlans.length">{{ infoContainer.courseInfo.ch_name }}</td>
+        <tr v-for="(planContainer, planIndex) in infoContainer.coursePlans" :key="planIndex"
+            :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
+          <template v-if="groupSelected.length === 0 || groupSelected.filter(g=>planContainer.coursePlan.groups.indexOf(g[1])>-1).length">
+
+
+            <!--课程名称，需要加点击事件-->
+            <td v-if="planIndex===0" :rowspan="infoContainer.coursePlans.length"
+                class="InfoChName" @click="openClickCourseInfoDialog(infoContainer.courseInfo)"
+            >
+              {{ infoContainer.courseInfo.ch_name }}
+            </td>
+
+
             <td>{{ planContainer.coursePlan.method }}</td>
             <td>{{ planContainer.coursePlan.teacher_name }}</td>
             <td>{{ apiToolkit.getNameOfGroups(planContainer.coursePlan.groups) }}</td>
-            <td><strong>{{ planContainer.totalHours }}</strong></td>
-            <td v-for="weeklyHour in planContainer.weeklyHours" :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour }}</td>
+            <td class="TotalHours">{{ planContainer.totalHours }}</td>
+            <td v-for="weeklyHour in planContainer.weeklyHours" :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour ? weeklyHour : "" }}</td>
           </template>
         </tr>
       </template>
@@ -90,5 +111,19 @@ tr, th, td {
 .CourseWeeklyHours:hover {
   background-color: black;
   color: white;
+}
+
+.TotalHours {
+  text-shadow: 0 0 2px black
+}
+
+.InfoChName {
+  cursor: pointer;
+  width: min-content;
+}
+
+.InfoChName:hover {
+  color: white;
+  background-color: black;
 }
 </style>

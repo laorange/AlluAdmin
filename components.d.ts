@@ -4,15 +4,17 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AddingCourseDialog: typeof import('./src/components/CourseAdmin/Dialog/AddingCourseDialog.vue')['default']
+    AddingCourseDialog: typeof import('./src/components/CourseAdmin/Dialogs/AddingCourseDialog.vue')['default']
+    ClickCourseInfoDialog: typeof import('./src/components/CoursePlanAdmin/Dialogs/ClickCourseInfoDialog.vue')['default']
     CourseAdmin: typeof import('./src/components/CourseAdmin/CourseAdmin.vue')['default']
     CoursePlanAdmin: typeof import('./src/components/CoursePlanAdmin/CoursePlanAdmin.vue')['default']
     CoursePlanTable: typeof import('./src/components/CoursePlanAdmin/CoursePlanTable.vue')['default']
-    DeletingCourseDialog: typeof import('./src/components/CourseAdmin/Dialog/DeletingCourseDialog.vue')['default']
+    DeletingCourseDialog: typeof import('./src/components/CourseAdmin/Dialogs/DeletingCourseDialog.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCascader: typeof import('element-plus/es')['ElCascader']
     ElCascaderPanel: typeof import('element-plus/es')['ElCascaderPanel']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
@@ -28,7 +30,7 @@ declare module 'vue' {
     GroupSelector: typeof import('./src/components/GroupSelector.vue')['default']
     LoadingMask: typeof import('./src/components/loadingMask.vue')['default']
     OtherAdmin: typeof import('./src/components/OtherAdmin/OtherAdmin.vue')['default']
-    SelectPlanDialog: typeof import('./src/components/CourseAdmin/Dialog/SelectPlanDialog.vue')['default']
+    SelectPlanDialog: typeof import('./src/components/CourseAdmin/Dialogs/SelectPlanDialog.vue')['default']
     SemesterSelector: typeof import('./src/components/SemesterSelector.vue')['default']
     TimetableBlock: typeof import('./src/components/CourseAdmin/WeeklyTimetable/TimetableBlock.vue')['default']
     TopMenu: typeof import('./src/components/TopMenu.vue')['default']
