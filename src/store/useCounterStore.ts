@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import axios from "axios";
-import {CourseInfo, CoursePlan} from "../types/api";
+import {CourseInfo} from "../types/api";
+import {CoursePlanContainer} from "../components/CoursePlanAdmin/utils/CourseInfoHandler";
 
 type CounterStoreState = {
     isLoading: boolean,
@@ -27,7 +28,7 @@ type CounterStoreState = {
         clickCoursePlanDialog: {
             whetherShow: boolean,
             courseInfo: CourseInfo | undefined
-            coursePlan: CoursePlan | undefined
+            coursePlanContainer: CoursePlanContainer | undefined
         }
     }
 }
@@ -59,7 +60,7 @@ export const useCounterStore = defineStore("counter", {
                 clickCoursePlanDialog: {
                     whetherShow: false,
                     courseInfo: undefined,
-                    coursePlan: undefined
+                    coursePlanContainer: undefined
                 }
             },
         };

@@ -58,6 +58,7 @@ class CourseInfoHandler {
 }
 
 export {
+    CoursePlanContainer,
     CourseInfoHandler,
     CourseInfoContainer
 };

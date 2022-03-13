@@ -18,23 +18,28 @@ const redirect = (url: string) => {
       width="30%"
   >
     <div id="ClickCourseInfoDialogBody">
-      <el-button @click="redirect(urls.admin.changeCourseInfo(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id))">
+      <el-button type="primary"
+                 @click="redirect(urls.admin.changeCourseInfo(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id))">
         编辑课程信息
       </el-button>
 
-      <el-button @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'Course'))">
+      <el-button type="primary"
+                 @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'Course'))">
         新增理论课(Course)
       </el-button>
 
-      <el-button @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'TD'))">
+      <el-button type="primary"
+                 @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'TD'))">
         新增习题课(TD)
       </el-button>
 
-      <el-button @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'TP'))">
+      <el-button type="primary"
+                 @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'TP'))">
         新增实验课(TP)
       </el-button>
 
-      <el-button @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'Exam'))">
+      <el-button type="primary"
+                 @click="redirect(urls.admin.addCoursePlan(store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.info_id, 'Exam'))">
         新增考试安排(Exam)
       </el-button>
     </div>
@@ -50,6 +55,11 @@ const redirect = (url: string) => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+#ClickCourseInfoDialogBody > * {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #ClickCourseInfoDialogBody .el-button + .el-button {

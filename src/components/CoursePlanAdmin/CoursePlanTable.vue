@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {CourseInfo, CoursePlan, SemesterConfig} from "../../types/api";
+import {CourseInfo, SemesterConfig} from "../../types/api";
 import dayjs from "dayjs";
-import {CourseInfoHandler, CourseInfoContainer} from "./utils/CourseInfoHandler";
+import {CourseInfoHandler, CourseInfoContainer, CoursePlanContainer} from "./utils/CourseInfoHandler";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
@@ -35,15 +35,14 @@ const openClickCourseInfoDialog = (inputtedInfo: CourseInfo) => {
   store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = true
 }
 
-const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: CoursePlan) => {
+const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: CoursePlanContainer) => {
   store.coursePlanAdmin.clickCoursePlanDialog.courseInfo = inputtedInfo;
-  store.coursePlanAdmin.clickCoursePlanDialog.coursePlan = inputtedPlan;
+  store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer = inputtedPlan;
   store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = true
 }
 </script>
 
 <template>
-  <!--   v-if="courseInfoContainers.filter(item=>semesterSelected.indexOf(item.courseInfo.semester)>-1).length || semesterSelected.length === 0"-->
   <table v-if="courseInfoContainers.filter(item=>semesterSelected.indexOf(item.courseInfo.semester)>-1).length || semesterSelected.length === 0">
     <tr>
       <th>课程名</th>
@@ -74,7 +73,6 @@ const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: Cours
             :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
           <template v-if="groupSelected.length === 0 || groupSelected.filter(g=>planContainer.coursePlan.groups.indexOf(g[1])>-1).length">
 
-
             <!--课程名称，需要加点击事件-->
             <td v-if="planIndex===0" :rowspan="infoContainer.coursePlans.length"
                 class="InfoChName" @click="openClickCourseInfoDialog(infoContainer.courseInfo)"
@@ -84,17 +82,17 @@ const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: Cours
 
             <!-- region Plan可点击区域，需要加点击事件-->
             <td
-                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer.coursePlan)"
+                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer)"
             >{{ planContainer.coursePlan.method }}
             </td>
 
             <td
-                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer.coursePlan)"
+                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer)"
             >{{ planContainer.coursePlan.teacher_name }}
             </td>
 
             <td
-                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer.coursePlan)"
+                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer)"
             >{{ apiToolkit.getNameOfGroups(planContainer.coursePlan.groups) }}
             </td>
             <!-- endregion -->

@@ -1,14 +1,25 @@
 <script setup lang="ts">
 
-import {useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import urls from "../../../utils/urls";
+import {computed} from "vue";
 
 const store = useCounterStore()
+const apiToolkit = useApiToolkit()
 
 const redirect = (url: string) => {
   store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = false
   window.open(url)
 }
+
+const editPlanUrl = computed((): string => urls.admin.changeCoursePlan(
+    store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer?.coursePlan.plan_id ?? 0
+))
+
+const methodDisplay = computed(() => store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer?.coursePlan.method)
+const teacherNameDisplay = computed(() => store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer?.coursePlan.teacher_name)
+const groupNameDisplay = computed(() => apiToolkit.getNameOfGroups(store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer?.coursePlan.groups ?? []))
+const totalHoursDisplay = computed(() => store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer?.totalHours)
 </script>
 
 <template>
@@ -18,7 +29,11 @@ const redirect = (url: string) => {
       width="30%"
   >
     <div id="clickCoursePlanDialogBody">
-      <el-button @click="redirect(urls.admin.changeCoursePlan(store.coursePlanAdmin.clickCoursePlanDialog.coursePlan?.plan_id))">
+      <div v-if="methodDisplay">上课方式：{{ methodDisplay }}</div>
+      <div v-if="teacherNameDisplay">授课教师：{{ teacherNameDisplay }}</div>
+      <div v-if="groupNameDisplay">分组：{{ groupNameDisplay }}</div>
+      <div>总课时：{{ totalHoursDisplay }}</div>
+      <el-button @click="redirect(editPlanUrl)" type="primary">
         编辑该教学计划
       </el-button>
     </div>
@@ -34,6 +49,11 @@ const redirect = (url: string) => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+#clickCoursePlanDialogBody > * {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #clickCoursePlanDialogBody .el-button + .el-button {
