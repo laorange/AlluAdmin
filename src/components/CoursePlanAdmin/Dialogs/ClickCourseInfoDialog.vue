@@ -4,7 +4,6 @@ import {useCounterStore} from "../../../store/counter";
 import urls from "../../../utils/urls";
 
 const store = useCounterStore()
-// store.coursePlanAdmin.clickCourseInfoDialog.courseInfo.ch_name
 
 const redirect = (url: string) => {
   store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = false
@@ -53,7 +52,7 @@ const redirect = (url: string) => {
   justify-content: center;
 }
 
-#ClickCourseInfoDialogBody .el-button+.el-button {
+#ClickCourseInfoDialogBody .el-button + .el-button {
   margin-left: 0;
 }
 </style>

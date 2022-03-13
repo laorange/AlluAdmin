@@ -4,6 +4,7 @@ import {useApiToolkit} from "../../store/counter";
 import GroupSelector from "../GroupSelector.vue";
 
 import ClickCourseInfoDialog from "./Dialogs/ClickCourseInfoDialog.vue";
+import ClickCoursePlanDialog from "./Dialogs/ClickCoursePlanDialog.vue";
 
 
 const apiToolkit = useApiToolkit();
@@ -19,8 +20,10 @@ const apiToolkit = useApiToolkit();
   </div>
   <course-plan-table></course-plan-table>
 
-  <!-- Dialogs -->
+  <!-- region Dialogs -->
   <click-course-info-dialog></click-course-info-dialog>
+  <click-course-plan-dialog></click-course-plan-dialog>
+  <!-- endregion -->
 </template>
 
 <style scoped>

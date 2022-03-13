@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {CourseInfo, SemesterConfig} from "../../types/api";
+import {CourseInfo, CoursePlan, SemesterConfig} from "../../types/api";
 import dayjs from "dayjs";
 import {CourseInfoHandler, CourseInfoContainer} from "./utils/CourseInfoHandler";
 
@@ -30,9 +30,15 @@ const courseInfoContainers = computed((): CourseInfoContainer[] => {
 })
 
 // 点击CourseInfo后的对话框
-const openClickCourseInfoDialog = (inputedInfo: CourseInfo) => {
-  store.coursePlanAdmin.clickCourseInfoDialog.courseInfo = inputedInfo;
+const openClickCourseInfoDialog = (inputtedInfo: CourseInfo) => {
+  store.coursePlanAdmin.clickCourseInfoDialog.courseInfo = inputtedInfo;
   store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = true
+}
+
+const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: CoursePlan) => {
+  store.coursePlanAdmin.clickCoursePlanDialog.courseInfo = inputtedInfo;
+  store.coursePlanAdmin.clickCoursePlanDialog.coursePlan = inputtedPlan;
+  store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = true
 }
 </script>
 
@@ -58,7 +64,10 @@ const openClickCourseInfoDialog = (inputedInfo: CourseInfo) => {
           </td>
 
 
-          <td colspan="24">无对应教学计划</td>
+          <td colspan="24"
+              class="NoPlanInfo" @click="openClickCourseInfoDialog(infoContainer.courseInfo)"
+          >无对应教学计划
+          </td>
         </tr>
 
         <tr v-for="(planContainer, planIndex) in infoContainer.coursePlans" :key="planIndex"
@@ -73,10 +82,24 @@ const openClickCourseInfoDialog = (inputedInfo: CourseInfo) => {
               {{ infoContainer.courseInfo.ch_name }}
             </td>
 
+            <!-- region Plan可点击区域，需要加点击事件-->
+            <td
+                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer.coursePlan)"
+            >{{ planContainer.coursePlan.method }}
+            </td>
 
-            <td>{{ planContainer.coursePlan.method }}</td>
-            <td>{{ planContainer.coursePlan.teacher_name }}</td>
-            <td>{{ apiToolkit.getNameOfGroups(planContainer.coursePlan.groups) }}</td>
+            <td
+                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer.coursePlan)"
+            >{{ planContainer.coursePlan.teacher_name }}
+            </td>
+
+            <td
+                class="CoursePlanClickable" @click="openClickCoursePlanDialog(infoContainer.courseInfo, planContainer.coursePlan)"
+            >{{ apiToolkit.getNameOfGroups(planContainer.coursePlan.groups) }}
+            </td>
+            <!-- endregion -->
+
+
             <td class="TotalHours">{{ planContainer.totalHours }}</td>
             <td v-for="weeklyHour in planContainer.weeklyHours" :key="weeklyHour" class="CourseWeeklyHours">{{ weeklyHour ? weeklyHour : "" }}</td>
           </template>
@@ -117,13 +140,13 @@ tr, th, td {
   text-shadow: 0 0 2px black
 }
 
-.InfoChName {
+.InfoChName, .CoursePlanClickable, .NoPlanInfo {
   cursor: pointer;
-  width: min-content;
 }
 
-.InfoChName:hover {
+.InfoChName:hover, .CoursePlanClickable:hover, .NoPlanInfo:hover {
   color: white;
   background-color: black;
 }
+
 </style>

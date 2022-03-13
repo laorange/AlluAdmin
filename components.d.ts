@@ -6,6 +6,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddingCourseDialog: typeof import('./src/components/CourseAdmin/Dialogs/AddingCourseDialog.vue')['default']
     ClickCourseInfoDialog: typeof import('./src/components/CoursePlanAdmin/Dialogs/ClickCourseInfoDialog.vue')['default']
+    ClickCoursePlanDialog: typeof import('./src/components/CoursePlanAdmin/Dialogs/ClickCoursePlanDialog.vue')['default']
     CourseAdmin: typeof import('./src/components/CourseAdmin/CourseAdmin.vue')['default']
     CoursePlanAdmin: typeof import('./src/components/CoursePlanAdmin/CoursePlanAdmin.vue')['default']
     CoursePlanTable: typeof import('./src/components/CoursePlanAdmin/CoursePlanTable.vue')['default']
