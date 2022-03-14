@@ -6,7 +6,7 @@ import {useApiToolkit, useCounterStore} from "./store/counter";
 import LoadingMask from "./components/loadingMask.vue";
 import TopMenu from "./components/TopMenu.vue";
 
-import {onBeforeMount, onMounted} from "vue";
+import {onMounted} from "vue";
 import {useRoute} from "vue-router";
 
 // import {useRoute, useRouter} from "vue-router";
@@ -15,20 +15,11 @@ const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 const route = useRoute()
 
-// --------------
-onBeforeMount(async () => {
-
-})
-
-onMounted(async () => {
-  await apiToolkit.requestSemesterConfig()
-  const _period = apiToolkit.semesterConfig.first()?.current_period
-  apiToolkit.requestDataExceptSemesterConfigAndGroup(_period)
-
-  // region 读取route.query中的group并赋值在store中，如果无效则置undefined
-  await apiToolkit.group.requestData({period: _period})
-  const groupInQuery = String(route.query.group ?? '').split(',')
-  for (const groupString of groupInQuery) {
+// region 读取route.query中的有效信息并赋值在store中
+function useRouterQueryReader() {
+  // region groups
+  const groupsInQuery = String(route.query.groups ?? '').split(',')
+  for (const groupString of groupsInQuery) {
     let groupId = parseInt(groupString)
     if (!isNaN(groupId)) {
       let groupInApi = (apiToolkit.group.filter(group => group.group_id === groupId))
@@ -38,6 +29,29 @@ onMounted(async () => {
     }
   }
   // endregion
+
+  // region weeks
+  const weeksInQuery = String(route.query.weeks ?? '').split(',')
+  for (const weekString of weeksInQuery) {
+    let week = parseInt(weekString)
+    if (!isNaN(week)) {
+      store.courseAdmin.weekSelected.push(week)
+    }
+  }
+  // endregion
+}
+
+// endregion
+
+
+onMounted(async () => {
+  await apiToolkit.requestSemesterConfig()
+  const _period = apiToolkit.semesterConfig.first()?.current_period
+
+  apiToolkit.requestDataExceptSemesterConfigAndGroup(_period)
+
+  await apiToolkit.group.requestData({period: _period})
+  useRouterQueryReader()
 })
 </script>
 

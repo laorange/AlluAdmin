@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {computed} from "vue";
+import {computed, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 
 defineProps({
   verticallyDisplay: {
@@ -11,6 +12,9 @@ defineProps({
 
 const apiToolkit = useApiToolkit();
 const store = useCounterStore();
+const route = useRoute()
+const router = useRouter()
+
 const maxWeek = computed(() => apiToolkit.semesterConfig.first()?.max_week)
 
 interface OptionInElTransfer {
@@ -19,7 +23,13 @@ interface OptionInElTransfer {
   disabled: boolean
 }
 
+// 定义一个响应式变量weekSelecting，在weekCandidates的computed中使用，以在weekSelected变化时更新weekCandidates
+let weekSelecting = ref<boolean>(false)
+
 const weekCandidates = computed(() => {
+  if (weekSelecting.value) {
+    weekSelecting.value = false
+  }
   let candidates: OptionInElTransfer[] = [];
   for (let week = 1; week <= maxWeek.value; week++) {
     candidates.push({
@@ -30,6 +40,21 @@ const weekCandidates = computed(() => {
   }
   return candidates
 })
+
+// region 监视：如果选择新的年级，同步变化到groupSelected和route.query
+watch(() => store.courseAdmin.weekSelected, (newWeekSelected) => {
+  weekSelecting.value = true
+
+  // route.query
+  router.push({
+    name: String(route.name),
+    query: {
+      ...route.query,
+      weeks: newWeekSelected.length ? Array.from(new Set(newWeekSelected)).join(",") : undefined
+    }
+  })
+}, {deep: true})
+// endregion
 
 </script>
 

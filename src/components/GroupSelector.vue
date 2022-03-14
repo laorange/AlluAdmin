@@ -19,8 +19,9 @@ const router = useRouter()
 
 const period = computed(() => apiToolkit.semesterConfig.first()?.current_period ?? 0)
 
-// region 引入一个响应式变量，在groupOptions的computed中使用，以在GroupSelected变化时更新groupOptions
+// region 定义一个响应式变量groupSelecting，在groupOptions的computed中使用，以在GroupSelected变化时更新groupOptions
 let groupSelecting = ref<boolean>(false)
+
 const groupOptions = computed((): ElOption[] => {
   if (groupSelecting.value) {
     groupSelecting.value = false
@@ -63,7 +64,7 @@ watch(() => store.groupSelected, (newGroupSelected) => {
     name: String(route.name),
     query: {
       ...route.query,
-      group: groupIds.length ? Array.from(new Set(groupIds)).join(",") : undefined
+      groups: groupIds.length ? Array.from(new Set(groupIds)).join(",") : undefined
     }
   })
 }, {deep: true})
