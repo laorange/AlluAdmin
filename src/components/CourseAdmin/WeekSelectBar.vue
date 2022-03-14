@@ -46,7 +46,7 @@ watch(() => store.courseAdmin.weekSelected, (newWeekSelected) => {
   weekSelecting.value = true
 
   // route.query
-  router.push({
+  router.replace({
     name: String(route.name),
     query: {
       ...route.query,

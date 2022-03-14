@@ -17,7 +17,7 @@ const store = useCounterStore()
 const route = useRoute()
 const router = useRouter()
 
-const period = computed(() => apiToolkit.semesterConfig.first()?.current_period ?? 0)
+const period = computed<number>(() => apiToolkit.semesterConfig.first()?.current_period ?? 0)
 
 // region 定义一个响应式变量groupSelecting，在groupOptions的computed中使用，以在GroupSelected变化时更新groupOptions
 let groupSelecting = ref<boolean>(false)
@@ -60,7 +60,7 @@ watch(() => store.groupSelected, (newGroupSelected) => {
   }
 
   // route.query
-  router.push({
+  router.replace({
     name: String(route.name),
     query: {
       ...route.query,

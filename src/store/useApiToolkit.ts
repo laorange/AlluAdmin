@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 import urls from "../utils/urls";
 import {formatDate} from "../utils/dateUtils";
+import {CourseInfoContainer, CourseInfoHandler} from "../utils/ApiDataHandlers/CourseInfoHandler";
 
 
 class ApiRequester<T> {
@@ -48,6 +49,18 @@ export const useApiToolkit = defineStore("apiToolkit", {
             semesterConfig: new ApiRequester<SemesterConfig>(urls.api.semesterConfig),
             teacher: new ApiRequester<Teacher>(urls.api.teacher),
         };
+    },
+    getters: {
+        courseInfoContainers(): CourseInfoContainer[] {
+            let _courseInfoHandler = new CourseInfoHandler(this.courseInfo.data)
+            _courseInfoHandler.addCoursePlans(
+                this.coursePlan.data,
+                this.course.data,
+                this.semesterConfig.first()?.max_week ?? 20,
+                dayjs(this.semesterConfig.first()?.week1_monday_date)
+            )
+            return _courseInfoHandler.infoList
+        }
     },
     actions: {
         async requestSemesterConfig() {

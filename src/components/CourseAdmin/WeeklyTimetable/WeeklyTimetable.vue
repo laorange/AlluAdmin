@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import TimetableBlock from "./TimetableBlock.vue";
+import {computed, watch} from "vue";
+import {CourseRecorder} from "../../../types/courseAdmin";
 
 
 const apiToolkit = useApiToolkit()
 const store = useCounterStore()
+
+const courseRecorders = computed<CourseRecorder[]>(() => {
+  for (const datum of apiToolkit.course.data) {
+
+  }
+  return []
+})
 
 </script>
 

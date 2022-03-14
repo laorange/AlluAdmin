@@ -1,33 +1,22 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {CourseInfo, CoursePlan, SemesterConfig} from "../../types/api";
-import dayjs from "dayjs";
-import {CourseInfoHandler, CourseInfoContainer, CoursePlanContainer} from "./utils/CourseInfoHandler";
+import {CourseInfo, SemesterConfig} from "../../types/api";
+import {AdvancedCourseInfoHandler, CourseInfoContainer, CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 
 const semesterConfig = computed((): SemesterConfig | undefined => apiToolkit.semesterConfig.first())
 const maxWeek = computed(() => semesterConfig.value?.max_week ?? 20)
-const week1Monday = computed((): dayjs.Dayjs => dayjs(semesterConfig.value?.week1_monday_date));
 const semesterSelected = computed((): number[] => store.semesterSelected)
 const groupSelected = computed((): [number, number][] => store.groupSelected)
 
-const courseInfoContainers = computed((): CourseInfoContainer[] => {
-  let _courseInfoHandler = new CourseInfoHandler()
-
-  _courseInfoHandler.addCourseInfos(apiToolkit.courseInfo.data)
-
-  _courseInfoHandler.addCoursePlans(
-      apiToolkit.coursePlan.data,
-      apiToolkit.course.data,
-      maxWeek.value,
-      week1Monday.value
-  )
-
-  return _courseInfoHandler.infoList
-})
+const courseInfoContainers = computed((): CourseInfoContainer[] => apiToolkit.courseInfoContainers)
+const advancedInfoHandler = computed(() => new AdvancedCourseInfoHandler(courseInfoContainers.value,
+    semesterSelected.value,
+    groupSelected.value
+))
 
 // 点击CourseInfo后的对话框
 const openClickCourseInfoDialog = (inputtedInfo: CourseInfo) => {
@@ -50,55 +39,10 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
   }
 }
 
-const filters = {
-  plansForSelectedGroup(inputtedInfoContainer: CourseInfoContainer, getFullWhenSelectNone: boolean = false): CoursePlanContainer[] {
-    if (getFullWhenSelectNone || judges.whetherUserDoesNotCareGroup()) return inputtedInfoContainer.coursePlans
-    return inputtedInfoContainer.coursePlans.filter(pc => judges.whetherPlanForSelectedGroup(pc))
-  },
-  InfosInSelectedSemester(): CourseInfoContainer[] {
-    if (semesterSelected.value.length === 0) return courseInfoContainers.value
-    return courseInfoContainers.value.filter(ic => semesterSelected.value.indexOf(ic.courseInfo.semester) > -1)
-  },
-}
-
-const judges = {
-  whetherUserDoesNotCareGroup(): boolean {
-    return groupSelected.value.length === 0
-  },
-  getTrueWhenSelectNone(originalResult: boolean) {
-    return originalResult || judges.whetherUserDoesNotCareGroup()
-  },
-  whetherCourseInfoForSelectedSemester(inputtedInfoContainer: CourseInfoContainer): boolean {
-    return semesterSelected.value.indexOf(inputtedInfoContainer.courseInfo.semester) > -1
-  },
-  whetherPlanForSelectedGroup(inputtedPlanContainer: CoursePlanContainer): boolean {
-    return groupSelected.value.filter(group => inputtedPlanContainer.coursePlan.groups.indexOf(group[1]) > -1).length > 0
-  },
-  whetherCourseInfoHasProperPlan(inputtedInfoContainer: CourseInfoContainer): boolean {
-    return judges.whetherCourseInfoForSelectedSemester(inputtedInfoContainer) &&
-        filters.plansForSelectedGroup(inputtedInfoContainer).length > 0
-  },
-  whetherCourseInfoForSelectedGroup(): boolean {
-    return courseInfoContainers.value.filter(ic => judges.whetherCourseInfoHasProperPlan(ic)).length > 0;
-  },
-  whetherInfoInThisSemesterWithoutPlan(): boolean {
-    return filters.InfosInSelectedSemester().filter(ic => ic.coursePlans.length === 0).length > 0;
-  },
-  whetherPdcIsEmpty(): boolean {
-    return judges.getTrueWhenSelectNone(judges.whetherCourseInfoForSelectedGroup() || judges.whetherInfoInThisSemesterWithoutPlan());
-  },
-}
-
-function getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
-  let rowSpan = inputtedInfoContainer.coursePlans.filter(pc => {
-    return judges.getTrueWhenSelectNone(judges.whetherPlanForSelectedGroup(pc));
-  }).length
-  return rowSpan ? rowSpan : 1
-}
 </script>
 
 <template>
-  <table v-if="judges.getTrueWhenSelectNone(judges.whetherPdcIsEmpty())">
+  <table v-if="advancedInfoHandler.judge_getTrueWhenSelectNone(advancedInfoHandler.judge_whetherPdcIsEmpty())">
     <tr>
       <th>课程名</th>
       <th>类型</th>
@@ -108,7 +52,7 @@ function getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
       <th class="WeekCol" v-for="week in maxWeek" :key="week">{{ week }}</th>
     </tr>
 
-    <template v-for="(infoContainer, InfoIndex) in filters.InfosInSelectedSemester()" :key="InfoIndex">
+    <template v-for="(infoContainer, InfoIndex) in advancedInfoHandler.filter_infosInSelectedSemester()" :key="InfoIndex">
 
       <!-- region 如果某个Info没有教学计划(Plan)，则忽略Group的筛选 -->
       <tr v-if="infoContainer.coursePlans.length === 0" :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
@@ -125,13 +69,13 @@ function getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
       </tr>
       <!-- endregion -->
 
-      <tr v-for="(planContainer, planIndex) in filters.plansForSelectedGroup(infoContainer)" :key="planIndex"
+      <tr v-for="(planContainer, planIndex) in advancedInfoHandler.filter_plansForSelectedGroup(infoContainer)" :key="planIndex"
           :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
-        <template v-if="judges.whetherUserDoesNotCareGroup() || judges.whetherPdcIsEmpty()">
+        <template v-if="advancedInfoHandler.judge_whetherUserDoesNotCareGroup() || advancedInfoHandler.judge_whetherPdcIsEmpty()">
 
           <!--课程名称，需要加点击事件-->
           <td v-if="planIndex===0"
-              :rowspan="getRowSpanNum(infoContainer)"
+              :rowspan="advancedInfoHandler.getRowSpanNum(infoContainer)"
               class="InfoChName" @click="openClickCourseInfoDialog(infoContainer.courseInfo)"
           >
             {{ infoContainer.courseInfo.ch_name }}
