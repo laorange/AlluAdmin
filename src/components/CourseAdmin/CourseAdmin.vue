@@ -16,7 +16,7 @@ import GroupSelector from "../GroupSelector.vue";
         <h4>请选择：年级 & 分组 & 周数</h4>
         <group-selector></group-selector>
       </div>
-      <week-select-bar :vertically-display="false"></week-select-bar>
+      <week-select-bar></week-select-bar>
     </div>
 
     <div class="CourseAdminHorizontal">

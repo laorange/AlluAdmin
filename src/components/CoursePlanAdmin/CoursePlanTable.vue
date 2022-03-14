@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {CourseInfo, SemesterConfig} from "../../types/api";
-import {AdvancedCourseInfoHandler, CourseInfoContainer, CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
+import {CourseInfo} from "../../types/api";
+import {AdvancedCourseInfoHandler, CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 
-const maxWeek = computed(() => apiToolkit.maxWeek)
+const maxWeek = computed<number>(() => apiToolkit.maxWeek)
 
-const semesterSelected = computed((): number[] => store.semesterSelected)
-const groupSelected = computed((): [number, number][] => store.groupSelected)
-const advancedInfoHandler = computed(() => new AdvancedCourseInfoHandler(apiToolkit.courseInfoContainers,
+const semesterSelected = computed<number[]>(() => store.semesterSelected)
+const groupSelected = computed<[number, number][]>(() => store.groupSelected)
+const advancedInfoHandler = computed<AdvancedCourseInfoHandler>(() => new AdvancedCourseInfoHandler(apiToolkit.courseInfoContainers,
     semesterSelected.value,
     groupSelected.value
 ))

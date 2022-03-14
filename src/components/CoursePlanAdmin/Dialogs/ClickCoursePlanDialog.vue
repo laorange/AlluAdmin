@@ -12,7 +12,7 @@ const redirect = (url: string) => {
   window.open(url)
 }
 
-const editPlanUrl = computed((): string => urls.admin.changeCoursePlan(
+const editPlanUrl = computed<string>(() => urls.admin.changeCoursePlan(
     store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer?.coursePlan.plan_id ?? 0
 ))
 

@@ -22,7 +22,7 @@ const period = computed<number>(() => apiToolkit.semesterConfig.first()?.current
 // region 定义一个响应式变量groupSelecting，在groupOptions的computed中使用，以在GroupSelected变化时更新groupOptions
 let groupSelecting = ref<boolean>(false)
 
-const groupOptions = computed((): ElOption[] => {
+const groupOptions = computed<ElOption[]>(() => {
   if (groupSelecting.value) {
     groupSelecting.value = false
   }

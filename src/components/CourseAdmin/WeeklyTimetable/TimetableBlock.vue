@@ -10,7 +10,7 @@ const store = useCounterStore()
 
 let courseSelectData = ref<{ [courseId: number]: boolean }>({})
 
-let courseList = computed((): Course[] => {
+let courseList = computed<Course[]>(() => {
   courseSelectData.value = []
   for (const course of apiToolkit.course.data) {
     courseSelectData.value[course.course_id] = false

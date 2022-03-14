@@ -10,12 +10,12 @@ import {AdvancedCourseInfoHandler} from "../../../utils/ApiDataHandlers/CourseIn
 const apiToolkit = useApiToolkit()
 const store = useCounterStore()
 
-const semesterConfig = computed((): SemesterConfig | undefined => apiToolkit.semesterConfig.first())
-const maxWeek = computed(() => apiToolkit.maxWeek)
+const semesterConfig = computed<SemesterConfig | undefined>(() => apiToolkit.semesterConfig.first())
+const maxWeek = computed<number>(() => apiToolkit.maxWeek)
 
-const semesterSelected = computed((): number[] => store.semesterSelected)
-const groupSelected = computed((): [number, number][] => store.groupSelected)
-const advancedInfoHandler = computed(() => new AdvancedCourseInfoHandler(apiToolkit.courseInfoContainers,
+const semesterSelected = computed<number[]>(() => store.semesterSelected)
+const groupSelected = computed<[number, number][]>(() => store.groupSelected)
+const advancedInfoHandler = computed<AdvancedCourseInfoHandler>(() => new AdvancedCourseInfoHandler(apiToolkit.courseInfoContainers,
     semesterSelected.value,
     groupSelected.value
 ))

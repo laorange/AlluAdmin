@@ -6,13 +6,13 @@ import {Delete, CirclePlus, DocumentCopy, Scissor, Edit} from "@element-plus/ico
 
 const store = useCounterStore();
 
-const AmountOfSelectedPlan = computed((): number => store.courseAdmin.planIdSelected.length)
+const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.planIdSelected.length)
 // const AmountOfSelectedCourse = ref<number>(0)
-const AmountOfSelectedCourse = computed((): number => store.courseAdmin.courseIdSelected.length)
+const AmountOfSelectedCourse = computed<number>(() => store.courseAdmin.courseIdSelected.length)
 
-const whetherShowAddPlanButton = computed((): boolean => AmountOfSelectedCourse.value == 0)
-const whetherShowEditCourseButton = computed((): boolean => AmountOfSelectedCourse.value == 1)
-const whetherShowOtherCourseFunctionalButton = computed((): boolean => AmountOfSelectedCourse.value >= 1)
+const whetherShowAddPlanButton = computed<boolean>(() => AmountOfSelectedCourse.value == 0)
+const whetherShowEditCourseButton = computed<boolean>(() => AmountOfSelectedCourse.value == 1)
+const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfSelectedCourse.value >= 1)
 
 </script>
 

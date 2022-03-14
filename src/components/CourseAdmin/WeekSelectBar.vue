@@ -3,19 +3,12 @@ import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {computed, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
-defineProps({
-  verticallyDisplay: {
-    type: Boolean,
-    default: true
-  }
-})
-
 const apiToolkit = useApiToolkit();
 const store = useCounterStore();
 const route = useRoute()
 const router = useRouter()
 
-const maxWeek = computed(() => apiToolkit.maxWeek)
+const maxWeek = computed<number>(() => apiToolkit.maxWeek)
 
 interface OptionInElTransfer {
   value: number
@@ -26,7 +19,7 @@ interface OptionInElTransfer {
 // 定义一个响应式变量weekSelecting，在weekCandidates的computed中使用，以在weekSelected变化时更新weekCandidates
 let weekSelecting = ref<boolean>(false)
 
-const weekCandidates = computed(() => {
+const weekCandidates = computed<OptionInElTransfer[]>(() => {
   if (weekSelecting.value) {
     weekSelecting.value = false
   }
@@ -59,7 +52,7 @@ watch(() => store.courseAdmin.weekSelected, (newWeekSelected) => {
 </script>
 
 <template>
-  <div :class="verticallyDisplay?'MinContentTransferContainer':'TransferContainer'">
+  <div class="TransferContainer">
     <el-transfer
         v-model="store.courseAdmin.weekSelected"
         :props="{key: 'value', label: 'description'}"

@@ -10,8 +10,8 @@ import {getIsoWeekDay, getWeeksBetweenTwoDayFrom0} from "../../../utils/dateUtil
 const store = useCounterStore();
 const apiToolkit = useApiToolkit()
 
-const groupName = computed(() => store.coursePlanAdmin.clickWeeklyHoursDialog.groupName)
-const week = computed(() => store.coursePlanAdmin.clickWeeklyHoursDialog.week)
+const groupName = computed<string>(() => store.coursePlanAdmin.clickWeeklyHoursDialog.groupName)
+const week = computed<number>(() => store.coursePlanAdmin.clickWeeklyHoursDialog.week)
 
 function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | number): Course[] {
   return (store.coursePlanAdmin.clickWeeklyHoursDialog.planContainer?.courses ?? []).filter(
