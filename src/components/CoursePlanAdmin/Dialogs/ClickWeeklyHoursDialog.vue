@@ -5,6 +5,7 @@ import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import {Course, WhatDay, WhichLesson} from "../../../types/api";
 import {getIsoWeekDay, getWeeksBetweenTwoDayFrom0} from "../../../utils/dateUtils";
+import CourseCard from "../../CourseCard.vue";
 
 
 const store = useCounterStore();
@@ -43,21 +44,9 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
         <template v-for="whichLesson in 5" :key="whichLesson">
           <template v-for="whatDay in 7" :key="whatDay">
             <div class="TimeBlockItem">
-              <div class="CourseCard" v-for="course in filterCourse(whatDay, whichLesson)"
-                   :key="course.course_id" :style="{backgroundColor: '#' + course.color}">
-                <!--  <div>row:{{ row }},col:{{ col }}</div>-->
-                <!--  <div>which_lesson: {{ course.data.which_lesson }}</div>-->
-                <!--  <div>what_day: {{ course.what_day }}</div>-->
-                <div v-show="course.ch_name">{{ course.ch_name }}</div>
-                <div v-show="course.en_name">{{ course.en_name }}</div>
-                <div v-show="course.fr_name">{{ course.fr_name }}</div>
-                <div v-show="course.date">{{ course.date }}</div>
-                <div v-show="course.method">{{ course.method }}</div>
-                <div v-show="course.teacher_name">{{ course.teacher_name }}</div>
-                <div v-show="groupName">{{ groupName }}</div>
-                <div v-show="course.room_name">{{ course.room_name }}</div>
-                <div v-show="course.note">{{ course.note }}</div>
-              </div>
+              <template v-for="course in filterCourse(whatDay, whichLesson)" :key="course.course_id">
+                <course-card :course="course"></course-card>
+              </template>
             </div>
           </template>
         </template>

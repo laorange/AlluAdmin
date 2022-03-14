@@ -9,7 +9,6 @@ import GroupSelector from "../GroupSelector.vue";
 </script>
 
 <template>
-  <h1>🚧 施工中...</h1>
   <div class="CourseAdminVertical">
     <div class="TopPart">
       <div>
@@ -26,6 +25,8 @@ import GroupSelector from "../GroupSelector.vue";
       </div>
     </div>
   </div>
+
+  <h1>🚧 施工中...</h1>
 </template>
 
 <style scoped>
@@ -58,6 +59,6 @@ import GroupSelector from "../GroupSelector.vue";
   width: 100%;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 </style>
