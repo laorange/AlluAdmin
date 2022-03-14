@@ -86,8 +86,8 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
 
 .TimeBlockItem {
   height: 150px;
-  cursor: pointer;
-  user-select: none;
+  /*cursor: pointer;*/
+  /*user-select: none;*/
 }
 
 .CourseCard {

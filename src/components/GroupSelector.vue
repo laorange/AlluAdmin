@@ -2,6 +2,7 @@
 import {useApiToolkit, useCounterStore} from "../store/counter";
 import {computed, ref, watch} from "vue";
 import {getSemesterOptionsByPeriod} from "../utils/getSemesterOptionsByPeriod";
+import {useRoute, useRouter} from "vue-router";
 
 interface ElOption {
   value: number,
@@ -13,10 +14,17 @@ const multiple = {multiple: true}
 
 const apiToolkit = useApiToolkit()
 const store = useCounterStore()
+const route = useRoute()
+const router = useRouter()
 
 const period = computed(() => apiToolkit.semesterConfig.first()?.current_period ?? 0)
 
+// region 引入一个响应式变量，在groupOptions的computed中使用，以在GroupSelected变化时更新groupOptions
+let groupSelecting = ref<boolean>(false)
 const groupOptions = computed((): ElOption[] => {
+  if (groupSelecting.value) {
+    groupSelecting.value = false
+  }
   let _groupOptions: ElOption[] = getSemesterOptionsByPeriod(period.value);
   for (const group of apiToolkit.group.data) {
     let elOption = _groupOptions.filter(item => item.value === group.semester)
@@ -32,16 +40,34 @@ const groupOptions = computed((): ElOption[] => {
   }
   return _groupOptions
 })
+// endregion
 
-watch(() => store.groupSelected, () => {
+// region 监视：如果选择新的年级，同步变化到groupSelected和route.query
+watch(() => store.groupSelected, (newGroupSelected) => {
+  groupSelecting.value = true
+  let groupIds: number[] = []
+
+  // groupSelected
   store.semesterSelected = []
-  for (const groupSelected of store.groupSelected) {
+  for (const groupSelected of newGroupSelected) {
+    // 如果当前semesterSelected里还没Group对应的学期，那就加上
     if (store.semesterSelected.indexOf(groupSelected[0]) === -1) {
       store.semesterSelected.push(groupSelected[0])
     }
-  }
-}, {deep: true, immediate: true})
 
+    groupIds.push(groupSelected[1])
+  }
+
+  // route.query
+  router.push({
+    name: String(route.name),
+    query: {
+      ...route.query,
+      group: groupIds.length ? Array.from(new Set(groupIds)).join(",") : undefined
+    }
+  })
+}, {deep: true})
+// endregion
 </script>
 
 <template>

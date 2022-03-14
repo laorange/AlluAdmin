@@ -54,13 +54,16 @@ export const useApiToolkit = defineStore("apiToolkit", {
             await this.semesterConfig.requestData()
         },
         requestData(period?: number) {
+            this.requestDataExceptSemesterConfigAndGroup(period)
+            this.group.requestData({period: period})
+        },
+        requestDataExceptSemesterConfigAndGroup(period?: number) {
             this.classroom.requestData()
             this.course.requestData({period: period})
             this.courseChangeLog.requestData({after: formatDate(dayjs().add(-3, 'day'))})
             this.courseInfo.requestData({period: period})
             this.coursePlan.requestData({period: period})
             this.courseType.requestData()
-            this.group.requestData({period: period})
             this.notice.requestData()
             this.teacher.requestData()
         },

@@ -44,12 +44,16 @@ const weekCandidates = computed(() => {
   </div>
 </template>
 
-<style scoped>
+<style>
 .TransferContainer {
   width: max-content;
 }
 
 .MinContentTransferContainer {
   width: min-content;
+}
+
+.el-transfer__buttons {
+  padding: 0 5px;
 }
 </style>
