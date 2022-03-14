@@ -6,7 +6,7 @@ import {getIsoWeekDay} from "../../../utils/dateUtils";
 import CourseCard from "../../CourseCard.vue";
 
 
-const props = defineProps<{ whatDay: number, whichLesson: number, courseRecorders: CourseRecorder[] }>()
+const props = defineProps<{ whatDay: number, whichLesson: number }>()
 
 const apiToolkit = useApiToolkit()
 const store = useCounterStore()
@@ -16,16 +16,20 @@ function filterForThisBlock(courseRecorder: CourseRecorder): boolean {
   let properWhichLesson: boolean = courseRecorder.course.which_lesson === props.whichLesson;
   return properWhatDay && properWhichLesson
 }
+
+function getPlacementName(whichLesson: number) {
+  return whichLesson <= 2 ? "bottom-start" : "top-start"
+}
 </script>
 
 <template>
   <el-scrollbar height="140px">
     <div class="TimetableBlock">
-      <div v-for="courseRecorder in courseRecorders" :key="courseRecorder.course.course_id" class="scrollbar-demo-item">
+      <div v-for="courseRecorder in store.courseAdmin.courseRecorders" :key="courseRecorder.course.course_id" class="scrollbar-demo-item">
         <el-tooltip
             class="box-item"
             effect="light"
-            placement="top-start"
+            :placement="getPlacementName(courseRecorder.course.which_lesson)"
         >
           <template #content>
             <course-card :course="courseRecorder.course"></course-card>

@@ -18,30 +18,28 @@ const semesterSelected = computed<number[]>(() => store.semesterSelected)
 const groupSelected = computed<[number, number][]>(() => store.groupSelected)
 const weekSelected = computed<number[]>(() => store.courseAdmin.weekSelected)
 
-const courseRecorders = ref<CourseRecorder[]>([])
-
 function getWeekOfOneCourse(course: Course): number {
   return getWeeksBetweenTwoDayFrom0(dayjs(course.date), apiToolkit.week1Monday) + 1
 }
 
 function refreshCourseRecorders() {
-  courseRecorders.value = []
+  store.courseAdmin.courseRecorders = []
   for (const course of apiToolkit.course.filter(course => {
     let groupIdsOfThisCourse: number[] = JSON.parse(course.group_ids) as number[]
     let properGroup: boolean = groupSelected.value.length === 0 || groupSelected.value.filter(gs => groupIdsOfThisCourse.indexOf(gs[1]) > -1).length > 0
     let properWeek: boolean = weekSelected.value.length === 0 || weekSelected.value.indexOf(getWeekOfOneCourse(course)) > -1;
     return properGroup && properWeek
   })) {
-    courseRecorders.value.push({course, checked: false, week: getWeekOfOneCourse(course)})
+    store.courseAdmin.courseRecorders.push({course, checked: false, week: getWeekOfOneCourse(course)})
   }
 }
 
 watch(() => semesterSelected, () => refreshCourseRecorders(), {immediate: true, deep: true})
 watch(() => groupSelected, () => refreshCourseRecorders(), {immediate: true, deep: true})
 watch(() => weekSelected, () => refreshCourseRecorders(), {immediate: true, deep: true})
-watch(() => courseRecorders, () => {
+watch(() => store.courseAdmin.courseRecorders, () => {
   store.courseAdmin.courseIdSelected = []
-  for (const courseRecorder of courseRecorders.value.filter(cr => cr.checked)) {
+  for (const courseRecorder of store.courseAdmin.courseRecorders.filter(cr => cr.checked)) {
     store.courseAdmin.courseIdSelected.push(courseRecorder.course.course_id);
   }
 }, {deep: true, immediate: true})
@@ -52,9 +50,9 @@ watch(() => apiToolkit.course, () => refreshCourseRecorders(), {deep: true})
 
 <template>
   <div class="WeeklyTimetableBody">
-    <template v-for="whatDay in 7">
-      <div class="TimetableBlock" v-for="whichLesson in 5">
-        <timetable-block :what-day="whatDay" :which-lesson="whichLesson" :courseRecorders="courseRecorders"></timetable-block>
+    <template v-for="whichLesson in 5">
+      <div class="TimetableBlock" v-for="whatDay in 7">
+        <timetable-block :what-day="whatDay" :which-lesson="whichLesson" :courseRecorders="store.courseAdmin.courseRecorders"></timetable-block>
       </div>
     </template>
   </div>

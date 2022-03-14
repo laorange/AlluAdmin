@@ -22,6 +22,7 @@ import GroupSelector from "../GroupSelector.vue";
       <div class="BottomPart">
         <function-button-area></function-button-area>
         <weekly-timetable class="weekly-timetable"></weekly-timetable>
+        <div class="TableFooter"></div>
       </div>
     </div>
   </div>
@@ -60,5 +61,13 @@ import GroupSelector from "../GroupSelector.vue";
   justify-content: space-around;
   align-items: center;
   margin: 10px 0;
+}
+
+.TableFooter{
+  background-color: #efefef;
+  width: 100%;
+  height: 30px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 </style>

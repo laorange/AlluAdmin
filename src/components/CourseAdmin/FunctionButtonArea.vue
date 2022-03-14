@@ -3,17 +3,36 @@ import {useCounterStore} from "../../store/counter";
 import {computed, ref} from "vue";
 
 import {Delete, CirclePlus, DocumentCopy, Scissor, Edit} from "@element-plus/icons-vue";
+import urls from "../../utils/urls";
 
 const store = useCounterStore();
 
 const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.planIdSelected.length)
-// const AmountOfSelectedCourse = ref<number>(0)
 const AmountOfSelectedCourse = computed<number>(() => store.courseAdmin.courseIdSelected.length)
 
 const whetherShowAddPlanButton = computed<boolean>(() => AmountOfSelectedCourse.value == 0)
 const whetherShowEditCourseButton = computed<boolean>(() => AmountOfSelectedCourse.value == 1)
 const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfSelectedCourse.value >= 1)
 
+const clickFunc = {
+  toEdit() {
+    window.open(urls.admin.changeCourse(store.courseAdmin.courseIdSelected[0]));
+  },
+  toCopy() {
+    console.log('copy', store.courseAdmin.courseIdSelected)
+  },
+  toCut() {
+    console.log('cut', store.courseAdmin.courseIdSelected)
+  },
+  toDelete() {
+    console.log('delete', store.courseAdmin.courseIdSelected)
+  },
+  toClearSelectedCourse() {
+    for (const courseRecorder of store.courseAdmin.courseRecorders) {
+      courseRecorder.checked = false
+    }
+  },
+}
 </script>
 
 <template>
@@ -24,12 +43,13 @@ const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfS
       <span v-else>如需添加课程，请先<strong>选择教学计划</strong></span>
     </template>
 
-    <el-button plain type="primary" v-if="whetherShowEditCourseButton" :icon="Edit">编辑信息</el-button>
+    <el-button plain type="primary" v-if="whetherShowEditCourseButton" :icon="Edit" @click="clickFunc.toEdit()">编辑信息</el-button>
 
     <template v-if="whetherShowOtherCourseFunctionalButton">
-      <el-button plain type="warning" :icon="DocumentCopy">复制</el-button>
-      <el-button plain type="warning" :icon="Scissor">调课</el-button>
-      <el-button plain type="danger" :icon="Delete">删除选中的{{ AmountOfSelectedCourse }}节课程</el-button>
+      <el-button plain type="warning" :icon="DocumentCopy" @click="clickFunc.toCopy()">复制</el-button>
+      <el-button plain type="warning" :icon="Scissor" @click="clickFunc.toCut()">调课</el-button>
+      <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfSelectedCourse }}节课程</el-button>
+      <el-button plain type="primary" :icon="DocumentCopy" @click="clickFunc.toClearSelectedCourse()">取消选择</el-button>
     </template>
   </div>
 </template>
@@ -40,6 +60,7 @@ const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfS
   width: 100%;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  padding: 10px 0;
 }
 
 .FunctionButtonArea > * {
