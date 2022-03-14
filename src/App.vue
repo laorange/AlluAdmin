@@ -5,13 +5,9 @@
 import {useApiToolkit, useCounterStore} from "./store/counter";
 import LoadingMask from "./components/loadingMask.vue";
 import TopMenu from "./components/TopMenu.vue";
-import CommonComponent from "./components/CommonComponent.vue";
-
 
 import {onMounted} from "vue";
 import {useRoute} from "vue-router";
-
-// import {useRoute, useRouter} from "vue-router";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
@@ -48,11 +44,8 @@ function useRouterQueryReader() {
 
 onMounted(async () => {
   await apiToolkit.requestSemesterConfig()
-  const _period = apiToolkit.semesterConfig.first()?.current_period
-
-  apiToolkit.requestDataExceptSemesterConfigAndGroup(_period)
-
-  await apiToolkit.group.requestData({period: _period})
+  apiToolkit.requestDataExceptSemesterConfigAndGroup(apiToolkit.period)
+  await apiToolkit.group.requestData({period: apiToolkit.period})
   useRouterQueryReader()
 })
 </script>
@@ -61,7 +54,6 @@ onMounted(async () => {
   <top-menu></top-menu>
   <router-view></router-view>
   <loading-mask></loading-mask>
-  <common-component></common-component>
 </template>
 
 <style>

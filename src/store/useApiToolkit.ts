@@ -51,13 +51,25 @@ export const useApiToolkit = defineStore("apiToolkit", {
         };
     },
     getters: {
+        maxWeek(): number {
+            return this.semesterConfig.first()?.max_week ?? 20
+        },
+        week1Monday(): dayjs.Dayjs {
+            return dayjs(this.semesterConfig.first()?.week1_monday_date)
+        },
+        period(): number {
+            return this.semesterConfig.first()?.current_period ?? 0
+        },
+        periodDisplay(): string {
+            return this.semesterConfig.first()?.current_period_display ?? '本学期'
+        },
         courseInfoContainers(): CourseInfoContainer[] {
             let _courseInfoHandler = new CourseInfoHandler(this.courseInfo.data)
             _courseInfoHandler.addCoursePlans(
                 this.coursePlan.data,
                 this.course.data,
-                this.semesterConfig.first()?.max_week ?? 20,
-                dayjs(this.semesterConfig.first()?.week1_monday_date)
+                this.maxWeek,
+                this.week1Monday,
             )
             return _courseInfoHandler.infoList
         }

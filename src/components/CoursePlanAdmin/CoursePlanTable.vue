@@ -7,13 +7,11 @@ import {AdvancedCourseInfoHandler, CourseInfoContainer, CoursePlanContainer} fro
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 
-const semesterConfig = computed((): SemesterConfig | undefined => apiToolkit.semesterConfig.first())
-const maxWeek = computed(() => semesterConfig.value?.max_week ?? 20)
+const maxWeek = computed(() => apiToolkit.maxWeek)
+
 const semesterSelected = computed((): number[] => store.semesterSelected)
 const groupSelected = computed((): [number, number][] => store.groupSelected)
-
-const courseInfoContainers = computed((): CourseInfoContainer[] => apiToolkit.courseInfoContainers)
-const advancedInfoHandler = computed(() => new AdvancedCourseInfoHandler(courseInfoContainers.value,
+const advancedInfoHandler = computed(() => new AdvancedCourseInfoHandler(apiToolkit.courseInfoContainers,
     semesterSelected.value,
     groupSelected.value
 ))

@@ -8,7 +8,6 @@ declare module 'vue' {
     ClickCourseInfoDialog: typeof import('./src/components/CoursePlanAdmin/Dialogs/ClickCourseInfoDialog.vue')['default']
     ClickCoursePlanDialog: typeof import('./src/components/CoursePlanAdmin/Dialogs/ClickCoursePlanDialog.vue')['default']
     ClickWeeklyHoursDialog: typeof import('./src/components/CoursePlanAdmin/Dialogs/ClickWeeklyHoursDialog.vue')['default']
-    CommonComponent: typeof import('./src/components/CommonComponent.vue')['default']
     CourseAdmin: typeof import('./src/components/CourseAdmin/CourseAdmin.vue')['default']
     CoursePlanAdmin: typeof import('./src/components/CoursePlanAdmin/CoursePlanAdmin.vue')['default']
     CoursePlanTable: typeof import('./src/components/CoursePlanAdmin/CoursePlanTable.vue')['default']

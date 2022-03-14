@@ -15,7 +15,7 @@ const store = useCounterStore();
 const route = useRoute()
 const router = useRouter()
 
-const maxWeek = computed(() => apiToolkit.semesterConfig.first()?.max_week)
+const maxWeek = computed(() => apiToolkit.maxWeek)
 
 interface OptionInElTransfer {
   value: number
