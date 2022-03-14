@@ -1,42 +1,40 @@
 <script setup lang="ts">
-import {computed, reactive, ref} from "vue";
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
-import {Course} from "../../../types/api";
+import {CourseRecorder} from "../../../types/courseAdmin";
+import dayjs from "dayjs";
+import {getIsoWeekDay} from "../../../utils/dateUtils";
 
-defineProps<{ whatDay: number, whichLesson: number }>()
+const props = defineProps<{ whatDay: number, whichLesson: number, courseRecorders: CourseRecorder[] }>()
 
 const apiToolkit = useApiToolkit()
 const store = useCounterStore()
 
-let courseSelectData = ref<{ [courseId: number]: boolean }>({})
-
-let courseList = computed<Course[]>(() => {
-  courseSelectData.value = []
-  for (const course of apiToolkit.course.data) {
-    courseSelectData.value[course.course_id] = false
-  }
-  return apiToolkit.course.data
-})
+function filterForThisBlock(courseRecorder: CourseRecorder): boolean {
+  let properWhatDay: boolean = getIsoWeekDay(dayjs(courseRecorder.course.date)) === props.whatDay;
+  let properWhichLesson: boolean = courseRecorder.course.which_lesson === props.whichLesson;
+  return properWhatDay && properWhichLesson
+}
 </script>
 
 <template>
   <el-scrollbar height="140px">
     <div class="TimetableBlock">
-      <div v-for="course in courseList" :key="course.course_id" class="scrollbar-demo-item">
-        <el-checkbox v-model="courseSelectData[course.course_id]" :label="course.ch_name" size="small"></el-checkbox>
+      <div v-for="courseRecorder in courseRecorders" :key="courseRecorder.course.course_id" class="scrollbar-demo-item">
+        <el-checkbox v-if="filterForThisBlock(courseRecorder)"
+            v-model="courseRecorder.checked" :label="courseRecorder.course.ch_name" size="small"></el-checkbox>
       </div>
     </div>
   </el-scrollbar>
 </template>
 
 <style scoped>
-.TimetableBlock{
+.TimetableBlock {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.el-checkbox{
+.el-checkbox {
   margin-bottom: 2px;
 }
 </style>
