@@ -22,6 +22,7 @@ declare module 'vue' {
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTransfer: typeof import('element-plus/es')['ElTransfer']
+    ElTree: typeof import('element-plus/es')['ElTree']
     FunctionButtonArea: typeof import('./src/components/CourseAdmin/FunctionButtonArea.vue')['default']
     GroupSelector: typeof import('./src/components/GroupSelector.vue')['default']
     LoadingMask: typeof import('./src/components/loadingMask.vue')['default']

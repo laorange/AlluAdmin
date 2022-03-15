@@ -9,12 +9,7 @@ const apiToolkit = useApiToolkit()
 
 const maxWeek = computed<number>(() => apiToolkit.maxWeek)
 
-const semesterSelected = computed<number[]>(() => store.semesterSelected)
-const groupSelected = computed<[number, number][]>(() => store.groupSelected)
-const advancedInfoHandler = computed<AdvancedCourseInfoHandler>(() => new AdvancedCourseInfoHandler(apiToolkit.courseInfoContainers,
-    semesterSelected.value,
-    groupSelected.value
-))
+const advancedInfoHandler = computed<AdvancedCourseInfoHandler>(() => store.advancedInfoHandler)
 
 // 点击CourseInfo后的对话框
 const openClickCourseInfoDialog = (inputtedInfo: CourseInfo) => {

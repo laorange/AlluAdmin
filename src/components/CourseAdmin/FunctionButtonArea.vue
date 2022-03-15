@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import {useCounterStore} from "../../store/counter";
-import {computed, ref} from "vue";
+import {useApiToolkit, useCounterStore} from "../../store/counter";
+import {computed} from "vue";
 
-import {Delete, CirclePlus, DocumentCopy, Scissor, Edit} from "@element-plus/icons-vue";
+import {Delete, CirclePlus, DocumentCopy, Scissor, Edit, RefreshLeft, Refresh} from "@element-plus/icons-vue";
 import urls from "../../utils/urls";
 
 const store = useCounterStore();
+const apiToolkit = useApiToolkit()
 
 const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.planIdSelected.length)
 const AmountOfSelectedCourse = computed<number>(() => store.courseAdmin.courseIdSelected.length)
@@ -15,6 +16,9 @@ const whetherShowEditCourseButton = computed<boolean>(() => AmountOfSelectedCour
 const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfSelectedCourse.value >= 1)
 
 const clickFunc = {
+  toSelectPlan() {
+    store.courseAdmin.whetherShowSelectPlanDialog = true
+  },
   toEdit() {
     window.open(urls.admin.changeCourse(store.courseAdmin.courseIdSelected[0]));
   },
@@ -32,14 +36,20 @@ const clickFunc = {
       courseRecorder.checked = false
     }
   },
+  toClearSelectedPlan() {
+    store.courseAdmin.planIdSelected = []
+  },
 }
 </script>
 
 <template>
   <div class="FunctionButtonArea">
     <template v-if="whetherShowAddPlanButton">
-      <el-button plain type="primary" :icon="CirclePlus">选择教学计划</el-button>
-      <span v-if="AmountOfSelectedPlan">当前选择了{{ AmountOfSelectedPlan }}个教学计划</span>
+      <el-button plain type="primary" :icon="CirclePlus" @click="clickFunc.toSelectPlan">选择教学计划</el-button>
+      <template v-if="AmountOfSelectedPlan">
+        <span>当前选择了{{ AmountOfSelectedPlan }}个教学计划</span>
+        <el-button plain type="primary" :icon="RefreshLeft" @click="clickFunc.toClearSelectedPlan()">取消选择</el-button>
+      </template>
       <span v-else>如需添加课程，请先<strong>选择教学计划</strong></span>
     </template>
 
@@ -49,8 +59,10 @@ const clickFunc = {
       <el-button plain type="warning" :icon="DocumentCopy" @click="clickFunc.toCopy()">复制</el-button>
       <el-button plain type="warning" :icon="Scissor" @click="clickFunc.toCut()">调课</el-button>
       <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfSelectedCourse }}节课程</el-button>
-      <el-button plain type="primary" :icon="DocumentCopy" @click="clickFunc.toClearSelectedCourse()">取消选择</el-button>
+      <el-button plain type="primary" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourse()">取消选择</el-button>
     </template>
+
+    <el-button plain type="warning" :icon="Refresh" @click="apiToolkit.requestData()">重新获取数据</el-button>
   </div>
 </template>
 

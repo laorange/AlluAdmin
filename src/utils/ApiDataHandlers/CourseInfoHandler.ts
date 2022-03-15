@@ -70,8 +70,8 @@ class AdvancedCourseInfoHandler {
         this.groupSelected = groupSelected
     }
 
-    filter_plansForSelectedGroup(inputtedInfoContainer: CourseInfoContainer, getFullWhenSelectNone: boolean = false): CoursePlanContainer[] {
-        if (getFullWhenSelectNone || this.judge_whetherUserDoesNotCareGroup()) return inputtedInfoContainer.coursePlans
+    filter_plansForSelectedGroup(inputtedInfoContainer: CourseInfoContainer, getAllPlansWhenSelectNone: boolean = false): CoursePlanContainer[] {
+        if (getAllPlansWhenSelectNone || this.judge_whetherUserDoesNotCareGroup()) return inputtedInfoContainer.coursePlans
         return inputtedInfoContainer.coursePlans.filter(pc => this.judge_whetherPlanForSelectedGroup(pc))
     }
 

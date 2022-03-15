@@ -1,8 +1,9 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 import {CourseInfo, WhatDay, WhichLesson} from "../types/api";
-import {CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
+import {AdvancedCourseInfoHandler, CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
 import {CourseRecorder} from "../types/courseAdmin";
+import {useApiToolkit} from "./counter";
 
 type CounterStoreState = {
     isLoading: boolean,
@@ -18,6 +19,7 @@ type CounterStoreState = {
         courseIdDeleting: number[],
         whetherShowDeletingDialog: boolean,
         whetherShowAddingDialog: boolean,
+        whetherShowSelectPlanDialog: boolean,
         whatDay: WhatDay,
         whichLesson: WhichLesson,
         courseRecorders: CourseRecorder[],
@@ -57,6 +59,7 @@ export const useCounterStore = defineStore("counter", {
                 courseIdDeleting: [],
                 whetherShowDeletingDialog: false,
                 whetherShowAddingDialog: false,
+                whetherShowSelectPlanDialog: false,
                 whatDay: 1,
                 whichLesson: 1,
                 courseRecorders: [],
@@ -79,6 +82,16 @@ export const useCounterStore = defineStore("counter", {
                 },
             },
         };
+    },
+    getters: {
+        advancedInfoHandler(): AdvancedCourseInfoHandler {
+            const apiToolkit = useApiToolkit();
+            return new AdvancedCourseInfoHandler(
+                apiToolkit.courseInfoContainers,
+                this.semesterSelected,
+                this.groupSelected
+            )
+        }
     },
     actions: {
         async axiosGet<T>(url: string, parameters: { [key: string]: (string | number | undefined) } = {}) {

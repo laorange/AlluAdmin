@@ -5,6 +5,8 @@ import WeeklyTimetable from "./WeeklyTimetable/WeeklyTimetable.vue";
 // import 'element-plus/theme-chalk/display.css'
 
 import GroupSelector from "../GroupSelector.vue";
+import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
+
 
 </script>
 
@@ -26,6 +28,10 @@ import GroupSelector from "../GroupSelector.vue";
       </div>
     </div>
   </div>
+
+  <!-- region Dialogs -->
+  <select-plan-dialog></select-plan-dialog>
+  <!-- endregion -->
 
   <h1>🚧 施工中...</h1>
 </template>
@@ -61,6 +67,7 @@ import GroupSelector from "../GroupSelector.vue";
   justify-content: space-around;
   align-items: center;
   margin: 10px 0;
+  flex-wrap: wrap;
 }
 
 .TableFooter{

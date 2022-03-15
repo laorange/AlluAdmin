@@ -5,3 +5,9 @@ export interface CourseRecorder {
     checked: boolean,
     week: number
 }
+
+export interface ElTreeOption {
+    id: number,
+    label: string,
+    children?: ElTreeOption[]
+}
