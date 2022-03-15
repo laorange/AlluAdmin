@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import {getIsoWeekDay} from "../../../utils/dateUtils";
 import CourseCard from "../../CourseCard.vue";
 
-
 const props = defineProps<{ whatDay: number, whichLesson: number }>()
 
 const apiToolkit = useApiToolkit()

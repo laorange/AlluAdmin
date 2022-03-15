@@ -2,7 +2,7 @@
 import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {computed} from "vue";
 
-import {Delete, CirclePlus, DocumentCopy, Scissor, Edit, RefreshLeft, Refresh} from "@element-plus/icons-vue";
+import {Delete, CirclePlus, DocumentCopy, Scissor, Edit, RefreshLeft} from "@element-plus/icons-vue";
 import urls from "../../utils/urls";
 
 const store = useCounterStore();
@@ -61,8 +61,6 @@ const clickFunc = {
       <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfSelectedCourse }}节课程</el-button>
       <el-button plain type="primary" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourse()">取消选择</el-button>
     </template>
-
-    <el-button plain type="warning" :icon="Refresh" @click="apiToolkit.requestData()">重新获取数据</el-button>
   </div>
 </template>
 

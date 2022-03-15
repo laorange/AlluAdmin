@@ -5,9 +5,8 @@ import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, 
 import dayjs from "dayjs";
 
 import urls from "../utils/urls";
-import {formatDate} from "../utils/dateUtils";
-import {CourseInfoContainer, CourseInfoHandler} from "../utils/ApiDataHandlers/CourseInfoHandler";
-
+import {formatDate, getWeeksBetweenTwoDayFrom0} from "../utils/dateUtils";
+import {SelectedInfo, CourseInfoContainer, CourseInfoHandler, CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
 
 class ApiRequester<T> {
     private _data: Array<T> = []
@@ -35,6 +34,7 @@ class ApiRequester<T> {
     }
 }
 
+
 export const useApiToolkit = defineStore("apiToolkit", {
     state: () => {
         return {
@@ -50,6 +50,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
             teacher: new ApiRequester<Teacher>(urls.api.teacher),
         };
     },
+
     getters: {
         maxWeek(): number {
             return this.semesterConfig.first()?.max_week ?? 20
@@ -63,6 +64,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
         periodDisplay(): string {
             return this.semesterConfig.first()?.current_period_display ?? '本学期'
         },
+
         courseInfoContainers(): CourseInfoContainer[] {
             let _courseInfoHandler = new CourseInfoHandler(this.courseInfo.data)
             _courseInfoHandler.addCoursePlans(
@@ -72,16 +74,89 @@ export const useApiToolkit = defineStore("apiToolkit", {
                 this.week1Monday,
             )
             return _courseInfoHandler.infoList
-        }
+        },
+        selectedInfo(): SelectedInfo {
+            const store = useCounterStore();
+            return new SelectedInfo(
+                this.courseInfoContainers,
+                store.semesterSelected,
+                store.groupSelected,
+                store.courseAdmin.weekSelected,
+            );
+        },
+
+        judge_whetherUserDoesNotCareGroup(): boolean {
+            return this.selectedInfo.groupSelected.length === 0
+        },
+
+        filter_infosBySemester(): CourseInfoContainer[] {
+            if (this.selectedInfo.semesterSelected.length === 0) return this.courseInfoContainers
+            return this.courseInfoContainers.filter(ic => this.selectedInfo.semesterSelected.indexOf(ic.courseInfo.semester) > -1)
+        },
+
+        filter_infosByGroup(): CourseInfoContainer[] {
+            return this.filter_infosBySemester.reduce((result: CourseInfoContainer[], ic: CourseInfoContainer) => {
+                // filteredPlanContainers = inputtedInfoContainer.coursePlans.filter(pc => this.judge_whetherPlanForSelectedGroup(pc))
+                let filteredPlanContainers = this.judge_whetherUserDoesNotCareGroup ? ic.coursePlans :
+                    ic.coursePlans.filter(pc => {
+                        return this.selectedInfo.groupSelected.filter(group => pc.coursePlan.groups.indexOf(group[1]) > -1).length > 0
+                    })
+
+                return result.concat([{
+                    courseInfo: ic.courseInfo,
+                    coursePlans: filteredPlanContainers
+                }])
+            }, [])
+        },
+
+        filter_infosByWeek(): CourseInfoContainer[] {
+            return this.filter_infosByGroup.reduce((result: CourseInfoContainer[], ic: CourseInfoContainer) => {
+                let newPlanContainers: CoursePlanContainer[] = []
+
+                // 当 sourceCoursePlan 中包含符合条件的Course时，sourceCoursePlan 会被添加到 newPlanContainers 中
+                for (const sourceCoursePlan of ic.coursePlans) {
+                    let courseFiltered = sourceCoursePlan.courses.filter(course => this.selectedInfo.weekSelected.indexOf(
+                        getWeeksBetweenTwoDayFrom0(dayjs(course.date), this.week1Monday) + 1
+                    ) > -1)
+                    if (courseFiltered.length > 0) {
+                        newPlanContainers.push({
+                            ...sourceCoursePlan,
+                            courses: courseFiltered
+                        })
+                    }
+                }
+
+                return result.concat([{courseInfo: ic.courseInfo, coursePlans: newPlanContainers}])
+            }, [])
+        },
+
+        filter_infosByWeekWithEmptyPlanContainer(): CourseInfoContainer[] {
+            return this.filter_infosByWeek.reduce((result: CourseInfoContainer[], item: CourseInfoContainer) => {
+                // 当 newPlanContainers 不为空时，当前 CourseInfoContainer 会被添加到result中
+                let newPlanContainers = item.coursePlans.filter(plan => plan.courses.length > 0)
+                return newPlanContainers.length > 0 ? result.concat([{...item, coursePlans: newPlanContainers}]) : result
+            }, [])
+        },
     },
+
     actions: {
+        async requestData() {
+            await this.requestSemesterConfig()
+            this.requestDataExceptSemesterConfigAndGroup(this.period)
+            await this.group.requestData({period: this.period})
+        },
+
         async requestSemesterConfig() {
             await this.semesterConfig.requestData()
         },
-        requestData(period?: number) {
+
+        // 请求数据（不包含 SemesterConfig）
+        requestDataExceptSemesterConfig(period?: number) {
             this.requestDataExceptSemesterConfigAndGroup(period)
             this.group.requestData({period: period})
         },
+
+        // 请求数据（不包含 SemesterConfig）
         requestDataExceptSemesterConfigAndGroup(period?: number) {
             this.classroom.requestData()
             this.course.requestData({period: period})
@@ -92,6 +167,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
             this.notice.requestData()
             this.teacher.requestData()
         },
+
         getNameOfGroups(groupIds: number[]) {
             return this.group.filter(
                 item => groupIds.indexOf(item.group_id) > -1
@@ -99,6 +175,53 @@ export const useApiToolkit = defineStore("apiToolkit", {
                 output.push(currentGroup.name)
                 return output
             }, []).join('&')
-        }
+        },
+
+        getWeekOfOneCourse(course: Course): number {
+            return getWeeksBetweenTwoDayFrom0(dayjs(course.date), this.week1Monday) + 1
+        },
+
+        filter_plansForSelectedGroup(inputtedInfoContainer: CourseInfoContainer, getAllPlansWhenSelectNone: boolean): CoursePlanContainer[] {
+            if (getAllPlansWhenSelectNone || this.judge_whetherUserDoesNotCareGroup) return inputtedInfoContainer.coursePlans
+            return inputtedInfoContainer.coursePlans.filter(pc => this.judge_whetherPlanForSelectedGroup(pc))
+        },
+
+        judge_getTrueWhenSelectNone(originalResult: boolean) {
+            return originalResult || this.judge_whetherUserDoesNotCareGroup
+        },
+
+        judge_whetherCourseInfoForSelectedSemester(inputtedInfoContainer: CourseInfoContainer): boolean {
+            return this.selectedInfo.semesterSelected.indexOf(inputtedInfoContainer.courseInfo.semester) > -1
+        },
+
+        judge_whetherPlanForSelectedGroup(inputtedPlanContainer: CoursePlanContainer): boolean {
+            return this.selectedInfo.groupSelected.filter(group => inputtedPlanContainer.coursePlan.groups.indexOf(group[1]) > -1).length > 0
+        },
+
+        judge_whetherCourseInfoHasProperPlan(inputtedInfoContainer: CourseInfoContainer): boolean {
+            return this.judge_whetherCourseInfoForSelectedSemester(inputtedInfoContainer) &&
+                this.filter_plansForSelectedGroup(inputtedInfoContainer, false).length > 0
+        },
+
+        judge_whetherCourseInfoForSelectedGroup(): boolean {
+            return this.courseInfoContainers.filter(ic => this.judge_whetherCourseInfoHasProperPlan(ic)).length > 0;
+        },
+
+        judge_whetherInfoInThisSemesterWithoutPlan(): boolean {
+            return this.filter_infosBySemester.filter(ic => ic.coursePlans.length === 0).length > 0;
+        },
+
+        judge_whetherPdcIsEmpty(): boolean {
+            return this.judge_getTrueWhenSelectNone(this.judge_whetherCourseInfoForSelectedGroup() || this.judge_whetherInfoInThisSemesterWithoutPlan());
+        },
+
+        getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
+            let rowSpan = inputtedInfoContainer.coursePlans.filter(
+                pc => {
+                    return this.judge_getTrueWhenSelectNone(this.judge_whetherPlanForSelectedGroup(pc));
+                }
+            ).length
+            return rowSpan ? rowSpan : 1
+        },
     },
 });

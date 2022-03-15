@@ -2,14 +2,12 @@
 import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {CourseInfo} from "../../types/api";
-import {AdvancedCourseInfoHandler, CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
+import {CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
 
 const maxWeek = computed<number>(() => apiToolkit.maxWeek)
-
-const advancedInfoHandler = computed<AdvancedCourseInfoHandler>(() => store.advancedInfoHandler)
 
 // 点击CourseInfo后的对话框
 const openClickCourseInfoDialog = (inputtedInfo: CourseInfo) => {
@@ -35,7 +33,7 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
 </script>
 
 <template>
-  <table v-if="advancedInfoHandler.judge_getTrueWhenSelectNone(advancedInfoHandler.judge_whetherPdcIsEmpty())">
+  <table v-if="apiToolkit.judge_getTrueWhenSelectNone(apiToolkit.judge_whetherPdcIsEmpty())">
     <tr>
       <th>课程名</th>
       <th>类型</th>
@@ -45,7 +43,7 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
       <th class="WeekCol" v-for="week in maxWeek" :key="week">{{ week }}</th>
     </tr>
 
-    <template v-for="(infoContainer, InfoIndex) in advancedInfoHandler.filter_infosInSelectedSemester()" :key="InfoIndex">
+    <template v-for="(infoContainer, InfoIndex) in apiToolkit.courseInfoContainers" :key="InfoIndex">
 
       <!-- region 如果某个Info没有教学计划(Plan)，则忽略Group的筛选 -->
       <tr v-if="infoContainer.coursePlans.length === 0" :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
@@ -62,13 +60,13 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
       </tr>
       <!-- endregion -->
 
-      <tr v-for="(planContainer, planIndex) in advancedInfoHandler.filter_plansForSelectedGroup(infoContainer)" :key="planIndex"
+      <tr v-for="(planContainer, planIndex) in apiToolkit.filter_plansForSelectedGroup(infoContainer, false)" :key="planIndex"
           :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
-        <template v-if="advancedInfoHandler.judge_whetherUserDoesNotCareGroup() || advancedInfoHandler.judge_whetherPdcIsEmpty()">
+        <template v-if="apiToolkit.judge_whetherUserDoesNotCareGroup || apiToolkit.judge_whetherPdcIsEmpty()">
 
           <!--课程名称，需要加点击事件-->
           <td v-if="planIndex===0"
-              :rowspan="advancedInfoHandler.getRowSpanNum(infoContainer)"
+              :rowspan="apiToolkit.getRowSpanNum(infoContainer)"
               class="InfoChName" @click="openClickCourseInfoDialog(infoContainer.courseInfo)"
           >
             {{ infoContainer.courseInfo.ch_name }}
@@ -100,6 +98,8 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
             >
               {{ weeklyHour }}
             </td>
+
+            <!-- 周课时为0则不显示信息 -->
             <td v-else></td>
           </template>
         </template>

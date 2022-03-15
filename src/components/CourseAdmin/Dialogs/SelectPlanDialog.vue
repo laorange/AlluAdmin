@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import {computed, ref, watch} from "vue";
-import {AdvancedCourseInfoHandler} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 import {ElTreeOption} from "../../../types/courseAdmin";
 
 const apiToolkit = useApiToolkit();
 const store = useCounterStore();
-
-const advancedInfoHandler = computed<AdvancedCourseInfoHandler>(() => store.advancedInfoHandler)
 
 const elTreeOptionIndicator = {
   label: 'label',
@@ -16,8 +13,8 @@ const elTreeOptionIndicator = {
 
 const elTreeOptions = computed<ElTreeOption[]>(() => {
   let _elTreeOptions: ElTreeOption[] = []
-  for (const ic of advancedInfoHandler.value.filter_infosInSelectedSemester()) {
-    let plans = advancedInfoHandler.value.filter_plansForSelectedGroup(ic, true)
+  for (const ic of apiToolkit.filter_infosBySemester) {
+    let plans = apiToolkit.filter_plansForSelectedGroup(ic, true)
     if (plans.length > 0) {
       let childrenOption: ElTreeOption[] = plans.reduce((result: ElTreeOption[], plan) => result.concat([{
         id: plan.coursePlan.plan_id,
@@ -43,7 +40,7 @@ watch(() => store.courseAdmin.planIdSelected, (newPlanIdSelected) => {
   newPlanIdSelected.reduce((_, planId) => $Tree$SelectPlanDialog$CourseAdmin.value.setChecked(planId, true), undefined)
 }, {deep: true})
 
-function checkChangeFunc(option: ElTreeOption, selfChecked: boolean, childChecked: boolean) {
+function checkChangeFunc(option: ElTreeOption, selfChecked: boolean) {  // 第三个参数：childChecked: boolean
   // 过滤掉一级节点的点击事件
   if (option.id > 0) {
     // console.log(option, selfChecked ? '选中' : '取消选中')

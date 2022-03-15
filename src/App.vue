@@ -43,9 +43,7 @@ function useRouterQueryReader() {
 
 
 onMounted(async () => {
-  await apiToolkit.requestSemesterConfig()
-  apiToolkit.requestDataExceptSemesterConfigAndGroup(apiToolkit.period)
-  await apiToolkit.group.requestData({period: apiToolkit.period})
+  await apiToolkit.requestData()
   useRouterQueryReader()
 })
 </script>

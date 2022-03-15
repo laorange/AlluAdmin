@@ -7,6 +7,7 @@ interface CoursePlanContainer {
     courses: Course[],
     weeklyHours: number[],
     totalHours: number,
+    courseInfo: CourseInfo
 }
 
 interface CourseInfoContainer {
@@ -45,81 +46,32 @@ class CourseInfoHandler {
 
             let totalHours = weeklyHours.reduce((total: number, num: number) => total + num)
 
+            let courseContainer = this.infoList.filter(ic => ic.courseInfo.info_id === coursePlan.info)[0]
+
             let _coursePlanContainer: CoursePlanContainer = {
                 coursePlan,
                 courses: coursesOfThisPlan,
                 weeklyHours,
                 totalHours,
+                courseInfo: courseContainer.courseInfo
             }
 
-            this.infoList.filter(
-                info2d => info2d.courseInfo.info_id === coursePlan.info
-            )[0].coursePlans.push(_coursePlanContainer)
+            courseContainer.coursePlans.push(_coursePlanContainer)
         }
     }
 }
 
-class AdvancedCourseInfoHandler {
-    courseInfoContainers: CourseInfoContainer[]
+class SelectedInfo {
+    // courseInfoContainers: CourseInfoContainer[]
     semesterSelected: number[]
     groupSelected: [number, number][]
+    weekSelected: number[]
 
-    constructor(courseInfoContainers: CourseInfoContainer[], semesterSelected: number[], groupSelected: [number, number][]) {
-        this.courseInfoContainers = courseInfoContainers
+    constructor(courseInfoContainers: CourseInfoContainer[], semesterSelected: number[], groupSelected: [number, number][], weekSelected: number[]) {
+        // this.courseInfoContainers = courseInfoContainers
         this.semesterSelected = semesterSelected
         this.groupSelected = groupSelected
-    }
-
-    filter_plansForSelectedGroup(inputtedInfoContainer: CourseInfoContainer, getAllPlansWhenSelectNone: boolean = false): CoursePlanContainer[] {
-        if (getAllPlansWhenSelectNone || this.judge_whetherUserDoesNotCareGroup()) return inputtedInfoContainer.coursePlans
-        return inputtedInfoContainer.coursePlans.filter(pc => this.judge_whetherPlanForSelectedGroup(pc))
-    }
-
-    filter_infosInSelectedSemester(): CourseInfoContainer[] {
-        if (this.semesterSelected.length === 0) return this.courseInfoContainers
-        return this.courseInfoContainers.filter(ic => this.semesterSelected.indexOf(ic.courseInfo.semester) > -1)
-    }
-
-    judge_whetherUserDoesNotCareGroup(): boolean {
-        return this.groupSelected.length === 0
-    }
-
-    judge_getTrueWhenSelectNone(originalResult: boolean) {
-        return originalResult || this.judge_whetherUserDoesNotCareGroup()
-    }
-
-    judge_whetherCourseInfoForSelectedSemester(inputtedInfoContainer: CourseInfoContainer): boolean {
-        return this.semesterSelected.indexOf(inputtedInfoContainer.courseInfo.semester) > -1
-    }
-
-    judge_whetherPlanForSelectedGroup(inputtedPlanContainer: CoursePlanContainer): boolean {
-        return this.groupSelected.filter(group => inputtedPlanContainer.coursePlan.groups.indexOf(group[1]) > -1).length > 0
-    }
-
-    judge_whetherCourseInfoHasProperPlan(inputtedInfoContainer: CourseInfoContainer): boolean {
-        return this.judge_whetherCourseInfoForSelectedSemester(inputtedInfoContainer) &&
-            this.filter_plansForSelectedGroup(inputtedInfoContainer).length > 0
-    }
-
-    judge_whetherCourseInfoForSelectedGroup(): boolean {
-        return this.courseInfoContainers.filter(ic => this.judge_whetherCourseInfoHasProperPlan(ic)).length > 0;
-    }
-
-    judge_whetherInfoInThisSemesterWithoutPlan(): boolean {
-        return this.filter_infosInSelectedSemester().filter(ic => ic.coursePlans.length === 0).length > 0;
-    }
-
-    judge_whetherPdcIsEmpty(): boolean {
-        return this.judge_getTrueWhenSelectNone(this.judge_whetherCourseInfoForSelectedGroup() || this.judge_whetherInfoInThisSemesterWithoutPlan());
-    }
-
-    getRowSpanNum(inputtedInfoContainer: CourseInfoContainer): number {
-        let rowSpan = inputtedInfoContainer.coursePlans.filter(
-            pc => {
-                return this.judge_getTrueWhenSelectNone(this.judge_whetherPlanForSelectedGroup(pc));
-            }
-        ).length
-        return rowSpan ? rowSpan : 1
+        this.weekSelected = weekSelected
     }
 }
 
@@ -127,5 +79,5 @@ export {
     CoursePlanContainer,
     CourseInfoHandler,
     CourseInfoContainer,
-    AdvancedCourseInfoHandler,
+    SelectedInfo,
 };
