@@ -2,7 +2,6 @@ import {defineStore} from "pinia";
 import axios from "axios";
 import {CourseInfo, WhatDay, WhichLesson} from "../types/api";
 import {CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
-import {CourseRecorder} from "../types/courseAdmin";
 
 type CounterStoreState = {
     isLoading: boolean,
@@ -21,7 +20,6 @@ type CounterStoreState = {
         whetherShowSelectPlanDialog: boolean,
         whatDay: WhatDay,
         whichLesson: WhichLesson,
-        courseRecorders: CourseRecorder[],
     },
     coursePlanAdmin: {
         clickCourseInfoDialog: {
@@ -61,7 +59,6 @@ export const useCounterStore = defineStore("counter", {
                 whetherShowSelectPlanDialog: false,
                 whatDay: 1,
                 whichLesson: 1,
-                courseRecorders: [],
             },
             coursePlanAdmin: {
                 clickCourseInfoDialog: {

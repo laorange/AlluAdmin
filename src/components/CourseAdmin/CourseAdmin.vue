@@ -2,7 +2,6 @@
 import WeekSelectBar from "./WeekSelectBar.vue";
 import FunctionButtonArea from "./FunctionButtonArea.vue";
 import WeeklyTimetable from "./WeeklyTimetable/WeeklyTimetable.vue";
-// import 'element-plus/theme-chalk/display.css'
 
 import GroupSelector from "../GroupSelector.vue";
 import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";

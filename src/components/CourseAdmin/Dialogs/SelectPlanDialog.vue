@@ -43,7 +43,6 @@ const innerDrawerDataForOnePlan = reactive<{
   plan: undefined
 })
 
-// const $Tree$SelectPlanDialog$CourseAdmin = ref<InstanceType<typeof element_plus.ElTree>>()
 const $Tree$SelectPlanDialog$CourseAdmin = ref()
 
 watch(() => store.courseAdmin.planIdSelected, (newPlanIdSelected) => {
