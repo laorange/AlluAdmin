@@ -31,7 +31,7 @@ import TimetableBlock from "./TimetableBlock.vue";
 .TimetableBlock {
   width: 14%;
   flex: 0 0 13.7%;
-  border: #efefef dashed 1px;
+  border: #ffffff solid 1px;
 }
 
 .TimeTableHeader {

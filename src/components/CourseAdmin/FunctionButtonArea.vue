@@ -2,7 +2,7 @@
 import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {computed} from "vue";
 
-import {Delete, CirclePlus, DocumentCopy, Scissor, Edit, RefreshLeft} from "@element-plus/icons-vue";
+import {Delete, CirclePlus, DocumentCopy, Rank, Edit, RefreshLeft} from "@element-plus/icons-vue";
 import urls from "../../utils/urls";
 
 const store = useCounterStore();
@@ -23,19 +23,32 @@ const clickFunc = {
     window.open(urls.admin.changeCourse(store.courseAdmin.courseIdSelected[0]));
   },
   toCopy() {
+    store.courseAdmin.operatingMode = 'Copy'
     console.log('copy', store.courseAdmin.courseIdSelected)
   },
+  toCancelCopy() {
+    clickFunc.toInitializeOperatingMode()
+  },
   toCut() {
+    store.courseAdmin.operatingMode = 'Cut'
     console.log('cut', store.courseAdmin.courseIdSelected)
   },
+  toCancelCut() {
+    clickFunc.toInitializeOperatingMode()
+  },
   toDelete() {
+    store.courseAdmin.operatingMode = 'Delete'
     console.log('delete', store.courseAdmin.courseIdSelected)
   },
   toClearSelectedCourse() {
+    clickFunc.toInitializeOperatingMode()
     store.courseAdmin.courseIdSelected = []
   },
   toClearSelectedPlan() {
     store.courseAdmin.planIdSelected = []
+  },
+  toInitializeOperatingMode() {
+    store.courseAdmin.operatingMode = ''
   },
 }
 </script>
@@ -46,18 +59,22 @@ const clickFunc = {
       <el-button plain type="primary" :icon="CirclePlus" @click="clickFunc.toSelectPlan">选择教学计划</el-button>
       <template v-if="AmountOfSelectedPlan">
         <span>当前选择了{{ AmountOfSelectedPlan }}个教学计划</span>
-        <el-button plain type="primary" :icon="RefreshLeft" @click="clickFunc.toClearSelectedPlan()">取消选择</el-button>
+        <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearSelectedPlan()">取消选择</el-button>
       </template>
       <span v-else>如需添加课程，请先<strong>选择教学计划</strong></span>
     </template>
 
-    <el-button plain type="primary" v-if="whetherShowEditCourseButton" :icon="Edit" @click="clickFunc.toEdit()">编辑信息</el-button>
+    <el-button plain type="default" v-if="whetherShowEditCourseButton" :icon="Edit" @click="clickFunc.toEdit()">编辑信息</el-button>
 
     <template v-if="whetherShowOtherCourseFunctionalButton">
-      <el-button plain type="warning" :icon="DocumentCopy" @click="clickFunc.toCopy()">复制</el-button>
-      <el-button plain type="warning" :icon="Scissor" @click="clickFunc.toCut()">调课</el-button>
+      <el-button plain type="warning" :icon="DocumentCopy" @click="clickFunc.toCopy()" v-if="store.courseAdmin.operatingMode!=='Copy'">复制</el-button>
+      <el-button plain type="primary" :icon="DocumentCopy" @click="clickFunc.toCancelCopy" v-else>取消复制</el-button>
+
+      <el-button plain type="warning" :icon="Rank" @click="clickFunc.toCut()" v-if="store.courseAdmin.operatingMode!=='Cut'">调课</el-button>
+      <el-button plain type="primary" :icon="Rank" @click="clickFunc.toCancelCut" v-else>取消调课</el-button>
+
       <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfSelectedCourse }}节课程</el-button>
-      <el-button plain type="primary" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourse()">取消选择</el-button>
+      <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourse()">清空选项</el-button>
     </template>
   </div>
 </template>

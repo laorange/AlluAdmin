@@ -5,6 +5,10 @@ import {computed, reactive, ref, watch} from "vue";
 import {Course} from "../../../types/api";
 import {CourseInfoContainer, CoursePlanContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 
+import {Plus, DocumentCopy, Rank} from "@element-plus/icons-vue";
+
+const timetableHeight = '180px'
+
 const props = defineProps<{ whatDay: number, whichLesson: number }>()
 
 const filteredInfoContainers = computed<CourseInfoContainer[]>(() =>
@@ -32,9 +36,10 @@ function parseGroupIdsOfCourse(course: Course) {
 }
 
 const elTreeOptions = computed<ElTreeOption[]>(() => {
-  let _elTreeOptions: ElTreeOption[] = []
+  let result: ElTreeOption[] = []
+
   for (const ic of filteredInfoContainers.value) {
-    let childrenOption: ElTreeOption[] = ic.coursePlans.reduce((result: ElTreeOption[], pc: CoursePlanContainer) => {
+    let childOptions: ElTreeOption[] = ic.coursePlans.reduce((result: ElTreeOption[], pc: CoursePlanContainer) => {
       return result.concat(pc.courses.reduce((innerR: ElTreeOption[], course: Course) => innerR.concat({
         id: course.course_id,
         label: [course.method ?? '', parseGroupIdsOfCourse(course)].join(' ')
@@ -44,12 +49,12 @@ const elTreeOptions = computed<ElTreeOption[]>(() => {
     let parentOption: ElTreeOption = {
       id: -ic.courseInfo.info_id,
       label: ic.courseInfo.ch_name,
-      children: childrenOption
+      children: childOptions
     }
 
-    _elTreeOptions.push(parentOption)
+    result.push(parentOption)
   }
-  return _elTreeOptions
+  return result
 })
 
 const $Tree$TimeTableBlock$CourseAdmin = ref()
@@ -80,14 +85,41 @@ function nodeClickFunc(elTreeOption: ElTreeOption) { // 另外俩参数：, tree
     innerDrawerDataForOneCourse.whetherShow = true
     innerDrawerDataForOneCourse.course = apiToolkit.course.filter(course => course.course_id === elTreeOption.id)[0]
   }
-
 }
+
+// region button
+const canAdd = computed<boolean>(() =>
+    store.courseAdmin.operatingMode === '' &&
+    store.courseAdmin.courseIdSelected.length === 0 &&
+    store.courseAdmin.planIdSelected.length > 0
+)
+
+const canCopy = computed<boolean>(() =>
+    store.courseAdmin.operatingMode === 'Copy' &&
+    store.courseAdmin.courseIdSelected.length > 0
+)
+
+const canCut = computed<boolean>(() =>
+    store.courseAdmin.operatingMode === 'Cut' &&
+    store.courseAdmin.courseIdSelected.length > 0
+)
+// endregion
 
 </script>
 
 <template>
-  <el-scrollbar height="140px">
+  <el-scrollbar :height="timetableHeight">
     <div class="TimetableBlock">
+      <el-button plain type="primary" :icon="Plus" size="small" v-if="canAdd"
+                 @click="">在此排课
+      </el-button>
+      <el-button plain type="success" :icon="DocumentCopy" size="small" v-if="canCopy"
+                 @click="">粘贴至此
+      </el-button>
+      <el-button plain type="warning" :icon="Rank" size="small" v-if="canCut"
+                 @click="">调课至此
+      </el-button>
+
       <el-tree
           :data="elTreeOptions"
           show-checkbox
@@ -121,6 +153,15 @@ function nodeClickFunc(elTreeOption: ElTreeOption) { // 另外俩参数：, tree
   flex-direction: column;
   align-items: flex-start;
   font-size: xx-small;
+}
+
+.TimetableBlock .el-button {
+  align-self: center;
+  width: 80%;
+}
+
+.TimetableBlock .el-button + .el-button {
+  margin: 0;
 }
 
 .el-tree {
