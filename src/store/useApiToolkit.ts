@@ -5,7 +5,7 @@ import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, 
 import dayjs from "dayjs";
 
 import urls from "../utils/urls";
-import {formatDate, getWeeksBetweenTwoDayFrom0} from "../utils/dateUtils";
+import {formatDate, getIsoWeekDay, getWeeksBetweenTwoDayFrom0} from "../utils/dateUtils";
 import {SelectedInfo, CourseInfoContainer, CourseInfoHandler, CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
 
 class ApiRequester<T> {
@@ -110,6 +110,9 @@ export const useApiToolkit = defineStore("apiToolkit", {
         },
 
         filter_infosByWeek(): CourseInfoContainer[] {
+            // 若没有选择任何周，则直接返回 filter_infosByGroup
+            if (this.selectedInfo.weekSelected.length === 0) return this.filter_infosByGroup
+
             return this.filter_infosByGroup.reduce((result: CourseInfoContainer[], ic: CourseInfoContainer) => {
                 let newPlanContainers: CoursePlanContainer[] = []
 
@@ -130,7 +133,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
             }, [])
         },
 
-        filter_infosByWeekWithEmptyPlanContainer(): CourseInfoContainer[] {
+        filter_infosByWeekWithNoEmptyPlanContainer(): CourseInfoContainer[] {
             return this.filter_infosByWeek.reduce((result: CourseInfoContainer[], item: CourseInfoContainer) => {
                 // 当 newPlanContainers 不为空时，当前 CourseInfoContainer 会被添加到result中
                 let newPlanContainers = item.coursePlans.filter(plan => plan.courses.length > 0)
@@ -222,6 +225,36 @@ export const useApiToolkit = defineStore("apiToolkit", {
                 }
             ).length
             return rowSpan ? rowSpan : 1
+        },
+
+        filter__infosByWeek_WhatDay_WhichLesson(whatDay: number, whichLesson: number): CourseInfoContainer[] {
+            let result: CourseInfoContainer[] = []
+            for (const info of this.filter_infosByWeekWithNoEmptyPlanContainer) {
+                console.log('230', info)
+                let filteredPlans: CoursePlanContainer[] = []
+                for (const coursePlan of info.coursePlans) {
+                    let filteredCourses: Course[] = coursePlan.courses.filter(
+                        course => {
+                            console.log('whatDay', getIsoWeekDay(dayjs(course.date)), whatDay)
+                            console.log('course.which_lesson', course.which_lesson, whichLesson)
+                            return getIsoWeekDay(dayjs(course.date)) === whatDay && course.which_lesson === whichLesson
+                        })
+                    if (filteredCourses.length > 0) {
+                        filteredPlans.push({
+                            ...coursePlan,
+                            courses: filteredCourses
+                        })
+                        console.log(coursePlan)
+                    }
+                }
+                if (filteredPlans.length > 0) {
+                    result.push({
+                        ...info,
+                        coursePlans: filteredPlans
+                    })
+                }
+            }
+            return result
         },
     },
 });

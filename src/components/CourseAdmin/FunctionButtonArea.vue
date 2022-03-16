@@ -32,9 +32,7 @@ const clickFunc = {
     console.log('delete', store.courseAdmin.courseIdSelected)
   },
   toClearSelectedCourse() {
-    for (const courseRecorder of store.courseAdmin.courseRecorders) {
-      courseRecorder.checked = false
-    }
+    store.courseAdmin.courseIdSelected = []
   },
   toClearSelectedPlan() {
     store.courseAdmin.planIdSelected = []

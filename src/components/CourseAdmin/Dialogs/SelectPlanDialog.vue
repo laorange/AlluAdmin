@@ -35,7 +35,7 @@ const elTreeOptions = computed<ElTreeOption[]>(() => {
   return _elTreeOptions
 })
 
-const innerDrawerData = reactive<{
+const innerDrawerDataForOnePlan = reactive<{
   whetherShow: boolean,
   plan: CoursePlan | undefined
 }>({
@@ -68,8 +68,8 @@ function checkChangeFunc(option: ElTreeOption, selfChecked: boolean) {  // 第�
 function nodeClickFunc(elTreeOption: ElTreeOption, treeNodeProps: unknown, event: Event) {
   // console.log(elTreeOption, treeNodeProps, event)
   if (elTreeOption.id > 0) {
-    innerDrawerData.whetherShow = true
-    innerDrawerData.plan = apiToolkit.coursePlan.filter(plan => plan.plan_id === elTreeOption.id)[0]
+    innerDrawerDataForOnePlan.whetherShow = true
+    innerDrawerDataForOnePlan.plan = apiToolkit.coursePlan.filter(plan => plan.plan_id === elTreeOption.id)[0]
   }
 }
 
@@ -88,6 +88,7 @@ function nodeClickFunc(elTreeOption: ElTreeOption, treeNodeProps: unknown, event
         show-checkbox
         node-key="id"
         :default-expand-all="true"
+        :render-after-expand="false"
         :props="elTreeOptionIndicator"
         ref="$Tree$SelectPlanDialog$CourseAdmin"
         @check-change="checkChangeFunc"
@@ -95,14 +96,14 @@ function nodeClickFunc(elTreeOption: ElTreeOption, treeNodeProps: unknown, event
     />
 
     <el-drawer
-        v-model="innerDrawerData.whetherShow"
-        :title="innerDrawerData.plan?.ch_name??'课程'"
+        v-model="innerDrawerDataForOnePlan.whetherShow"
+        :title="innerDrawerDataForOnePlan.plan?.ch_name??'课程'"
         size="30%"
         :append-to-body="true"
     >
-      <p v-if="innerDrawerData.plan?.method">授课方式：{{ innerDrawerData.plan?.method }}</p>
-      <p v-if="innerDrawerData.plan?.groups">分组: {{ apiToolkit.getNameOfGroups(innerDrawerData.plan?.groups) }}</p>
-      <p v-if="innerDrawerData.plan?.teacher_name">授课教师：{{ innerDrawerData.plan?.teacher_name }}</p>
+      <p v-if="innerDrawerDataForOnePlan.plan?.method">授课方式：{{ innerDrawerDataForOnePlan.plan?.method }}</p>
+      <p v-if="innerDrawerDataForOnePlan.plan?.groups">分组: {{ apiToolkit.getNameOfGroups(innerDrawerDataForOnePlan.plan?.groups) }}</p>
+      <p v-if="innerDrawerDataForOnePlan.plan?.teacher_name">授课教师：{{ innerDrawerDataForOnePlan.plan?.teacher_name }}</p>
     </el-drawer>
 
     <template #footer>
