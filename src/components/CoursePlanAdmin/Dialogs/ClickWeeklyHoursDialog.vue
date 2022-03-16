@@ -25,8 +25,8 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
 </script>
 
 <template>
-  <el-dialog v-model="store.coursePlanAdmin.clickWeeklyHoursDialog.whetherShow"
-             :title="`第 ${store.coursePlanAdmin.clickWeeklyHoursDialog.week} 周`" :fullscreen="false" width="95%">
+  <el-drawer v-model="store.coursePlanAdmin.clickWeeklyHoursDialog.whetherShow"
+             :title="`第 ${store.coursePlanAdmin.clickWeeklyHoursDialog.week} 周`" :fullscreen="false" size="50%">
 
     <div class="dialogBody">
       <div class="TimeBlock">
@@ -49,7 +49,7 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
         </template>
       </div>
     </div>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <style scoped>
@@ -58,6 +58,7 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
   flex-wrap: wrap;
   justify-content: center;
   color: black;
+  font-size: 1px;
 }
 
 .TimeBlockHead, .TimeBlockItem {

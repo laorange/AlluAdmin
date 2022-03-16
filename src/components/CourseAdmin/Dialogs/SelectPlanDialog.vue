@@ -79,7 +79,7 @@ function nodeClickFunc(elTreeOption: ElTreeOption, treeNodeProps: unknown, event
   <el-drawer
       v-model="store.courseAdmin.whetherShowSelectPlanDialog"
       title="请选择教学计划"
-      size="60%"
+      size="50%"
       direction="rtl"
       :append-to-body="true"
   >

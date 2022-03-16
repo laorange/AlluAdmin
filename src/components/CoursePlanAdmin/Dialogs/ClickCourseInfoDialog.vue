@@ -12,10 +12,10 @@ const redirect = (url: string) => {
 </script>
 
 <template>
-  <el-dialog
+  <el-drawer
       v-model="store.coursePlanAdmin.clickCourseInfoDialog.whetherShow"
       :title="store.coursePlanAdmin.clickCourseInfoDialog.courseInfo?.ch_name ?? '暂无课程信息'"
-      width="30%"
+      size="30%"
   >
     <div id="ClickCourseInfoDialogBody">
       <el-button type="primary"
@@ -47,7 +47,7 @@ const redirect = (url: string) => {
     <template #footer>
       <el-button @click="store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = false">取消</el-button>
     </template>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <style>

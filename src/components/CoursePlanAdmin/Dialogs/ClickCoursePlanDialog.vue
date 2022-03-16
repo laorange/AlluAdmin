@@ -23,10 +23,10 @@ const totalHoursDisplay = computed(() => store.coursePlanAdmin.clickCoursePlanDi
 </script>
 
 <template>
-  <el-dialog
+  <el-drawer
       v-model="store.coursePlanAdmin.clickCoursePlanDialog.whetherShow"
       :title="store.coursePlanAdmin.clickCoursePlanDialog.courseInfo?.ch_name ?? '暂无课程信息'"
-      width="30%"
+      size="30%"
   >
     <div id="clickCoursePlanDialogBody">
       <div v-if="methodDisplay">上课方式：{{ methodDisplay }}</div>
@@ -41,7 +41,7 @@ const totalHoursDisplay = computed(() => store.coursePlanAdmin.clickCoursePlanDi
     <template #footer>
       <el-button @click="store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = false">取消</el-button>
     </template>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <style>

@@ -14,8 +14,8 @@ const groupName = apiToolkit.getNameOfGroups(groupIds)
 <template>
   <div class="CourseCard" :style="{backgroundColor: '#' + course.color}">
     <div v-show="course.ch_name">{{ course.ch_name }}</div>
-    <div v-show="course.en_name">{{ course.en_name }}</div>
-    <div v-show="course.fr_name">{{ course.fr_name }}</div>
+<!--    <div v-show="course.en_name">{{ course.en_name }}</div>-->
+<!--    <div v-show="course.fr_name">{{ course.fr_name }}</div>-->
     <div v-show="course.date">{{ course.date }}</div>
     <div v-show="course.method">{{ course.method }}</div>
     <div v-show="course.teacher_name">{{ course.teacher_name }}</div>
