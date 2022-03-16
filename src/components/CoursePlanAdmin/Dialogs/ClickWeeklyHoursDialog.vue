@@ -11,14 +11,11 @@ import CourseCard from "../../CourseCard.vue";
 const store = useCounterStore();
 const apiToolkit = useApiToolkit()
 
-const groupName = computed<string>(() => store.coursePlanAdmin.clickWeeklyHoursDialog.groupName)
 const week = computed<number>(() => store.coursePlanAdmin.clickWeeklyHoursDialog.week)
 
 function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | number): Course[] {
   return (store.coursePlanAdmin.clickWeeklyHoursDialog.planContainer?.courses ?? []).filter(
       (course: Course) => {
-        console.log("getWeeksBetweenTwoDayFrom0(dayjs(), dayjs(apiToolkit.semesterConfig.first()?.week1_monday_date)) + 1", getWeeksBetweenTwoDayFrom0(dayjs(), dayjs(apiToolkit.semesterConfig.first()?.week1_monday_date)) + 1)
-        console.log("week.value", week.value)
         return getIsoWeekDay(dayjs(course.date)) === whatDay
             && whichLesson === course.which_lesson
             && getWeeksBetweenTwoDayFrom0(dayjs(course.date), dayjs(apiToolkit.semesterConfig.first()?.week1_monday_date)) + 1 === week.value

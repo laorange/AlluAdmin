@@ -69,8 +69,14 @@ export type CoursePlan = {
     "info": number,
     "groups": number[],
     "method": methodChoice,
+    "teacher_name": string,
     "color": string,
-    "teacher_name": string
+    "period": number,
+    "semester": number,
+    "code": string | null,
+    "ch_name": string,
+    "en_name": string | null,
+    "fr_name": string | null
 }
 
 export type CourseType = {
