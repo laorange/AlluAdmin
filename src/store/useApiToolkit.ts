@@ -21,7 +21,7 @@ class ApiRequester<T> {
         await store.axiosGet<T>(this._apiUrl, parameters).then(response => this._data = response)
     }
 
-    first(): T {
+    first(): T | undefined {
         return this._data[0]
     }
 
@@ -230,7 +230,6 @@ export const useApiToolkit = defineStore("apiToolkit", {
         filter__infosByWeek_WhatDay_WhichLesson(whatDay: number, whichLesson: number): CourseInfoContainer[] {
             let result: CourseInfoContainer[] = []
             for (const info of this.filter_infosByWeekWithNoEmptyPlanContainer) {
-                console.log('230', info)
                 let filteredPlans: CoursePlanContainer[] = []
                 for (const coursePlan of info.coursePlans) {
                     let filteredCourses: Course[] = coursePlan.courses.filter(
@@ -240,7 +239,6 @@ export const useApiToolkit = defineStore("apiToolkit", {
                             ...coursePlan,
                             courses: filteredCourses
                         })
-                        console.log(coursePlan)
                     }
                 }
                 if (filteredPlans.length > 0) {

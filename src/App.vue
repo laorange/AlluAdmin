@@ -8,6 +8,11 @@ import TopMenu from "./components/TopMenu.vue";
 
 import {onMounted} from "vue";
 import {useRoute} from "vue-router";
+import {getWeeksBetweenTwoDayFrom0} from "./utils/dateUtils";
+import dayjs from "dayjs";
+
+import 'element-plus/es/components/message/style/css'
+// import {ElMessage} from "element-plus/es";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
@@ -30,12 +35,23 @@ function useRouterQueryReader() {
 
   // region weeks
   const weeksInQuery = String(route.query.weeks ?? '').split(',')
+  let parsedWeeks = []
+  let weekNow = getWeeksBetweenTwoDayFrom0(dayjs(), apiToolkit.week1Monday) + 1
   for (const weekString of weeksInQuery) {
     let week = parseInt(weekString)
     if (!isNaN(week)) {
-      store.courseAdmin.weekSelected.push(week)
+      parsedWeeks.push(week)
     }
   }
+  if (parsedWeeks.length === 0) {
+    parsedWeeks = [weekNow]
+    // ElMessage.success({
+    //   showClose: true,
+    //   message: `已自动设置为第${weekNow}周`,
+    //   duration: 1500,
+    // })
+  }
+  store.courseAdmin.weekSelected = parsedWeeks;
   // endregion
 }
 

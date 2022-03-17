@@ -2,6 +2,10 @@
 import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {computed, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import {getWeeksBetweenTwoDayFrom0} from "../../utils/dateUtils";
+import dayjs from "dayjs";
+
+// import {ElMessage} from "element-plus/es";  // build时会出问题
 
 const apiToolkit = useApiToolkit();
 const store = useCounterStore();
@@ -36,16 +40,34 @@ const weekCandidates = computed<OptionInElTransfer[]>(() => {
 
 // region 监视：如果选择新的年级，同步变化到groupSelected和route.query
 watch(() => store.courseAdmin.weekSelected, (newWeekSelected) => {
-  weekSelecting.value = true
+  weekSelecting.value = true;
+
+  // 如果为空，则自动设置为当前周
+  if (newWeekSelected.length === 0) {
+    let weekNow = getWeeksBetweenTwoDayFrom0(dayjs(), apiToolkit.week1Monday) + 1
+    weekNow = (weekNow > 0 || weekNow <= (apiToolkit.maxWeek ?? 20)) ? weekNow : 1
+    store.courseAdmin.weekSelected = [weekNow]
+    // ElMessage.success({
+    //   showClose: true,
+    //   message: `已自动设置为第${weekNow}周`,
+    //   duration: 1500,
+    // })
+    alert(`已自动设置为第${weekNow}周`)
+  }
 
   // route.query
-  router.replace({
-    name: String(route.name),
-    query: {
-      ...route.query,
-      weeks: newWeekSelected.length ? Array.from(new Set(newWeekSelected)).join(",") : undefined
+  if (newWeekSelected.length !== 0) {
+    let weeksInQuery = newWeekSelected.length ? Array.from(new Set(newWeekSelected)).join(",") : undefined
+    if (weeksInQuery !== route.query.weeks) {
+      router.replace({
+        name: String(route.name),
+        query: {
+          ...route.query,
+          weeks: weeksInQuery
+        }
+      })
     }
-  })
+  }
 }, {deep: true})
 // endregion
 

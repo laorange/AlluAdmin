@@ -92,5 +92,8 @@ export const useCounterStore = defineStore("counter", {
             this.isLoading = false;
             return response.data as T[];
         },
+        getWeeksString(): string {
+            return this.weeksString
+        },
     },
 });

@@ -106,11 +106,11 @@ function nodeClickFunc(elTreeOption: ElTreeOption, treeNodeProps: unknown, event
     </el-drawer>
 
     <template #footer>
-      <el-button @click="store.courseAdmin.planIdSelected = []" type="warning"
+      <el-button @click="store.courseAdmin.whetherShowSelectPlanDialog = false" type="success">完成</el-button>
+      <el-button @click="store.courseAdmin.planIdSelected = []" type="default"
                  :disabled="store.courseAdmin.planIdSelected.length===0">
         取消选中
       </el-button>
-      <el-button @click="store.courseAdmin.whetherShowSelectPlanDialog = false" type="primary">完成</el-button>
     </template>
   </el-drawer>
 

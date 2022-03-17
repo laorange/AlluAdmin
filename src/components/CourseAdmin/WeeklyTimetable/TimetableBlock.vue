@@ -91,10 +91,13 @@ const eventFunc = {
     store.courseAdmin.whatDay = props.whatDay as WhatDay
     store.courseAdmin.whichLesson = props.whichLesson as WhichLesson
   },
-  toAdd() {
+  toAddHere() {
     eventFunc.setWhatDayWhichLesson();
     store.courseAdmin.whetherShowAddingDialog = true
-  }
+  },
+  toCopyHere() {
+    eventFunc.toAddHere()
+  },
 }
 
 // region button
@@ -121,10 +124,10 @@ const canCut = computed<boolean>(() =>
   <el-scrollbar :height="timetableHeight">
     <div class="TimetableBlock">
       <el-button plain type="primary" :icon="Plus" size="small" v-if="canAdd"
-                 @click="eventFunc.toAdd">在此排课
+                 @click="eventFunc.toAddHere">在此排课
       </el-button>
       <el-button plain type="success" :icon="DocumentCopy" size="small" v-if="canCopy"
-                 @click="">粘贴至此
+                 @click="eventFunc.toCopyHere">粘贴至此
       </el-button>
       <el-button plain type="warning" :icon="Rank" size="small" v-if="canCut"
                  @click="">调课至此

@@ -24,7 +24,6 @@ const clickFunc = {
   },
   toCopy() {
     store.courseAdmin.operatingMode = 'Copy'
-    console.log('copy', store.courseAdmin.courseIdSelected)
   },
   toCancelCopy() {
     clickFunc.toInitializeOperatingMode()
