@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import axios from "axios";
 import {CourseInfo, WhatDay, WhichLesson} from "../types/api";
 import {CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
+import getWeeksString from "../utils/getWeeksString";
 
 type CounterStoreState = {
     isLoading: boolean,
@@ -11,11 +12,6 @@ type CounterStoreState = {
         weekSelected: number[],
         planIdSelected: number[],
         courseIdSelected: number[],
-        // courseIdCopying: number[],
-        // courseIdCutting: number[],
-        // courseIdDeleting: number[],
-        // courseIdAdding: number[],
-        // courseIdOperating: number[],
         operatingMode: 'Delete' | 'Cut' | 'Copy' | '',
         whetherShowDeletingDialog: boolean,
         whetherShowAddingDialog: boolean,
@@ -52,7 +48,6 @@ export const useCounterStore = defineStore("counter", {
                 weekSelected: [],
                 planIdSelected: [],
                 courseIdSelected: [],
-                // courseIdOperating: [],
                 operatingMode: '',
                 whetherShowDeletingDialog: false,
                 whetherShowAddingDialog: false,
@@ -79,6 +74,13 @@ export const useCounterStore = defineStore("counter", {
             },
         };
     },
+
+    getters: {
+        weeksString(): string {
+            return getWeeksString(this.courseAdmin.weekSelected)
+        },
+    },
+
     actions: {
         async axiosGet<T>(url: string, parameters: { [key: string]: (string | number | undefined) } = {}) {
             this.isLoading = true;

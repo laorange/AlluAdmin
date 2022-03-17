@@ -5,6 +5,7 @@ import WeeklyTimetable from "./WeeklyTimetable/WeeklyTimetable.vue";
 
 import GroupSelector from "../GroupSelector.vue";
 import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
+import AddingCourseDialog from "./Dialogs/AddingCourseDialog.vue";
 
 
 </script>
@@ -30,6 +31,7 @@ import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
 
   <!-- region Dialogs -->
   <select-plan-dialog></select-plan-dialog>
+  <adding-course-dialog></adding-course-dialog>
   <!-- endregion -->
 
   <h1>🚧 施工中...</h1>
@@ -69,7 +71,7 @@ import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
   flex-wrap: wrap;
 }
 
-.TableFooter{
+.TableFooter {
   background-color: #efefef;
   width: 100%;
   height: 30px;

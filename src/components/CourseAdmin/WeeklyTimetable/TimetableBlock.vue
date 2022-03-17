@@ -2,7 +2,7 @@
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import {ElTreeOption} from "../../../types/courseAdmin";
 import {computed, reactive, ref, watch} from "vue";
-import {Course} from "../../../types/api";
+import {Course, WhatDay, WhichLesson} from "../../../types/api";
 import {CourseInfoContainer, CoursePlanContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 
 import {Plus, DocumentCopy, Rank} from "@element-plus/icons-vue";
@@ -68,22 +68,32 @@ watch(() => store.courseAdmin.courseIdSelected, (newCourseIdSelected: number[]) 
   }
 }, {deep: true})
 
-function checkChangeFunc(option: ElTreeOption, selfChecked: boolean) {  // 第三个参数：childChecked: boolean
-  // 过滤掉一级节点的点击事件
-  if (option.id > 0) {
-    // console.log(option, selfChecked ? '选中' : '取消选中')
-    if (selfChecked) {
-      store.courseAdmin.courseIdSelected.push(option.id)
-    } else {
-      store.courseAdmin.courseIdSelected = store.courseAdmin.courseIdSelected.filter(courseId => courseId !== option.id)
-    }
-  }
-}
 
-function nodeClickFunc(elTreeOption: ElTreeOption) { // 另外俩参数：, treeNodeProps: unknown, event: Event
-  if (elTreeOption.id > 0) {
-    innerDrawerDataForOneCourse.whetherShow = true
-    innerDrawerDataForOneCourse.course = apiToolkit.course.filter(course => course.course_id === elTreeOption.id)[0]
+const eventFunc = {
+  nodeClickFunc(elTreeOption: ElTreeOption) { // 另外俩参数：, treeNodeProps: unknown, event: Event
+    if (elTreeOption.id > 0) {
+      innerDrawerDataForOneCourse.whetherShow = true
+      innerDrawerDataForOneCourse.course = apiToolkit.course.filter(course => course.course_id === elTreeOption.id)[0]
+    }
+  },
+  checkChangeFunc(option: ElTreeOption, selfChecked: boolean) {  // 第三个参数：childChecked: boolean
+    // 过滤掉一级节点的点击事件
+    if (option.id > 0) {
+      // console.log(option, selfChecked ? '选中' : '取消选中')
+      if (selfChecked) {
+        store.courseAdmin.courseIdSelected.push(option.id)
+      } else {
+        store.courseAdmin.courseIdSelected = store.courseAdmin.courseIdSelected.filter(courseId => courseId !== option.id)
+      }
+    }
+  },
+  setWhatDayWhichLesson() {
+    store.courseAdmin.whatDay = props.whatDay as WhatDay
+    store.courseAdmin.whichLesson = props.whichLesson as WhichLesson
+  },
+  toAdd() {
+    eventFunc.setWhatDayWhichLesson();
+    store.courseAdmin.whetherShowAddingDialog = true
   }
 }
 
@@ -111,7 +121,7 @@ const canCut = computed<boolean>(() =>
   <el-scrollbar :height="timetableHeight">
     <div class="TimetableBlock">
       <el-button plain type="primary" :icon="Plus" size="small" v-if="canAdd"
-                 @click="">在此排课
+                 @click="eventFunc.toAdd">在此排课
       </el-button>
       <el-button plain type="success" :icon="DocumentCopy" size="small" v-if="canCopy"
                  @click="">粘贴至此
@@ -127,8 +137,8 @@ const canCut = computed<boolean>(() =>
           :props="elTreeOptionIndicator"
           ref="$Tree$TimeTableBlock$CourseAdmin"
           empty-text=""
-          @check-change="checkChangeFunc"
-          @node-click="nodeClickFunc"
+          @check-change="eventFunc.checkChangeFunc"
+          @node-click="eventFunc.nodeClickFunc"
           :render-after-expand="false"
       />
 

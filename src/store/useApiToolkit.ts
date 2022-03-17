@@ -234,11 +234,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
                 let filteredPlans: CoursePlanContainer[] = []
                 for (const coursePlan of info.coursePlans) {
                     let filteredCourses: Course[] = coursePlan.courses.filter(
-                        course => {
-                            console.log('whatDay', getIsoWeekDay(dayjs(course.date)), whatDay)
-                            console.log('course.which_lesson', course.which_lesson, whichLesson)
-                            return getIsoWeekDay(dayjs(course.date)) === whatDay && course.which_lesson === whichLesson
-                        })
+                        course => getIsoWeekDay(dayjs(course.date)) === whatDay && course.which_lesson === whichLesson)
                     if (filteredCourses.length > 0) {
                         filteredPlans.push({
                             ...coursePlan,
