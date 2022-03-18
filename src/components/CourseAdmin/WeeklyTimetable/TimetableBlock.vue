@@ -109,7 +109,7 @@ const eventFunc = {
 const canAdd = computed<boolean>(() =>
     store.courseAdmin.operatingMode === '' &&
     store.courseAdmin.courseIdSelected.length === 0 &&
-    store.courseAdmin.planIdSelected.length > 0
+    store.courseAdmin.rawSelectedPlans.length > 0
 )
 
 const canCopy = computed<boolean>(() =>

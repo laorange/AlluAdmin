@@ -23,7 +23,6 @@ declare module 'vue' {
     ElOption: typeof import('element-plus/es')['ElOption']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
-    ElTransfer: typeof import('element-plus/es')['ElTransfer']
     ElTree: typeof import('element-plus/es')['ElTree']
     FunctionButtonArea: typeof import('./src/components/CourseAdmin/FunctionButtonArea.vue')['default']
     GroupSelector: typeof import('./src/components/GroupSelector.vue')['default']

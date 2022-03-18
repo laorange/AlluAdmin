@@ -27,7 +27,7 @@ const description = computed<string>(() => {
 const planIdOperating = computed<number[]>(() => {
   if (store.courseAdmin.operatingMode === "") {
     //  Mode为“”，是按教学计划添加
-    return store.courseAdmin.planIdSelected
+    return store.selectedPlans
   } else {
     //  其他情况：Mode为“Copy“或”Cut”，是按选择的课程对应的教学计划添加
     return store.courseAdmin.courseIdSelected.map((courseId) => apiToolkit.course.filter(course => course.course_id === courseId)[0]?.plan)
@@ -85,8 +85,8 @@ const whetherCanSubmit = computed<boolean>(() => {
 
 const eventFunc = {
   deleteSelectedPlan(planId: number) {
-    store.courseAdmin.planIdSelected = store.courseAdmin.planIdSelected.filter(planIdSelected => planId !== planIdSelected)
-    if (store.courseAdmin.planIdSelected.length === 0) {
+    store.courseAdmin.rawSelectedPlans = store.courseAdmin.rawSelectedPlans.filter(rp => planId !== rp[1])
+    if (store.courseAdmin.rawSelectedPlans.length === 0) {
       store.courseAdmin.whetherShowAddingDialog = false
       store.courseAdmin.operatingMode = ""
     }
@@ -95,7 +95,7 @@ const eventFunc = {
     store.courseAdmin.whetherShowAddingDialog = false
   },
   clickReselectPlanButton() {
-    store.courseAdmin.planIdSelected = []
+    store.courseAdmin.rawSelectedPlans = []
     store.courseAdmin.whetherShowAddingDialog = false
     store.courseAdmin.whetherShowSelectPlanDialog = true
   },
@@ -109,63 +109,66 @@ const eventFunc = {
 </script>
 
 <template>
-  <ElDrawer
-      v-model="store.courseAdmin.whetherShowAddingDialog"
-      :title="description"
-      size="75%"
-      direction="rtl"
-      :append-to-body="true"
-  >
-    <div class="PreparingInfoArea">
-      <div>{{ whatDayList[store.courseAdmin.whatDay - 1] }}
-        &nbsp;&nbsp;-&nbsp;&nbsp;
-        {{ `第${store.courseAdmin.whichLesson * 2 - 1}、${store.courseAdmin.whichLesson * 2}节课` }}</div>
-      <div>请选择需要添加到哪些周: {{ store.getWeeksString() }}</div>
-      <week-select-bar></week-select-bar>
-    </div>
-
-    <div class="FormSetDiv">
-      <div class="FormDiv">
-        <div>课程名</div>
-        <div>授课方式</div>
-        <div>授课教师</div>
-        <div>分组</div>
-        <div>教室</div>
-        <div class="FormNote">备注</div>
-        <el-icon></el-icon>
-      </div>
-      <div class="FormDiv" v-for="formInfo in formInfos">
-        <div>{{ formInfo.plan.ch_name }}</div>
-        <div>{{ formInfo.plan.method }}</div>
-        <div>{{ formInfo.plan.teacher ? formInfo.plan.teacher_name : "" }}</div>
-        <div>{{ formInfo.plan.groups.length ? apiToolkit.getNameOfGroups(formInfo.plan.groups) : "" }}</div>
-        <div>
-          <el-select v-model="formInfo.classroomId" placeholder="选择教室">
-            <el-option
-                v-for="room in apiToolkit.classroom.data"
-                :key="room.room_id"
-                :label="room.name"
-                :value="room.room_id"
-                :disabled="occupiedClassroomIds.indexOf(room.room_id)>-1"
-            />
-          </el-select>
+  <div class="AddingCourseDialog">
+    <ElDrawer
+        v-model="store.courseAdmin.whetherShowAddingDialog"
+        :title="description"
+        size="75%"
+        direction="rtl"
+        :append-to-body="true"
+    >
+      <div class="PreparingInfoArea">
+        <div>{{ whatDayList[store.courseAdmin.whatDay - 1] }}
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          {{ `第${store.courseAdmin.whichLesson * 2 - 1}、${store.courseAdmin.whichLesson * 2}节课` }}
         </div>
-        <div class="FormNote">
-          <el-input v-model="formInfo.note" placeholder="备注(选填)"/>
-        </div>
-
-        <el-icon @click="eventFunc.deleteSelectedPlan(formInfo.plan.plan_id)">
-          <delete/>
-        </el-icon>
+        <div>请选择需要添加到哪些周: {{ store.getWeeksString() }}</div>
+        <week-select-bar></week-select-bar>
       </div>
-    </div>
 
-    <template #footer>
-      <el-button @click="eventFunc.submit" :disabled="!whetherCanSubmit" type="success">确认添加</el-button>
-      <el-button @click="eventFunc.clickCancelButton" type="default">取消</el-button>
-      <el-button @click="eventFunc.clickReselectPlanButton" type="primary">重新选择教学计划</el-button>
-    </template>
-  </ElDrawer>
+      <div class="FormSetDiv">
+        <div class="FormDiv">
+          <div>课程名</div>
+          <div>授课方式</div>
+          <div>授课教师</div>
+          <div>分组</div>
+          <div>教室</div>
+          <div class="FormNote">备注</div>
+          <el-icon></el-icon>
+        </div>
+        <div class="FormDiv" v-for="formInfo in formInfos">
+          <div>{{ formInfo.plan.ch_name }}</div>
+          <div>{{ formInfo.plan.method }}</div>
+          <div>{{ formInfo.plan.teacher ? formInfo.plan.teacher_name : "" }}</div>
+          <div>{{ formInfo.plan.groups.length ? apiToolkit.getNameOfGroups(formInfo.plan.groups) : "" }}</div>
+          <div>
+            <el-select v-model="formInfo.classroomId" placeholder="选择教室">
+              <el-option
+                  v-for="room in apiToolkit.classroom.data"
+                  :key="room.room_id"
+                  :label="room.name"
+                  :value="room.room_id"
+                  :disabled="occupiedClassroomIds.indexOf(room.room_id)>-1"
+              />
+            </el-select>
+          </div>
+          <div class="FormNote">
+            <el-input v-model="formInfo.note" placeholder="备注(选填)"/>
+          </div>
+
+          <el-icon @click="eventFunc.deleteSelectedPlan(formInfo.plan.plan_id)">
+            <delete/>
+          </el-icon>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="eventFunc.submit" :disabled="!whetherCanSubmit" type="success">确认添加</el-button>
+        <el-button @click="eventFunc.clickCancelButton" type="default">取消</el-button>
+        <el-button @click="eventFunc.clickReselectPlanButton" type="primary">重新选择教学计划</el-button>
+      </template>
+    </ElDrawer>
+  </div>
 </template>
 
 <style scoped>

@@ -58,6 +58,11 @@ export const useApiToolkit = defineStore("apiToolkit", {
         week1Monday(): dayjs.Dayjs {
             return dayjs(this.semesterConfig.first()?.week1_monday_date)
         },
+
+        weekNow(): number{
+            return getWeeksBetweenTwoDayFrom0(dayjs(), this.week1Monday) + 1
+        },
+
         period(): number {
             return this.semesterConfig.first()?.current_period ?? 0
         },
@@ -78,20 +83,19 @@ export const useApiToolkit = defineStore("apiToolkit", {
         selectedInfo(): SelectedInfo {
             const store = useCounterStore();
             return new SelectedInfo(
-                this.courseInfoContainers,
-                store.semesterSelected,
-                store.groupSelected,
-                store.courseAdmin.weekSelected,
+                store.selectedSemesters,
+                store.selectedGroups,
+                store.selectedWeeks,
             );
         },
 
         judge_whetherUserDoesNotCareGroup(): boolean {
-            return this.selectedInfo.groupSelected.length === 0
+            return this.selectedInfo.selectedGroups.length === 0
         },
 
         filter_infosBySemester(): CourseInfoContainer[] {
-            if (this.selectedInfo.semesterSelected.length === 0) return this.courseInfoContainers
-            return this.courseInfoContainers.filter(ic => this.selectedInfo.semesterSelected.indexOf(ic.courseInfo.semester) > -1)
+            if (this.selectedInfo.selectedSemesters.length === 0) return this.courseInfoContainers
+            return this.courseInfoContainers.filter(ic => this.selectedInfo.selectedSemesters.indexOf(ic.courseInfo.semester) > -1)
         },
 
         filter_infosByGroup(): CourseInfoContainer[] {
@@ -99,7 +103,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
                 // filteredPlanContainers = inputtedInfoContainer.coursePlans.filter(pc => this.judge_whetherPlanForSelectedGroup(pc))
                 let filteredPlanContainers = this.judge_whetherUserDoesNotCareGroup ? ic.coursePlans :
                     ic.coursePlans.filter(pc => {
-                        return this.selectedInfo.groupSelected.filter(group => pc.coursePlan.groups.indexOf(group[1]) > -1).length > 0
+                        return this.selectedInfo.selectedGroups.filter(group => pc.coursePlan.groups.indexOf(group) > -1).length > 0
                     })
 
                 return result.concat([{
@@ -111,14 +115,14 @@ export const useApiToolkit = defineStore("apiToolkit", {
 
         filter_infosByWeek(): CourseInfoContainer[] {
             // 若没有选择任何周，则直接返回 filter_infosByGroup
-            if (this.selectedInfo.weekSelected.length === 0) return this.filter_infosByGroup
+            if (this.selectedInfo.selectedWeeks.length === 0) return this.filter_infosByGroup
 
             return this.filter_infosByGroup.reduce((result: CourseInfoContainer[], ic: CourseInfoContainer) => {
                 let newPlanContainers: CoursePlanContainer[] = []
 
                 // 当 sourceCoursePlan 中包含符合条件的Course时，sourceCoursePlan 会被添加到 newPlanContainers 中
                 for (const sourceCoursePlan of ic.coursePlans) {
-                    let courseFiltered = sourceCoursePlan.courses.filter(course => this.selectedInfo.weekSelected.indexOf(
+                    let courseFiltered = sourceCoursePlan.courses.filter(course => this.selectedInfo.selectedWeeks.indexOf(
                         getWeeksBetweenTwoDayFrom0(dayjs(course.date), this.week1Monday) + 1
                     ) > -1)
                     if (courseFiltered.length > 0) {
@@ -179,6 +183,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
                 return output
             }, []).join('&')
         },
+
         getGroupNameOfCourse(course: Course): string {
             let groups = JSON.parse(course?.group_ids ?? '') as number[]
             return this.getNameOfGroups(groups)
@@ -198,11 +203,11 @@ export const useApiToolkit = defineStore("apiToolkit", {
         },
 
         judge_whetherCourseInfoForSelectedSemester(inputtedInfoContainer: CourseInfoContainer): boolean {
-            return this.selectedInfo.semesterSelected.indexOf(inputtedInfoContainer.courseInfo.semester) > -1
+            return this.selectedInfo.selectedSemesters.indexOf(inputtedInfoContainer.courseInfo.semester) > -1
         },
 
         judge_whetherPlanForSelectedGroup(inputtedPlanContainer: CoursePlanContainer): boolean {
-            return this.selectedInfo.groupSelected.filter(group => inputtedPlanContainer.coursePlan.groups.indexOf(group[1]) > -1).length > 0
+            return this.selectedInfo.selectedGroups.filter(group => inputtedPlanContainer.coursePlan.groups.indexOf(group) > -1).length > 0
         },
 
         judge_whetherCourseInfoHasProperPlan(inputtedInfoContainer: CourseInfoContainer): boolean {

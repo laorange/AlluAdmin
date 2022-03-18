@@ -3,14 +3,16 @@ import axios from "axios";
 import {CourseInfo, WhatDay, WhichLesson} from "../types/api";
 import {CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
 import getWeeksString from "../utils/getWeeksString";
+import {useApiToolkit} from "./counter";
+import {ElOption} from "../types/options";
 
 type CounterStoreState = {
     isLoading: boolean,
-    semesterSelected: number[],
-    groupSelected: [number, number][],
+    rawSelectedGroups: [number, number][],
+    rawSelectedWeeks: [number, number][],
     courseAdmin: {
-        weekSelected: number[],
-        planIdSelected: number[],
+        planOptions: ElOption[],
+        rawSelectedPlans: [number, number][],
         courseIdSelected: number[],
         operatingMode: 'Delete' | 'Cut' | 'Copy' | '',
         whetherShowDeletingDialog: boolean,
@@ -42,11 +44,11 @@ export const useCounterStore = defineStore("counter", {
     state: (): CounterStoreState => {
         return {
             isLoading: false,
-            semesterSelected: [],
-            groupSelected: [],
+            rawSelectedGroups: [],
+            rawSelectedWeeks: [],
             courseAdmin: {
-                weekSelected: [],
-                planIdSelected: [],
+                planOptions: [],
+                rawSelectedPlans: [],
                 courseIdSelected: [],
                 operatingMode: '',
                 whetherShowDeletingDialog: false,
@@ -76,8 +78,21 @@ export const useCounterStore = defineStore("counter", {
     },
 
     getters: {
+        selectedWeeks(): number[] {
+            this.rawSelectedWeeks.sort((a,b)=>a[1]-b[1])
+            return this.rawSelectedWeeks.map(rw => rw[1])
+        },
         weeksString(): string {
-            return getWeeksString(this.courseAdmin.weekSelected)
+            return getWeeksString(this.selectedWeeks)
+        },
+        selectedGroups(): number[] {
+            return this.rawSelectedGroups.map(rg => rg[1])
+        },
+        selectedSemesters(): number[] {
+            return Array.from(new Set(this.rawSelectedGroups.map(rg => rg[0])));
+        },
+        selectedPlans(): number[] {
+            return Array.from(new Set(this.courseAdmin.rawSelectedPlans.map(rp => rp[1])));
         },
     },
 
@@ -94,6 +109,29 @@ export const useCounterStore = defineStore("counter", {
         },
         getWeeksString(): string {
             return this.weeksString
+        },
+        updatePlanOptions() {
+            const apiToolkit = useApiToolkit()
+            console.log("updateRawSelectedPlans")
+
+            let planOptions = []
+            for (const ic of apiToolkit.filter_infosBySemester) {
+                let plans = apiToolkit.filter_plansForSelectedGroup(ic, true)
+                if (plans.length > 0) {
+                    let childrenOption: ElOption[] = plans.reduce((result: ElOption[], plan) => result.concat([{
+                        value: plan.coursePlan.plan_id,
+                        label: `${plan.coursePlan.method}-${plan.coursePlan.teacher_name ?? ''}-${apiToolkit.getNameOfGroups(plan.coursePlan.groups)}`,
+                    }]), []);
+
+                    let parentOption: ElOption = {
+                        value: -ic.courseInfo.info_id,
+                        label: ic.courseInfo.ch_name,
+                        children: childrenOption
+                    }
+                    planOptions.push(parentOption)
+                }
+            }
+            this.courseAdmin.planOptions = planOptions
         },
     },
 });

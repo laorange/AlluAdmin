@@ -8,7 +8,7 @@ import urls from "../../utils/urls";
 const store = useCounterStore();
 const apiToolkit = useApiToolkit()
 
-const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.planIdSelected.length)
+const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.rawSelectedPlans.length)
 const AmountOfSelectedCourse = computed<number>(() => store.courseAdmin.courseIdSelected.length)
 
 const whetherShowAddPlanButton = computed<boolean>(() => AmountOfSelectedCourse.value == 0)
@@ -17,7 +17,10 @@ const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfS
 
 const clickFunc = {
   toSelectPlan() {
-    store.courseAdmin.whetherShowSelectPlanDialog = true
+    if (store.courseAdmin.planOptions.length === 0) {
+      store.updatePlanOptions()
+    }
+    store.courseAdmin.whetherShowSelectPlanDialog = true;
   },
   toEdit() {
     window.open(urls.admin.changeCourse(store.courseAdmin.courseIdSelected[0]));
@@ -43,7 +46,7 @@ const clickFunc = {
     store.courseAdmin.courseIdSelected = []
   },
   toClearSelectedPlan() {
-    store.courseAdmin.planIdSelected = []
+    store.courseAdmin.rawSelectedPlans = []
   },
   toInitializeOperatingMode() {
     store.courseAdmin.operatingMode = ''

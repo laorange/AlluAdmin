@@ -8,10 +8,9 @@ import TopMenu from "./components/TopMenu.vue";
 
 import {onMounted} from "vue";
 import {useRoute} from "vue-router";
-import {getWeeksBetweenTwoDayFrom0} from "./utils/dateUtils";
-import dayjs from "dayjs";
 
 import 'element-plus/es/components/message/style/css'
+import {ElTreeOption} from "./types/courseAdmin";
 // import {ElMessage} from "element-plus/es";
 
 const store = useCounterStore()
@@ -27,7 +26,7 @@ function useRouterQueryReader() {
     if (!isNaN(groupId)) {
       let groupInApi = (apiToolkit.group.filter(group => group.group_id === groupId))
       if (groupInApi.length > 0) {
-        store.groupSelected.push([groupInApi[0].semester, groupId])
+        store.rawSelectedGroups.push([groupInApi[0].semester, groupId])
       }
     }
   }
@@ -36,7 +35,6 @@ function useRouterQueryReader() {
   // region weeks
   const weeksInQuery = String(route.query.weeks ?? '').split(',')
   let parsedWeeks = []
-  let weekNow = getWeeksBetweenTwoDayFrom0(dayjs(), apiToolkit.week1Monday) + 1
   for (const weekString of weeksInQuery) {
     let week = parseInt(weekString)
     if (!isNaN(week)) {
@@ -44,14 +42,14 @@ function useRouterQueryReader() {
     }
   }
   if (parsedWeeks.length === 0) {
-    parsedWeeks = [weekNow]
+    parsedWeeks = [apiToolkit.weekNow]
     // ElMessage.success({
     //   showClose: true,
     //   message: `已自动设置为第${weekNow}周`,
     //   duration: 1500,
     // })
   }
-  store.courseAdmin.weekSelected = parsedWeeks;
+  store.rawSelectedWeeks = parsedWeeks.map(week => [Math.floor((week - 1) / 5) + 1, week]);
   // endregion
 }
 

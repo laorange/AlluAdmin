@@ -62,16 +62,14 @@ class CourseInfoHandler {
 }
 
 class SelectedInfo {
-    // courseInfoContainers: CourseInfoContainer[]
-    semesterSelected: number[]
-    groupSelected: [number, number][]
-    weekSelected: number[]
+    selectedSemesters: number[]
+    selectedGroups: number[]
+    selectedWeeks: number[]
 
-    constructor(courseInfoContainers: CourseInfoContainer[], semesterSelected: number[], groupSelected: [number, number][], weekSelected: number[]) {
-        // this.courseInfoContainers = courseInfoContainers
-        this.semesterSelected = semesterSelected
-        this.groupSelected = groupSelected
-        this.weekSelected = weekSelected
+    constructor(selectedSemesters: number[], selectedGroups: number[], selectedWeeks: number[]) {
+        this.selectedSemesters = selectedSemesters
+        this.selectedGroups = selectedGroups
+        this.selectedWeeks = selectedWeeks
     }
 }
 
