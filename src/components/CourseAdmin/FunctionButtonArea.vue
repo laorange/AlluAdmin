@@ -30,14 +30,13 @@ const clickFunc = {
   },
   toCut() {
     store.courseAdmin.operatingMode = 'Cut'
-    console.log('cut', store.courseAdmin.courseIdSelected)
   },
   toCancelCut() {
     clickFunc.toInitializeOperatingMode()
   },
   toDelete() {
     store.courseAdmin.operatingMode = 'Delete'
-    console.log('delete', store.courseAdmin.courseIdSelected)
+    store.courseAdmin.whetherShowDeletingDialog = true
   },
   toClearSelectedCourse() {
     clickFunc.toInitializeOperatingMode()

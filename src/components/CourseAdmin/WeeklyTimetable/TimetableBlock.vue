@@ -30,10 +30,11 @@ const innerDrawerDataForOneCourse = reactive<{
   course: undefined
 })
 
-function parseGroupIdsOfCourse(course: Course) {
-  let groups = JSON.parse(course?.group_ids ?? '') as number[]
-  return apiToolkit.getNameOfGroups(groups)
-}
+// getGroupNameOfCourse apiToolkit.getGroupNameOfCourse
+// function apiToolkit.getGroupNameOfCourse(course: Course) {
+//   let groups = JSON.parse(course?.group_ids ?? '') as number[]
+//   return apiToolkit.getNameOfGroups(groups)
+// }
 
 const elTreeOptions = computed<ElTreeOption[]>(() => {
   let result: ElTreeOption[] = []
@@ -42,7 +43,7 @@ const elTreeOptions = computed<ElTreeOption[]>(() => {
     let childOptions: ElTreeOption[] = ic.coursePlans.reduce((result: ElTreeOption[], pc: CoursePlanContainer) => {
       return result.concat(pc.courses.reduce((innerR: ElTreeOption[], course: Course) => innerR.concat({
         id: course.course_id,
-        label: [course.method ?? '', parseGroupIdsOfCourse(course)].join(' ')
+        label: [course.method ?? '', apiToolkit.getGroupNameOfCourse(course)].join(' ')
       }), []))
     }, [])
 
@@ -98,6 +99,10 @@ const eventFunc = {
   toCopyHere() {
     eventFunc.toAddHere()
   },
+  toCutHere() {
+    eventFunc.setWhatDayWhichLesson();
+    store.courseAdmin.whetherShowDeletingDialog = true  // 先请用户确定是否要删除原有课程
+  },
 }
 
 // region button
@@ -130,7 +135,7 @@ const canCut = computed<boolean>(() =>
                  @click="eventFunc.toCopyHere">粘贴至此
       </el-button>
       <el-button plain type="warning" :icon="Rank" size="small" v-if="canCut"
-                 @click="">调课至此
+                 @click="eventFunc.toCutHere">调课至此
       </el-button>
 
       <el-tree
@@ -153,7 +158,7 @@ const canCut = computed<boolean>(() =>
       >
         <p v-if="innerDrawerDataForOneCourse.course">{{ `第${apiToolkit.getWeekOfOneCourse(innerDrawerDataForOneCourse.course)}周` }}</p>
         <p v-if="innerDrawerDataForOneCourse.course?.method">授课方式：{{ innerDrawerDataForOneCourse.course?.method }}</p>
-        <p v-if="innerDrawerDataForOneCourse.course?.group_ids">分组: {{ parseGroupIdsOfCourse(innerDrawerDataForOneCourse.course) }}</p>
+        <p v-if="innerDrawerDataForOneCourse.course?.group_ids">分组: {{ apiToolkit.getGroupNameOfCourse(innerDrawerDataForOneCourse.course) }}</p>
         <p v-if="innerDrawerDataForOneCourse.course?.teacher_name">授课教师：{{ innerDrawerDataForOneCourse.course?.teacher_name }}</p>
       </el-drawer>
     </div>

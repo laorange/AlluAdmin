@@ -6,7 +6,7 @@ import WeeklyTimetable from "./WeeklyTimetable/WeeklyTimetable.vue";
 import GroupSelector from "../GroupSelector.vue";
 import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
 import AddingCourseDialog from "./Dialogs/AddingCourseDialog.vue";
-
+import DeletingCourseDialog from "./Dialogs/DeletingCourseDialog.vue";
 
 </script>
 
@@ -32,6 +32,7 @@ import AddingCourseDialog from "./Dialogs/AddingCourseDialog.vue";
   <!-- region Dialogs -->
   <select-plan-dialog></select-plan-dialog>
   <adding-course-dialog></adding-course-dialog>
+  <deleting-course-dialog></deleting-course-dialog>
   <!-- endregion -->
 
   <h1>🚧 施工中...</h1>

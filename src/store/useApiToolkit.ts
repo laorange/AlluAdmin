@@ -171,13 +171,17 @@ export const useApiToolkit = defineStore("apiToolkit", {
             this.teacher.requestData()
         },
 
-        getNameOfGroups(groupIds: number[]) {
+        getNameOfGroups(groupIds: number[]): string {
             return this.group.filter(
                 item => groupIds.indexOf(item.group_id) > -1
             ).reduce((output: string[], currentGroup) => {
                 output.push(currentGroup.name)
                 return output
             }, []).join('&')
+        },
+        getGroupNameOfCourse(course: Course): string {
+            let groups = JSON.parse(course?.group_ids ?? '') as number[]
+            return this.getNameOfGroups(groups)
         },
 
         getWeekOfOneCourse(course: Course): number {

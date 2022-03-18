@@ -5,6 +5,8 @@ import {ref, computed, watch} from "vue";
 import {CoursePlan} from "../../../types/api";
 import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 import {Delete} from "@element-plus/icons-vue";
+import WeekSelectBar from "../WeekSelectBar.vue";
+
 
 const store = useCounterStore();
 const apiToolkit = useApiToolkit();
@@ -14,9 +16,9 @@ const whatDayList = ["星期一", "星期二", "星期三", "星期四", "星期
 const description = computed<string>(() => {
   switch (store.courseAdmin.operatingMode) {
     case "Copy":
-      return "调课清单"
-    case "Cut":
       return "复制清单"
+    case "Cut":
+      return "调课清单"
     default:
       return "排课清单"
   }
@@ -98,7 +100,8 @@ const eventFunc = {
     store.courseAdmin.whetherShowSelectPlanDialog = true
   },
   submit() {
-    console.log("提交了信息", "formInfos", formInfos)
+    alert("提交了信息")
+    console.log("formInfos", formInfos);
     store.courseAdmin.whetherShowAddingDialog = false
     store.courseAdmin.operatingMode = ""
   },
@@ -113,9 +116,13 @@ const eventFunc = {
       direction="rtl"
       :append-to-body="true"
   >
-    <div>{{ whatDayList[store.courseAdmin.whatDay - 1] }}</div>
-    <div>{{ `第${store.courseAdmin.whichLesson * 2 - 1}、${store.courseAdmin.whichLesson * 2}节课` }}</div>
-    <div>{{ store.getWeeksString() }}</div>
+    <div class="PreparingInfoArea">
+      <div>{{ whatDayList[store.courseAdmin.whatDay - 1] }}
+        &nbsp;&nbsp;-&nbsp;&nbsp;
+        {{ `第${store.courseAdmin.whichLesson * 2 - 1}、${store.courseAdmin.whichLesson * 2}节课` }}</div>
+      <div>请选择需要添加到哪些周: {{ store.getWeeksString() }}</div>
+      <week-select-bar></week-select-bar>
+    </div>
 
     <div class="FormSetDiv">
       <div class="FormDiv">
@@ -165,15 +172,20 @@ const eventFunc = {
 .el-drawer__body {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
-.el-drawer__body > div {
+.el-drawer__body > * {
   margin: 5px 0;
   text-align: center;
 }
 
-.FormSetDiv {
+.PreparingInfoArea > *{
+  margin: 5px 0;
+}
+
+.FormSetDiv, .PreparingInfoArea {
   display: flex;
   flex-direction: column;
   align-items: center;

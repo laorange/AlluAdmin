@@ -54,6 +54,7 @@ watch(() => store.courseAdmin.planIdSelected, (newPlanIdSelected) => {
 
 function checkChangeFunc(option: ElTreeOption, selfChecked: boolean) {  // 第三个参数：childChecked: boolean
   // 过滤掉一级节点的点击事件
+  console.log("checkChangeFunc", option, selfChecked)
   if (option.id > 0) {
     // console.log(option, selfChecked ? '选中' : '取消选中')
     if (selfChecked) {
