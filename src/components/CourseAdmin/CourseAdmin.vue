@@ -8,16 +8,28 @@ import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
 import AddingCourseDialog from "./Dialogs/AddingCourseDialog.vue";
 import DeletingCourseDialog from "./Dialogs/DeletingCourseDialog.vue";
 
+import {useCounterStore} from "../../store/counter";
+import {SAME_SITE_AS_DJANGO} from "../../utils/urls";
+
+const store = useCounterStore()
 </script>
 
 <template>
   <div class="CourseAdminVertical">
+    <template v-if="!SAME_SITE_AS_DJANGO">
+      <h1>🙈 预览模式 🙈</h1>
+      <h3>如需更改信息，请前往正式管理页面</h3>
+    </template>
+
     <div class="TopPart">
       <div>
-        <h4>请选择：年级 & 分组 & 周数</h4>
+        <h4>请选择：年级 & 分组</h4>
         <group-selector></group-selector>
       </div>
-      <week-select-bar></week-select-bar>
+      <div>
+        <h4>第?周: {{ store.getWeeksString() }}</h4>
+        <week-select-bar></week-select-bar>
+      </div>
     </div>
 
     <div class="CourseAdminHorizontal">
@@ -34,8 +46,6 @@ import DeletingCourseDialog from "./Dialogs/DeletingCourseDialog.vue";
   <adding-course-dialog></adding-course-dialog>
   <deleting-course-dialog></deleting-course-dialog>
   <!-- endregion -->
-
-  <h1>🚧 施工中...</h1>
 </template>
 
 <style scoped>
