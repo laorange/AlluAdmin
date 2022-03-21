@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
-import {ElTreeOption} from "../../../types/courseAdmin";
-import {computed, reactive, ref, watch} from "vue";
-import {Course, WhatDay, WhichLesson} from "../../../types/api";
-import {CourseInfoContainer, CoursePlanContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
+import {computed} from "vue";
+import CourseCard from "../../CourseCard.vue";
 
-import {Plus, DocumentCopy, Rank} from "@element-plus/icons-vue";
+import {WhatDay, WhichLesson} from "../../../types/api";
+import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
+
+import {Plus, DocumentCopy, Rank, Finished, Switch} from "@element-plus/icons-vue";
+
+const apiToolkit = useApiToolkit()
+const store = useCounterStore()
 
 const timetableHeight = '180px'
 
@@ -14,80 +18,18 @@ const props = defineProps<{ whatDay: number, whichLesson: number }>()
 const filteredInfoContainers = computed<CourseInfoContainer[]>(() =>
     apiToolkit.filter__infosByWeek_WhatDay_WhichLesson(props.whatDay, props.whichLesson))
 
-const elTreeOptionIndicator = {
-  label: 'label',
-  children: 'children',
-}
-
-const apiToolkit = useApiToolkit()
-const store = useCounterStore()
-
-const innerDrawerDataForOneCourse = reactive<{
-  whetherShow: boolean,
-  course: Course | undefined
-}>({
-  whetherShow: false,
-  course: undefined
-})
-
-// getGroupNameOfCourse apiToolkit.getGroupNameOfCourse
-// function apiToolkit.getGroupNameOfCourse(course: Course) {
-//   let groups = JSON.parse(course?.group_ids ?? '') as number[]
-//   return apiToolkit.getNameOfGroups(groups)
-// }
-
-const elTreeOptions = computed<ElTreeOption[]>(() => {
-  let result: ElTreeOption[] = []
-
+const filteredCourseIds = computed<number[]>(() => {
+  let filteredCourseIds: number[] = []
   for (const ic of filteredInfoContainers.value) {
-    let childOptions: ElTreeOption[] = ic.coursePlans.reduce((result: ElTreeOption[], pc: CoursePlanContainer) => {
-      return result.concat(pc.courses.reduce((innerR: ElTreeOption[], course: Course) => innerR.concat({
-        id: course.course_id,
-        label: [course.method ?? '', apiToolkit.getGroupNameOfCourse(course)].join(' ')
-      }), []))
-    }, [])
-
-    let parentOption: ElTreeOption = {
-      id: -ic.courseInfo.info_id,
-      label: ic.courseInfo.ch_name,
-      children: childOptions
+    for (const pc of ic.coursePlans) {
+      filteredCourseIds = filteredCourseIds.concat(pc.courses.map(course => course.course_id))
     }
-
-    result.push(parentOption)
   }
-  return result
+  return filteredCourseIds
 })
-
-const $Tree$TimeTableBlock$CourseAdmin = ref()
-
-watch(() => store.courseAdmin.courseIdSelected, (newCourseIdSelected: number[]) => {
-  if (elTreeOptions.value.length > 0) {
-    $Tree$TimeTableBlock$CourseAdmin.value?.setCheckedNodes([])
-    newCourseIdSelected.reduce(
-        (_, courseId) => $Tree$TimeTableBlock$CourseAdmin.value?.setChecked(courseId, true, true),
-        undefined)
-  }
-}, {deep: true})
 
 
 const eventFunc = {
-  nodeClickFunc(elTreeOption: ElTreeOption) { // 另外俩参数：, treeNodeProps: unknown, event: Event
-    if (elTreeOption.id > 0) {
-      innerDrawerDataForOneCourse.whetherShow = true
-      innerDrawerDataForOneCourse.course = apiToolkit.course.filter(course => course.course_id === elTreeOption.id)[0]
-    }
-  },
-  checkChangeFunc(option: ElTreeOption, selfChecked: boolean) {  // 第三个参数：childChecked: boolean
-    // 过滤掉一级节点的点击事件
-    if (option.id > 0) {
-      // console.log(option, selfChecked ? '选中' : '取消选中')
-      if (selfChecked) {
-        store.courseAdmin.courseIdSelected.push(option.id)
-      } else {
-        store.courseAdmin.courseIdSelected = store.courseAdmin.courseIdSelected.filter(courseId => courseId !== option.id)
-      }
-    }
-  },
   setWhatDayWhichLesson() {
     store.courseAdmin.whatDay = props.whatDay as WhatDay
     store.courseAdmin.whichLesson = props.whichLesson as WhichLesson
@@ -103,31 +45,59 @@ const eventFunc = {
     eventFunc.setWhatDayWhichLesson();
     store.courseAdmin.whetherShowDeletingDialog = true  // 先请用户确定是否要删除原有课程
   },
+  toSelectAll() {
+    for (const courseButtonInfo of store.courseAdmin.courseButtonInfos) {
+      if (filteredCourseIds.value.indexOf(courseButtonInfo.course.course_id) > -1) {
+        courseButtonInfo.check = true
+      }
+    }
+  },
+  toMakeSelectionsOpposite() {
+    for (const courseButtonInfo of store.courseAdmin.courseButtonInfos) {
+      if (filteredCourseIds.value.indexOf(courseButtonInfo.course.course_id) > -1) {
+        courseButtonInfo.check = !courseButtonInfo.check
+      }
+    }
+  },
 }
 
 // region button
 const canAdd = computed<boolean>(() =>
     store.courseAdmin.operatingMode === '' &&
-    store.courseAdmin.courseIdSelected.length === 0 &&
+    store.selectedCourses.length === 0 &&
     store.courseAdmin.rawSelectedPlans.length > 0
 )
 
 const canCopy = computed<boolean>(() =>
     store.courseAdmin.operatingMode === 'Copy' &&
-    store.courseAdmin.courseIdSelected.length > 0
+    store.selectedCourses.length > 0
 )
 
 const canCut = computed<boolean>(() =>
     store.courseAdmin.operatingMode === 'Cut' &&
-    store.courseAdmin.courseIdSelected.length > 0
+    store.selectedCourses.length > 0
 )
+
 // endregion
 
+
+const placementName = computed(() => {
+  return props.whatDay <= 4 ? "right" : "left"
+})
 </script>
 
 <template>
   <el-scrollbar :height="timetableHeight">
     <div class="TimetableBlock">
+      <div class="TwoButtonsArea">
+        <el-button plain type="default" :icon="Finished" size="small" v-if="filteredCourseIds.length >= 2"
+                   @click="eventFunc.toSelectAll">全选
+        </el-button>
+        <el-button plain type="default" :icon="Switch" size="small" v-if="filteredCourseIds.length >= 2"
+                   @click="eventFunc.toMakeSelectionsOpposite">反选
+        </el-button>
+      </div>
+
       <el-button plain type="primary" :icon="Plus" size="small" v-if="canAdd"
                  @click="eventFunc.toAddHere">在此排课
       </el-button>
@@ -138,34 +108,37 @@ const canCut = computed<boolean>(() =>
                  @click="eventFunc.toCutHere">调课至此
       </el-button>
 
-      <el-tree
-          :data="elTreeOptions"
-          show-checkbox
-          node-key="id"
-          :props="elTreeOptionIndicator"
-          ref="$Tree$TimeTableBlock$CourseAdmin"
-          empty-text=""
-          @check-change="eventFunc.checkChangeFunc"
-          @node-click="eventFunc.nodeClickFunc"
-          :render-after-expand="false"
-      />
-
-      <el-drawer
-          v-model="innerDrawerDataForOneCourse.whetherShow"
-          :title="innerDrawerDataForOneCourse.course?.ch_name??'课程'"
-          size="30%"
-          :append-to-body="true"
-      >
-        <p v-if="innerDrawerDataForOneCourse.course">{{ `第${apiToolkit.getWeekOfOneCourse(innerDrawerDataForOneCourse.course)}周` }}</p>
-        <p v-if="innerDrawerDataForOneCourse.course?.method">授课方式：{{ innerDrawerDataForOneCourse.course?.method }}</p>
-        <p v-if="innerDrawerDataForOneCourse.course?.group_ids">分组: {{ apiToolkit.getGroupNameOfCourse(innerDrawerDataForOneCourse.course) }}</p>
-        <p v-if="innerDrawerDataForOneCourse.course?.teacher_name">授课教师：{{ innerDrawerDataForOneCourse.course?.teacher_name }}</p>
-      </el-drawer>
+      <template v-for="courseButtonInfo in store.courseAdmin.courseButtonInfos">
+        <div v-if="filteredCourseIds.indexOf(courseButtonInfo.course.course_id) > -1">
+          <el-tooltip
+              class="box-item"
+              effect="light"
+              :placement="placementName"
+          >
+            <template #content>
+              <course-card :course="courseButtonInfo.course"></course-card>
+            </template>
+            <div>
+              <el-checkbox
+                  v-model="courseButtonInfo.check" :label="courseButtonInfo.course.ch_name" size="small"></el-checkbox>
+            </div>
+          </el-tooltip>
+        </div>
+      </template>
     </div>
   </el-scrollbar>
 </template>
 
 <style scoped>
+.TwoButtonsArea {
+  display: flex;
+  width: 100%;
+}
+
+.TwoButtonsArea > * {
+  flex: 1;
+}
+
 .TimetableBlock {
   display: flex;
   flex-direction: column;

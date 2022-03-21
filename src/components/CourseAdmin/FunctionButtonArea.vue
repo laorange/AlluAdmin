@@ -9,11 +9,11 @@ const store = useCounterStore();
 const apiToolkit = useApiToolkit()
 
 const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.rawSelectedPlans.length)
-const AmountOfSelectedCourse = computed<number>(() => store.courseAdmin.courseIdSelected.length)
+const AmountOfselectedCourses = computed<number>(() => store.selectedCourses.length)
 
-const whetherShowAddPlanButton = computed<boolean>(() => AmountOfSelectedCourse.value == 0)
-const whetherShowEditCourseButton = computed<boolean>(() => AmountOfSelectedCourse.value == 1)
-const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfSelectedCourse.value >= 1)
+const whetherShowAddPlanButton = computed<boolean>(() => AmountOfselectedCourses.value == 0)
+const whetherShowEditCourseButton = computed<boolean>(() => AmountOfselectedCourses.value == 1)
+const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfselectedCourses.value >= 1)
 
 const clickFunc = {
   toSelectPlan() {
@@ -23,7 +23,7 @@ const clickFunc = {
     store.courseAdmin.whetherShowSelectPlanDialog = true;
   },
   toEdit() {
-    window.open(urls.admin.changeCourse(store.courseAdmin.courseIdSelected[0]));
+    window.open(urls.admin.changeCourse(store.selectedCourses[0].course_id));
   },
   toCopy() {
     store.courseAdmin.operatingMode = 'Copy'
@@ -41,9 +41,11 @@ const clickFunc = {
     store.courseAdmin.operatingMode = 'Delete'
     store.courseAdmin.whetherShowDeletingDialog = true
   },
-  toClearSelectedCourse() {
+  toClearselectedCourses() {
     clickFunc.toInitializeOperatingMode()
-    store.courseAdmin.courseIdSelected = []
+    for (const cbi of store.courseAdmin.courseButtonInfos) {
+      if (cbi.check) cbi.check = false
+    }
   },
   toClearSelectedPlan() {
     store.courseAdmin.rawSelectedPlans = []
@@ -74,8 +76,8 @@ const clickFunc = {
       <el-button plain type="warning" :icon="Rank" @click="clickFunc.toCut()" v-if="store.courseAdmin.operatingMode!=='Cut'">调课</el-button>
       <el-button plain type="primary" :icon="Rank" @click="clickFunc.toCancelCut" v-else>取消调课</el-button>
 
-      <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfSelectedCourse }}节课程</el-button>
-      <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourse()">清空选项</el-button>
+      <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfselectedCourses }}节课程</el-button>
+      <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearselectedCourses()">清空选项</el-button>
     </template>
   </div>
 </template>

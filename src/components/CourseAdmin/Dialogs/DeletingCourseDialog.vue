@@ -20,14 +20,16 @@ const description = computed<string>(() => {
   }
 })
 
-const courseOperating = computed<Course[]>(() => {
-  return apiToolkit.course.filter(course => store.courseAdmin.courseIdSelected.indexOf(course.course_id) > -1)
-})
+const courseOperating = computed<Course[]>(() => store.selectedCourses)
 
 const eventFunc = {
   letOneCourseSelectedSurvive(courseId: number) {
-    store.courseAdmin.courseIdSelected = store.courseAdmin.courseIdSelected.filter(courseIdSelected => courseId !== courseIdSelected)
-    if (store.courseAdmin.courseIdSelected.length === 0) {
+    for (const cbi of store.courseAdmin.courseButtonInfos) {
+      if (cbi.course.course_id === courseId) {
+        cbi.check = false
+      }
+    }
+    if (store.selectedCourses.length === 0) {
       store.courseAdmin.whetherShowDeletingDialog = false
       store.courseAdmin.operatingMode = ""
     }
@@ -38,7 +40,7 @@ const eventFunc = {
   submit() {
     console.log("提交了信息", "formInfos")
     if (store.courseAdmin.operatingMode === "Cut") {
-      store.courseAdmin.whetherShowAddingDialog = false;
+      store.courseAdmin.whetherShowDeletingDialog = false;
       store.courseAdmin.whetherShowAddingDialog = true;
     } else {
       store.courseAdmin.whetherShowAddingDialog = false;

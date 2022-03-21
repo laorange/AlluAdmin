@@ -1,10 +1,11 @@
 import {defineStore} from "pinia";
 import axios from "axios";
-import {CourseInfo, WhatDay, WhichLesson} from "../types/api";
+import {Course, CourseInfo, WhatDay, WhichLesson} from "../types/api";
 import {CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
 import getWeeksString from "../utils/getWeeksString";
 import {useApiToolkit} from "./counter";
 import {ElOption} from "../types/options";
+import {courseButtonInfos} from "../types/courseAdmin";
 
 type CounterStoreState = {
     isLoading: boolean,
@@ -13,7 +14,9 @@ type CounterStoreState = {
     courseAdmin: {
         planOptions: ElOption[],
         rawSelectedPlans: [number, number][],
-        courseIdSelected: number[],
+        courseButtonInfos: courseButtonInfos[],
+
+        // courseIdSelected: number[],
         operatingMode: 'Delete' | 'Cut' | 'Copy' | '',
         whetherShowDeletingDialog: boolean,
         whetherShowAddingDialog: boolean,
@@ -49,7 +52,9 @@ export const useCounterStore = defineStore("counter", {
             courseAdmin: {
                 planOptions: [],
                 rawSelectedPlans: [],
-                courseIdSelected: [],
+                courseButtonInfos: [],
+
+                // courseIdSelected: [],
                 operatingMode: '',
                 whetherShowDeletingDialog: false,
                 whetherShowAddingDialog: false,
@@ -79,7 +84,7 @@ export const useCounterStore = defineStore("counter", {
 
     getters: {
         selectedWeeks(): number[] {
-            this.rawSelectedWeeks.sort((a,b)=>a[1]-b[1])
+            this.rawSelectedWeeks.sort((a, b) => a[1] - b[1])
             return this.rawSelectedWeeks.map(rw => rw[1])
         },
         weeksString(): string {
@@ -93,6 +98,14 @@ export const useCounterStore = defineStore("counter", {
         },
         selectedPlans(): number[] {
             return Array.from(new Set(this.courseAdmin.rawSelectedPlans.map(rp => rp[1])));
+        },
+        // courseIdSelected
+        selectedCourses(): Course[] {
+            let selectedCourses: Course[] = []
+            for (const cbi of this.courseAdmin.courseButtonInfos) {
+                if (cbi.check) selectedCourses.push(cbi.course)
+            }
+            return selectedCourses
         },
     },
 

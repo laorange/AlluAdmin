@@ -1,5 +1,19 @@
 <script setup lang="ts">
 import TimetableBlock from "./TimetableBlock.vue";
+import {watch} from "vue";
+import {useApiToolkit, useCounterStore} from "../../../store/counter";
+
+const apiToolkit = useApiToolkit()
+const store = useCounterStore()
+
+watch(() => apiToolkit.course.data, () => {
+  store.courseAdmin.courseButtonInfos = apiToolkit.course.data.map(course => {
+    return {
+      course: course,
+      check: false
+    }
+  })
+})
 
 </script>
 

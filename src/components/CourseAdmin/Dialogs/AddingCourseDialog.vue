@@ -30,7 +30,7 @@ const planIdOperating = computed<number[]>(() => {
     return store.selectedPlans
   } else {
     //  其他情况：Mode为“Copy“或”Cut”，是按选择的课程对应的教学计划添加
-    return store.courseAdmin.courseIdSelected.map((courseId) => apiToolkit.course.filter(course => course.course_id === courseId)[0]?.plan)
+    return store.selectedCourses.map((course) => course.plan)
   }
 })
 
@@ -165,7 +165,7 @@ const eventFunc = {
       <template #footer>
         <el-button @click="eventFunc.submit" :disabled="!whetherCanSubmit" type="success">确认添加</el-button>
         <el-button @click="eventFunc.clickCancelButton" type="default">取消</el-button>
-        <el-button @click="eventFunc.clickReselectPlanButton" type="primary">重新选择教学计划</el-button>
+        <el-button @click="eventFunc.clickReselectPlanButton" type="primary" v-if="store.courseAdmin.operatingMode!=='Cut'">重新选择教学计划</el-button>
       </template>
     </ElDrawer>
   </div>
@@ -184,7 +184,7 @@ const eventFunc = {
   text-align: center;
 }
 
-.PreparingInfoArea > *{
+.PreparingInfoArea > * {
   margin: 5px 0;
 }
 
