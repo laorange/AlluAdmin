@@ -58,7 +58,7 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
   flex-wrap: wrap;
   justify-content: center;
   color: black;
-  font-size: 1px;
+  font-size: xx-small;
 }
 
 .TimeBlockHead, .TimeBlockItem {
