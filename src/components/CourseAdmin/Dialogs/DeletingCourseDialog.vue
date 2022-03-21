@@ -5,6 +5,8 @@ import {Course} from "../../../types/api";
 import {Delete} from "@element-plus/icons-vue";
 import {getIsoWeekDay} from "../../../utils/dateUtils";
 import dayjs from "dayjs";
+import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
+import {axiosDeleteCourse} from "../../../utils/axiosEditCourseMethods";
 
 const store = useCounterStore();
 const apiToolkit = useApiToolkit();
@@ -44,7 +46,13 @@ const eventFunc = {
       store.courseAdmin.whetherShowAddingDialog = true;
     } else {
       store.courseAdmin.whetherShowAddingDialog = false;
-      alert("提交删除请求")
+      if (SAME_SITE_AS_DJANGO) {
+        for (const course of courseOperating.value) {
+          axiosDeleteCourse(course.course_id, () => location.reload())
+        }
+      } else {
+        alert("提交删除请求")
+      }
     }
   },
 }

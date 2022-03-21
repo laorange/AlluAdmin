@@ -1,9 +1,10 @@
 import {methodChoice} from "../types/api";
 
-export let SAME_SITE_AS_DJANGO = false;
+export let SAME_SITE_AS_DJANGO = true;
 
 function decorateUrl(relativeUrl: string): string {
     if (SAME_SITE_AS_DJANGO) {
+        // return relativeUrl
         return relativeUrl
     } else {
         return "https://siae.top" + relativeUrl
@@ -22,6 +23,9 @@ const urls = {
         notice: decorateUrl("/course/api/Notice/"),
         semesterConfig: decorateUrl("/course/api/SemesterConfig/"),
         teacher: decorateUrl("/course/api/Teacher/"),
+
+        courseForPostAdd: decorateUrl(`/course/api/CourseForPost/`),
+        courseForPostDelete: (courseId: number): string => decorateUrl(`/course/api/CourseForPost/${courseId}/`)
     },
     docs: "https://laorange.gitee.io/alludocs/",
     admin: {

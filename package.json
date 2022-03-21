@@ -1,9 +1,10 @@
 {
   "name": "allu-admin",
-  "version": "0.0.40",
+  "version": "0.0.43",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build --base=./",
+    "build-django": "vue-tsc --noEmit && vite build --base=/static/vue/alluAdmin/",
     "preview": "vite preview"
   },
   "dependencies": {

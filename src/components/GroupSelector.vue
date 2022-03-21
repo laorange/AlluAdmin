@@ -41,7 +41,7 @@ const groupOptions = computed<ElOption[]>(() => {
 // region 监视：如果选择新的年级，同步变化到groupSelected和route.query
 watch(() => store.rawSelectedGroups, (newGroupSelected) => {
   groupSelecting.value = true
-  let groupIds: number[] = newGroupSelected.map(gs=>gs[1])
+  let groupIds: number[] = newGroupSelected.map(gs => gs[1])
 
   // route.query
   router.replace({

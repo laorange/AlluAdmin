@@ -13,7 +13,7 @@ watch(() => apiToolkit.course.data, () => {
       check: false
     }
   })
-})
+}, {deep:true, immediate: true})
 
 </script>
 

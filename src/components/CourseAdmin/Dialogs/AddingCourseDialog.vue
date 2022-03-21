@@ -6,7 +6,15 @@ import {CoursePlan} from "../../../types/api";
 import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 import {Delete} from "@element-plus/icons-vue";
 import WeekSelectBar from "../WeekSelectBar.vue";
+import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
+import {axiosAddCourse} from "../../../utils/axiosEditCourseMethods";
+import dayjs from "dayjs";
 
+const dates = computed<dayjs.Dayjs[]>(() => {
+  return store.selectedWeeks.map(week => {
+    return apiToolkit.week1Monday.add(week - 1, 'week').add(store.courseAdmin.whatDay - 1, 'day')
+  })
+})
 
 const store = useCounterStore();
 const apiToolkit = useApiToolkit();
@@ -100,8 +108,24 @@ const eventFunc = {
     store.courseAdmin.whetherShowSelectPlanDialog = true
   },
   submit() {
-    alert("提交了信息")
-    console.log("formInfos", formInfos);
+    if (SAME_SITE_AS_DJANGO) {
+      for (const date of dates.value) {
+        for (const formInfo of formInfos.value) {
+          if (formInfo.classroomId) {
+            axiosAddCourse({
+              plan: formInfo.plan.plan_id,
+              room: formInfo.classroomId,
+              date,
+              which_lesson: store.courseAdmin.whichLesson,
+              note: formInfo.note,
+            }, () => location.reload())
+          }
+        }
+      }
+    } else {
+      alert("提交了信息");
+    }
+    console.log("formInfos", formInfos.value);
     store.courseAdmin.whetherShowAddingDialog = false
     store.courseAdmin.operatingMode = ""
   },
@@ -113,7 +137,7 @@ const eventFunc = {
     <ElDrawer
         v-model="store.courseAdmin.whetherShowAddingDialog"
         :title="description"
-        size="75%"
+        size="90%"
         direction="rtl"
         :append-to-body="true"
     >

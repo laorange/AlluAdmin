@@ -26,7 +26,8 @@ function filterCourse(whatDay: WhatDay | number, whichLesson: WhichLesson | numb
 
 <template>
   <el-drawer v-model="store.coursePlanAdmin.clickWeeklyHoursDialog.whetherShow"
-             :title="`第 ${store.coursePlanAdmin.clickWeeklyHoursDialog.week} 周`" :fullscreen="false" size="50%">
+             :title="`第 ${store.coursePlanAdmin.clickWeeklyHoursDialog.week} 周`"
+             :fullscreen="false" size="750px">
 
     <div class="dialogBody">
       <div class="TimeBlock">
