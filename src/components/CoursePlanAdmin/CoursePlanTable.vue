@@ -3,6 +3,7 @@ import {computed} from "vue";
 import {useApiToolkit, useCounterStore} from "../../store/counter";
 import {CourseInfo} from "../../types/api";
 import {CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
+import {SAME_SITE_AS_DJANGO} from "../../utils/urls";
 
 const store = useCounterStore()
 const apiToolkit = useApiToolkit()
@@ -11,14 +12,18 @@ const maxWeek = computed<number>(() => apiToolkit.maxWeek)
 
 // 点击CourseInfo后的对话框
 const openClickCourseInfoDialog = (inputtedInfo: CourseInfo) => {
-  store.coursePlanAdmin.clickCourseInfoDialog.courseInfo = inputtedInfo;
-  store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = true
+  if (SAME_SITE_AS_DJANGO) {
+    store.coursePlanAdmin.clickCourseInfoDialog.courseInfo = inputtedInfo;
+    store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = true
+  }
 }
 
 const openClickCoursePlanDialog = (inputtedInfo: CourseInfo, inputtedPlan: CoursePlanContainer) => {
-  store.coursePlanAdmin.clickCoursePlanDialog.courseInfo = inputtedInfo;
-  store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer = inputtedPlan;
-  store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = true
+  if (SAME_SITE_AS_DJANGO) {
+    store.coursePlanAdmin.clickCoursePlanDialog.courseInfo = inputtedInfo;
+    store.coursePlanAdmin.clickCoursePlanDialog.coursePlanContainer = inputtedPlan;
+    store.coursePlanAdmin.clickCoursePlanDialog.whetherShow = true
+  }
 }
 
 const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedWeek: number, weeklyHour: number) => {
