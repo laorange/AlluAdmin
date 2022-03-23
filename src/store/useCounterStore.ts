@@ -15,13 +15,14 @@ type CounterStoreState = {
         warning: string,
         error: string,
     },
+
     rawSelectedGroups: [number, number][],
-    rawSelectedWeeks: [number, number][],
+    selectedWeeks: number[],
+    // rawSelectedWeeks: [number, number][],
     courseAdmin: {
         planOptions: ElOption[],
         rawSelectedPlans: [number, number][],
         courseButtonInfos: courseButtonInfos[],
-
         // courseIdSelected: number[],
         operatingMode: 'Delete' | 'Cut' | 'Copy' | '',
         whetherShowDeletingDialog: boolean,
@@ -60,7 +61,8 @@ export const useCounterStore = defineStore("counter", {
                 error: "",
             },
             rawSelectedGroups: [],
-            rawSelectedWeeks: [],
+            selectedWeeks: [],
+            // rawSelectedWeeks: [],
             courseAdmin: {
                 planOptions: [],
                 rawSelectedPlans: [],
@@ -95,10 +97,10 @@ export const useCounterStore = defineStore("counter", {
     },
 
     getters: {
-        selectedWeeks(): number[] {
-            this.rawSelectedWeeks.sort((a, b) => a[1] - b[1])
-            return this.rawSelectedWeeks.map(rw => rw[1])
-        },
+        // selectedWeeks(): number[] {
+        //     this.rawSelectedWeeks.sort((a, b) => a[1] - b[1])
+        //     return this.rawSelectedWeeks.map(rw => rw[1])
+        // },
         weeksString(): string {
             return getWeeksString(this.selectedWeeks)
         },

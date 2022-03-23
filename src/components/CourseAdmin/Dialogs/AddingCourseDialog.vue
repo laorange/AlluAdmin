@@ -5,7 +5,7 @@ import {ref, computed, watch} from "vue";
 import {CoursePlan} from "../../../types/api";
 import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 import {Delete} from "@element-plus/icons-vue";
-import WeekSelectBar from "../WeekSelectBar.vue";
+import LazyWeekSelectBar from "../LazyWeekSelectBar.vue";
 import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
 import {axiosAddCourse} from "../../../utils/axiosEditCourseMethods";
 import dayjs from "dayjs";
@@ -149,8 +149,9 @@ const eventFunc = {
           &nbsp;&nbsp;&nbsp;&nbsp;
           {{ `第${store.courseAdmin.whichLesson * 2 - 1}、${store.courseAdmin.whichLesson * 2}节课` }}
         </div>
-        <div>请选择需要添加到哪些周: {{ store.getWeeksString() }}</div>
-        <week-select-bar></week-select-bar>
+        <div>请选择需要添加到哪些周:</div>
+        <div style="color: purple;font-size: large">{{ store.getWeeksString() }}</div>
+        <lazy-week-select-bar></lazy-week-select-bar>
       </div>
 
       <div class="FormSetDiv">

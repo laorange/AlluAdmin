@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WeekSelectBar from "./WeekSelectBar.vue";
+import LazyWeekSelectBar from "./LazyWeekSelectBar.vue";
 import FunctionButtonArea from "./FunctionButtonArea.vue";
 import WeeklyTimetable from "./WeeklyTimetable/WeeklyTimetable.vue";
 
@@ -27,8 +27,8 @@ const store = useCounterStore()
         <group-selector></group-selector>
       </div>
       <div>
-        <h4>第?周: {{ store.getWeeksString() }}</h4>
-        <week-select-bar></week-select-bar>
+        <div class="WeeksString">{{ store.getWeeksString() }}</div>
+        <lazy-week-select-bar></lazy-week-select-bar>
       </div>
     </div>
 
@@ -88,5 +88,14 @@ const store = useCounterStore()
   height: 30px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+}
+
+.WeeksString {
+  color: purple;
+  margin: 20px 0;
+  font-size: x-large;
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

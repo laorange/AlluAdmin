@@ -49,7 +49,7 @@ function useRouterQueryReader() {
     //   duration: 1500,
     // })
   }
-  store.rawSelectedWeeks = parsedWeeks.map(week => [Math.floor((week - 1) / 5) + 1, week]);
+  store.selectedWeeks = parsedWeeks;
   // endregion
 }
 

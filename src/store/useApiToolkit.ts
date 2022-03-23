@@ -59,7 +59,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
             return dayjs(this.semesterConfig.first()?.week1_monday_date)
         },
 
-        weekNow(): number{
+        weekNow(): number {
             return getWeeksBetweenTwoDayFrom0(dayjs(), this.week1Monday) + 1
         },
 
