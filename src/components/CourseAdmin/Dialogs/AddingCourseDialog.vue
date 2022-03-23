@@ -118,12 +118,15 @@ const eventFunc = {
               date,
               which_lesson: store.courseAdmin.whichLesson,
               note: formInfo.note,
-            }, () => location.reload())
+            }, () => undefined)
           }
         }
+        store.isLoading = true
+        store.alertInfo.success = "提交成功，页面将于3秒后自动刷新";
+        setTimeout(() => location.reload(), 3000)
       }
     } else {
-      alert("提交了信息");
+      store.alertInfo.success = "提交成功(预览模式不会产生实际效果)";
     }
     console.log("formInfos", formInfos.value);
     store.courseAdmin.whetherShowAddingDialog = false

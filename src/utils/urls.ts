@@ -5,7 +5,7 @@ export let SAME_SITE_AS_DJANGO = true;
 function decorateUrl(relativeUrl: string): string {
     if (SAME_SITE_AS_DJANGO) {
         // return relativeUrl
-        return relativeUrl
+        return "https://siae.top" + relativeUrl
     } else {
         return "https://siae.top" + relativeUrl
     }

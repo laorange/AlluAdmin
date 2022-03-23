@@ -9,6 +9,12 @@ import {courseButtonInfos} from "../types/courseAdmin";
 
 type CounterStoreState = {
     isLoading: boolean,
+    alertInfo: {
+        success: string,
+        info: string,
+        warning: string,
+        error: string,
+    },
     rawSelectedGroups: [number, number][],
     rawSelectedWeeks: [number, number][],
     courseAdmin: {
@@ -47,6 +53,12 @@ export const useCounterStore = defineStore("counter", {
     state: (): CounterStoreState => {
         return {
             isLoading: false,
+            alertInfo: {
+                success: "",
+                info: "",
+                warning: "",
+                error: "",
+            },
             rawSelectedGroups: [],
             rawSelectedWeeks: [],
             courseAdmin: {

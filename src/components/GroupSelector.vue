@@ -5,6 +5,8 @@ import {getSemesterOptionsByPeriod} from "../utils/getSemesterOptionsByPeriod";
 import {useRoute, useRouter} from "vue-router";
 import {ElOption} from "../types/options";
 
+// import {Finished, Switch} from "@element-plus/icons-vue";
+
 const multiple = {multiple: true}
 
 const apiToolkit = useApiToolkit()

@@ -3,6 +3,9 @@ import urls from "../utils/urls";
 
 import {useRoute, useRouter} from "vue-router";
 
+import PageTopAlerts from "./PageTopAlerts.vue";
+
+
 const route = useRoute()
 const router = useRouter()
 
@@ -37,6 +40,8 @@ const selectHandler = (key: string, keyPath?: string[]) => {
     <el-menu-item index="OtherAdmin">其他操作</el-menu-item>
     <el-menu-item index="docs">帮助文档</el-menu-item>
   </el-menu>
+
+  <page-top-alerts></page-top-alerts>
 </template>
 
 <style scoped>

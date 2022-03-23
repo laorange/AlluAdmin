@@ -48,10 +48,13 @@ const eventFunc = {
       store.courseAdmin.whetherShowAddingDialog = false;
       if (SAME_SITE_AS_DJANGO) {
         for (const course of courseOperating.value) {
-          axiosDeleteCourse(course.course_id, () => location.reload())
+          axiosDeleteCourse(course.course_id, () => undefined)
         }
+        store.isLoading = true
+        store.alertInfo.success = "提交成功，页面将于3秒后自动刷新";
+        setTimeout(() => location.reload(), 3000)
       } else {
-        alert("提交删除请求")
+        store.alertInfo.success = "提交成功(预览模式不会产生实际效果)";
       }
     }
   },
