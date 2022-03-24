@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useApiToolkit, useCounterStore} from "../../store/counter";
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 // import {ElMessage} from "element-plus/es";  // build时会出问题
@@ -14,11 +14,14 @@ const router = useRouter()
 
 const weeks = ref<number[]>([])
 const localSelectedWeeks = ref<number[]>([])
+
+// 根据 apiToolkit.maxWeek 生成 localSelectedWeeks
 watch(() => apiToolkit.maxWeek, () => {
   weeks.value = (new Array(apiToolkit.maxWeek)).fill(1).reduce((r: number[], i) => r.concat([i + (r[r.length - 1] ?? 0)]), [])
 }, {immediate: true})
 
 
+// 监测 store.selectedWeeks，若有变化，同步到 weekOptions 和 route.query
 watch(() => store.selectedWeeks, (newSelectedWeeks) => {
   newSelectedWeeks = Array.from(new Set(newSelectedWeeks))
   newSelectedWeeks.sort((a: number, b: number) => a - b)
@@ -47,6 +50,12 @@ watch(() => store.selectedWeeks, (newSelectedWeeks) => {
     }
   }
 }, {deep: true})
+
+
+const whetherLocalIsSameAsStore = computed<boolean>(() =>
+    store.selectedWeeks.length === localSelectedWeeks.value.length &&
+    store.selectedWeeks.filter(week => localSelectedWeeks.value.indexOf(week) > -1).length === store.selectedWeeks.length)
+
 
 const eventFunc = {
   toSelectAll() {
@@ -124,10 +133,14 @@ onMounted(() => localSelectedWeeks.value = store.selectedWeeks)
     </div>
 
     <el-button-group>
-      <el-button plain type="default" :icon="Select" size="small"
+      <el-button :type="whetherLocalIsSameAsStore?'default':'success'"
+                 :disabled="whetherLocalIsSameAsStore"
+                 :icon="Select" size="small" plain
                  @click="eventFunc.submit()">更新
       </el-button>
-      <el-button plain type="default" :icon="RefreshLeft" size="small"
+      <el-button :type="whetherLocalIsSameAsStore?'default':'warning'"
+                 :icon="RefreshLeft" size="small" plain
+                 :disabled="whetherLocalIsSameAsStore"
                  @click="eventFunc.refresh()">恢复
       </el-button>
     </el-button-group>
