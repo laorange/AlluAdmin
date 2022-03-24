@@ -1,6 +1,6 @@
 import {methodChoice} from "../types/api";
 
-export let SAME_SITE_AS_DJANGO = true;
+export let SAME_SITE_AS_DJANGO = false;
 
 function decorateUrl(relativeUrl: string): string {
     if (SAME_SITE_AS_DJANGO) {

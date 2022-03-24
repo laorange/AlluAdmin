@@ -3,10 +3,11 @@ import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import {computed} from "vue";
 import CourseCard from "../../CourseCard.vue";
 
-import {WhatDay, WhichLesson} from "../../../types/api";
+import {CoursePlan, WhatDay, WhichLesson} from "../../../types/api";
 import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 
 import {Plus, DocumentCopy, Rank, Finished, Switch} from "@element-plus/icons-vue";
+import {getFormalWhatDayString, getFormalWhichLessonString, whetherTwoArraysHaveSameElement} from "../../../utils/commonUtils";
 
 const apiToolkit = useApiToolkit()
 const store = useCounterStore()
@@ -15,8 +16,13 @@ const timetableHeight = '180px'
 
 const props = defineProps<{ whatDay: number, whichLesson: number }>()
 
+// 对Group、Week、WhatDay和WhichLesson进行过滤
 const filteredInfoContainers = computed<CourseInfoContainer[]>(() =>
-    apiToolkit.filter__infosByWeek_WhatDay_WhichLesson(props.whatDay, props.whichLesson))
+    apiToolkit.filter__infosByWhatDayAndWhichLesson(props.whatDay, props.whichLesson))
+
+// 只对Week、WhatDay和WhichLesson进行过滤
+const allGroupFilteredInfoContainers = computed<CourseInfoContainer[]>(() =>
+    apiToolkit.filter__infosByWhatDayAndWhichLesson(props.whatDay, props.whichLesson, apiToolkit.filter_infosByWeek))
 
 const filteredCourseIds = computed<number[]>(() => {
   let filteredCourseIds: number[] = []
@@ -61,21 +67,54 @@ const eventFunc = {
   },
 }
 
+const occupiedPlans = computed<CoursePlan[]>(() => {
+  return allGroupFilteredInfoContainers.value.reduce((result: CoursePlan[], ic) => result.concat(ic.coursePlans.map(pc => pc.coursePlan)), [])
+})
+
+const plansOfSelectedCourses = computed<CoursePlan[]>(() =>
+    apiToolkit.coursePlan.filter(plan => store.selectedCourses.map(c => c.plan).indexOf(plan.plan_id) > -1))
+const selectedPlans = computed<CoursePlan[]>(() =>
+    apiToolkit.coursePlan.filter(plan => store.selectedPlanIds.indexOf(plan.plan_id) > -1))
+
+// 判断待操作的Plan是否和已有的Plan冲突
+function judgeWhetherThereIsConflict(occupiedPlans: CoursePlan[], candidatePlans: CoursePlan[]): boolean {
+  if (whetherTwoArraysHaveSameElement(candidatePlans.map(p => p.plan_id),
+      occupiedPlans.map(p => p.plan_id))) {
+    return false
+  } else if (whetherTwoArraysHaveSameElement(candidatePlans.map(p => p.teacher), occupiedPlans.map(p => p.teacher))) {
+    return false
+  } else if (whetherTwoArraysHaveSameElement(
+      candidatePlans.map(p => p.groups).reduce((result: number[], groups) => result.concat(groups), []),
+      occupiedPlans.map(p => p.groups).reduce((result: number[], groups) => result.concat(groups), []))) {
+    return false
+  }
+  return true;
+}
+
+const whetherSelectedCoursesConflictWithExistingPlans = computed<boolean>(() =>
+    judgeWhetherThereIsConflict(occupiedPlans.value, plansOfSelectedCourses.value))
+
+const whetherSelectedPlansConflictWithExistingPlans = computed<boolean>(() =>
+    judgeWhetherThereIsConflict(occupiedPlans.value, selectedPlans.value))
+
 // region button
 const canAdd = computed<boolean>(() =>
     store.courseAdmin.operatingMode === '' &&
     store.selectedCourses.length === 0 &&
-    store.courseAdmin.rawSelectedPlans.length > 0
+    store.selectedPlanIds.length > 0
+    && whetherSelectedPlansConflictWithExistingPlans.value
 )
 
 const canCopy = computed<boolean>(() =>
     store.courseAdmin.operatingMode === 'Copy' &&
     store.selectedCourses.length > 0
+    && whetherSelectedCoursesConflictWithExistingPlans.value
 )
 
 const canCut = computed<boolean>(() =>
     store.courseAdmin.operatingMode === 'Cut' &&
     store.selectedCourses.length > 0
+    && whetherSelectedCoursesConflictWithExistingPlans.value
 )
 
 // endregion
@@ -84,6 +123,11 @@ const canCut = computed<boolean>(() =>
 const placementName = computed(() => {
   return props.whatDay <= 4 ? "right" : "left"
 })
+
+const timetableInfo = computed<string>(() => {
+  return `${getFormalWhatDayString(props.whatDay)} ${getFormalWhichLessonString(props.whichLesson)}`
+})
+
 </script>
 
 <template>
@@ -98,15 +142,26 @@ const placementName = computed(() => {
         </el-button>
       </div>
 
-      <el-button plain type="primary" :icon="Plus" size="small" v-if="canAdd"
-                 @click="eventFunc.toAddHere">在此排课
-      </el-button>
-      <el-button plain type="success" :icon="DocumentCopy" size="small" v-if="canCopy"
-                 @click="eventFunc.toCopyHere">粘贴至此
-      </el-button>
-      <el-button plain type="warning" :icon="Rank" size="small" v-if="canCut"
-                 @click="eventFunc.toCutHere">调课至此
-      </el-button>
+      <el-tooltip
+          class="box-item"
+          effect="light"
+          :placement="placementName"
+      >
+        <template #content>
+          <h2 class="tooltipH2">{{ store.weeksString }}</h2>
+          <h2 class="tooltipH2">{{ timetableInfo }}</h2>
+        </template>
+
+        <el-button plain type="primary" :icon="Plus" size="small" v-if="canAdd"
+                   @click="eventFunc.toAddHere">在此排课
+        </el-button>
+        <el-button plain type="success" :icon="DocumentCopy" size="small" v-if="canCopy"
+                   @click="eventFunc.toCopyHere">粘贴至此
+        </el-button>
+        <el-button plain type="warning" :icon="Rank" size="small" v-if="canCut"
+                   @click="eventFunc.toCutHere">调课至此
+        </el-button>
+      </el-tooltip>
 
       <template v-for="courseButtonInfo in store.courseAdmin.courseButtonInfos">
         <div v-if="filteredCourseIds.indexOf(courseButtonInfo.course.course_id) > -1">
@@ -153,6 +208,10 @@ const placementName = computed(() => {
 
 .TimetableBlock .el-button + .el-button {
   margin: 0;
+}
+
+.tooltipH2{
+  text-align: center;
 }
 
 .el-tree {

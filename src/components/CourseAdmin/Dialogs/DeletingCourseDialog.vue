@@ -7,11 +7,10 @@ import {getIsoWeekDay} from "../../../utils/dateUtils";
 import dayjs from "dayjs";
 import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
 import {axiosDeleteCourse} from "../../../utils/axiosEditCourseMethods";
+import {getFormalWhatDayString, getFormalWhichLessonString} from "../../../utils/commonUtils";
 
 const store = useCounterStore();
 const apiToolkit = useApiToolkit();
-
-const whatDayList = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
 
 const description = computed<string>(() => {
   switch (store.courseAdmin.operatingMode) {
@@ -59,8 +58,6 @@ const eventFunc = {
     }
   },
 }
-
-getIsoWeekDay(dayjs())
 </script>
 
 <template>
@@ -88,8 +85,8 @@ getIsoWeekDay(dayjs())
       <div class="FormDiv" v-for="course in courseOperating">
         <div>{{ course.date }}</div>
         <div>第{{ apiToolkit.getWeekOfOneCourse(course) }}周</div>
-        <div>{{ whatDayList[getIsoWeekDay(dayjs(course.date)) - 1] }}</div>
-        <div>{{ `第${course.which_lesson * 2 - 1}、${course.which_lesson * 2}节课` }}</div>
+        <div>{{ getFormalWhatDayString(getIsoWeekDay(dayjs(course.date))) }}</div>
+        <div>{{ `${getFormalWhichLessonString(course.which_lesson)}` }}</div>
         <div>{{ course.ch_name }}</div>
         <div>{{ course.method }}</div>
         <div>{{ course.teacher_name ? course.teacher_name : "" }}</div>

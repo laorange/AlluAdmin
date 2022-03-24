@@ -9,6 +9,7 @@ import LazyWeekSelectBar from "../LazyWeekSelectBar.vue";
 import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
 import {axiosAddCourse} from "../../../utils/axiosEditCourseMethods";
 import dayjs from "dayjs";
+import {getFormalWhatDayString} from "../../../utils/commonUtils";
 
 const dates = computed<dayjs.Dayjs[]>(() => {
   return store.selectedWeeks.map(week => {
@@ -18,8 +19,6 @@ const dates = computed<dayjs.Dayjs[]>(() => {
 
 const store = useCounterStore();
 const apiToolkit = useApiToolkit();
-
-const whatDayList = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
 
 const description = computed<string>(() => {
   switch (store.courseAdmin.operatingMode) {
@@ -35,7 +34,7 @@ const description = computed<string>(() => {
 const planIdOperating = computed<number[]>(() => {
   if (store.courseAdmin.operatingMode === "") {
     //  Mode为“”，是按教学计划添加
-    return store.selectedPlans
+    return store.selectedPlanIds
   } else {
     //  其他情况：Mode为“Copy“或”Cut”，是按选择的课程对应的教学计划添加
     return store.selectedCourses.map((course) => course.plan)
@@ -50,7 +49,6 @@ interface formInfoContainer {
   classroomId: number | undefined
 }
 
-
 const formInfos = ref<formInfoContainer[]>([])
 watch(() => planOperating.value, () => {
   formInfos.value = planOperating.value.map((plan: CoursePlan) => {
@@ -62,13 +60,13 @@ watch(() => planOperating.value, () => {
   })
 }, {deep: true, immediate: true})
 
-
-const filteredInfoContainers = computed<CourseInfoContainer[]>(() =>
-    apiToolkit.filter__infosByWeek_WhatDay_WhichLesson(store.courseAdmin.whatDay, store.courseAdmin.whichLesson))
+// 只对Week、WhatDay和WhichLesson进行过滤
+const allGroupFilteredInfoContainers = computed<CourseInfoContainer[]>(() =>
+    apiToolkit.filter__infosByWhatDayAndWhichLesson(store.courseAdmin.whatDay, store.courseAdmin.whichLesson, apiToolkit.filter_infosByWeek))
 
 const occupiedClassroomIds = computed<number[]>(() => {
   let occupiedClassroomIds: number[] = []
-  for (const ic of filteredInfoContainers.value) {
+  for (const ic of allGroupFilteredInfoContainers.value) {
     for (const pc of ic.coursePlans) {
       for (const course of pc.courses) {
         if (course.room) occupiedClassroomIds.push(course.room)
@@ -145,7 +143,7 @@ const eventFunc = {
         :append-to-body="true"
     >
       <div class="PreparingInfoArea">
-        <div>{{ whatDayList[store.courseAdmin.whatDay - 1] }}
+        <div>{{ getFormalWhatDayString(store.courseAdmin.whatDay) }}
           &nbsp;&nbsp;&nbsp;&nbsp;
           {{ `第${store.courseAdmin.whichLesson * 2 - 1}、${store.courseAdmin.whichLesson * 2}节课` }}
         </div>

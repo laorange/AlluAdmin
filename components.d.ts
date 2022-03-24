@@ -20,7 +20,6 @@ declare module 'vue' {
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCheckboxButton: typeof import('element-plus/es')['ElCheckboxButton']
     ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
-    ElCollapseTransition: typeof import('element-plus/es')['ElCollapseTransition']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
@@ -40,7 +39,6 @@ declare module 'vue' {
     TimetableBlock: typeof import('./src/components/CourseAdmin/WeeklyTimetable/TimetableBlock.vue')['default']
     TopMenu: typeof import('./src/components/TopMenu.vue')['default']
     WeeklyTimetable: typeof import('./src/components/CourseAdmin/WeeklyTimetable/WeeklyTimetable.vue')['default']
-    WeekSelectBar: typeof import('./src/components/CourseAdmin/WeekSelectBar.vue')['default']
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "allu-admin",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build --base=./",

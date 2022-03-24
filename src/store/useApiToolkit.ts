@@ -35,6 +35,32 @@ class ApiRequester<T> {
 }
 
 
+const apiDataFilters = {
+    filter_icByWeek(courseInfoContainers: CourseInfoContainer[],
+                    selectedInfo: SelectedInfo,
+                    week1Monday: dayjs.Dayjs) {
+        return courseInfoContainers.reduce((result: CourseInfoContainer[], ic: CourseInfoContainer) => {
+            let newPlanContainers: CoursePlanContainer[] = []
+
+            // 当 sourceCoursePlan 中包含符合条件的Course时，sourceCoursePlan 会被添加到 newPlanContainers 中
+            for (const sourceCoursePlan of ic.coursePlans) {
+                let courseFiltered = sourceCoursePlan.courses.filter(course => selectedInfo.selectedWeeks.indexOf(
+                    getWeeksBetweenTwoDayFrom0(dayjs(course.date), week1Monday) + 1
+                ) > -1)
+                if (courseFiltered.length > 0) {
+                    newPlanContainers.push({
+                        ...sourceCoursePlan,
+                        courses: courseFiltered
+                    })
+                }
+            }
+
+            return result.concat([{courseInfo: ic.courseInfo, coursePlans: newPlanContainers}])
+        }, [])
+    },
+}
+
+
 export const useApiToolkit = defineStore("apiToolkit", {
     state: () => {
         return {
@@ -115,30 +141,20 @@ export const useApiToolkit = defineStore("apiToolkit", {
 
         filter_infosByWeek(): CourseInfoContainer[] {
             // 若没有选择任何周，则直接返回 filter_infosByGroup
+            if (this.selectedInfo.selectedWeeks.length === 0) return this.courseInfoContainers
+            return apiDataFilters.filter_icByWeek(this.courseInfoContainers,
+                this.selectedInfo, this.week1Monday)
+        },
+
+        filter_infosByWeekAndGroup(): CourseInfoContainer[] {
+            // 若没有选择任何周，则直接返回 filter_infosByGroup
             if (this.selectedInfo.selectedWeeks.length === 0) return this.filter_infosByGroup
-
-            return this.filter_infosByGroup.reduce((result: CourseInfoContainer[], ic: CourseInfoContainer) => {
-                let newPlanContainers: CoursePlanContainer[] = []
-
-                // 当 sourceCoursePlan 中包含符合条件的Course时，sourceCoursePlan 会被添加到 newPlanContainers 中
-                for (const sourceCoursePlan of ic.coursePlans) {
-                    let courseFiltered = sourceCoursePlan.courses.filter(course => this.selectedInfo.selectedWeeks.indexOf(
-                        getWeeksBetweenTwoDayFrom0(dayjs(course.date), this.week1Monday) + 1
-                    ) > -1)
-                    if (courseFiltered.length > 0) {
-                        newPlanContainers.push({
-                            ...sourceCoursePlan,
-                            courses: courseFiltered
-                        })
-                    }
-                }
-
-                return result.concat([{courseInfo: ic.courseInfo, coursePlans: newPlanContainers}])
-            }, [])
+            return apiDataFilters.filter_icByWeek(this.filter_infosByGroup,
+                this.selectedInfo, this.week1Monday)
         },
 
         filter_infosByWeekWithNoEmptyPlanContainer(): CourseInfoContainer[] {
-            return this.filter_infosByWeek.reduce((result: CourseInfoContainer[], item: CourseInfoContainer) => {
+            return this.filter_infosByWeekAndGroup.reduce((result: CourseInfoContainer[], item: CourseInfoContainer) => {
                 // 当 newPlanContainers 不为空时，当前 CourseInfoContainer 会被添加到result中
                 let newPlanContainers = item.coursePlans.filter(plan => plan.courses.length > 0)
                 return newPlanContainers.length > 0 ? result.concat([{...item, coursePlans: newPlanContainers}]) : result
@@ -236,9 +252,13 @@ export const useApiToolkit = defineStore("apiToolkit", {
             return rowSpan ? rowSpan : 1
         },
 
-        filter__infosByWeek_WhatDay_WhichLesson(whatDay: number, whichLesson: number): CourseInfoContainer[] {
-            let result: CourseInfoContainer[] = []
-            for (const info of this.filter_infosByWeekWithNoEmptyPlanContainer) {
+        filter__infosByWhatDayAndWhichLesson(whatDay: number, whichLesson: number,
+                                                courseInfoContainers: CourseInfoContainer[] | undefined = undefined): CourseInfoContainer[] {
+            if (!courseInfoContainers) {
+                courseInfoContainers = this.filter_infosByWeekWithNoEmptyPlanContainer
+            }
+            let result: CourseInfoContainer[] = [];
+            for (const info of courseInfoContainers) {
                 let filteredPlans: CoursePlanContainer[] = []
                 for (const coursePlan of info.coursePlans) {
                     let filteredCourses: Course[] = coursePlan.courses.filter(

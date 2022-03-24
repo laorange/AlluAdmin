@@ -110,7 +110,7 @@ export const useCounterStore = defineStore("counter", {
         selectedSemesters(): number[] {
             return Array.from(new Set(this.rawSelectedGroups.map(rg => rg[0])));
         },
-        selectedPlans(): number[] {
+        selectedPlanIds(): number[] {
             return Array.from(new Set(this.courseAdmin.rawSelectedPlans.map(rp => rp[1])));
         },
         // courseIdSelected
