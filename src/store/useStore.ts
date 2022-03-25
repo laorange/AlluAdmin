@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 import {Course, CourseInfo, WhatDay, WhichLesson} from "../types/api";
-import {CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
+import {CourseInfoContainer, CoursePlanContainer} from "../utils/ApiDataHandlers/CourseInfoHandler";
 import getWeeksString from "../utils/getWeeksString";
 import {useApiToolkit} from "./counter";
 import {ElOption} from "../types/options";
@@ -28,6 +28,12 @@ type StoreState = {
         whetherShowDeletingDialog: boolean,
         whetherShowAddingDialog: boolean,
         whetherShowSelectPlanDialog: boolean,
+
+        dataOfTimetableBlockDetailDialog: {
+            whetherShow: boolean,
+            filteredInfoContainers: CourseInfoContainer[],
+        },
+
         whatDay: WhatDay,
         whichLesson: WhichLesson,
     },
@@ -68,11 +74,16 @@ export const useStore = defineStore("counter", {
                 rawSelectedPlans: [],
                 courseButtonInfos: [],
 
-                // courseIdSelected: [],
                 operatingMode: '',
                 whetherShowDeletingDialog: false,
                 whetherShowAddingDialog: false,
                 whetherShowSelectPlanDialog: false,
+
+                dataOfTimetableBlockDetailDialog: {
+                    whetherShow: false,
+                    filteredInfoContainers: [],
+                },
+
                 whatDay: 1,
                 whichLesson: 1,
             },

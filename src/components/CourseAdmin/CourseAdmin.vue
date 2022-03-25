@@ -7,6 +7,8 @@ import GroupSelector from "../GroupSelector.vue";
 import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
 import AddingCourseDialog from "./Dialogs/AddingCourseDialog.vue";
 import DeletingCourseDialog from "./Dialogs/DeletingCourseDialog.vue";
+import TimetableBlockDetailDialog from "./Dialogs/TimetableBlockDetailDialog.vue";
+
 
 import {useStore} from "../../store/counter";
 import {SAME_SITE_AS_DJANGO} from "../../utils/urls";
@@ -45,6 +47,7 @@ const store = useStore()
   <select-plan-dialog></select-plan-dialog>
   <adding-course-dialog></adding-course-dialog>
   <deleting-course-dialog></deleting-course-dialog>
+  <timetable-block-detail-dialog></timetable-block-detail-dialog>
   <!-- endregion -->
 </template>
 

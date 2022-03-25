@@ -37,6 +37,7 @@ declare module 'vue' {
     PageTopAlerts: typeof import('./src/components/PageTopAlerts.vue')['default']
     SelectPlanDialog: typeof import('./src/components/CourseAdmin/Dialogs/SelectPlanDialog.vue')['default']
     TimetableBlock: typeof import('./src/components/CourseAdmin/WeeklyTimetable/TimetableBlock.vue')['default']
+    TimetableBlockDetailDialog: typeof import('./src/components/CourseAdmin/Dialogs/TimetableBlockDetailDialog.vue')['default']
     TopMenu: typeof import('./src/components/TopMenu.vue')['default']
     WeeklyTimetable: typeof import('./src/components/CourseAdmin/WeeklyTimetable/WeeklyTimetable.vue')['default']
   }

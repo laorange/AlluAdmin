@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useApiToolkit, useStore} from "../../../store/counter";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import CourseCard from "../../CourseCard.vue";
 
 import {CoursePlan, WhatDay, WhichLesson} from "../../../types/api";
@@ -8,6 +8,7 @@ import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHand
 
 import {Plus, DocumentCopy, Rank, Finished, Switch} from "@element-plus/icons-vue";
 import {getFormalWhatDayString, getFormalWhichLessonString, whetherTwoArraysHaveSameElement} from "../../../utils/commonUtils";
+import {ElOption} from "../../../types/options";
 
 const apiToolkit = useApiToolkit()
 const store = useStore()
@@ -51,20 +52,12 @@ const eventFunc = {
     eventFunc.setWhatDayWhichLesson();
     store.courseAdmin.whetherShowDeletingDialog = true  // 先请用户确定是否要删除原有课程
   },
-  toSelectAll() {
-    for (const courseButtonInfo of store.courseAdmin.courseButtonInfos) {
-      if (filteredCourseIds.value.indexOf(courseButtonInfo.course.course_id) > -1) {
-        courseButtonInfo.check = true
-      }
-    }
-  },
-  toMakeSelectionsOpposite() {
-    for (const courseButtonInfo of store.courseAdmin.courseButtonInfos) {
-      if (filteredCourseIds.value.indexOf(courseButtonInfo.course.course_id) > -1) {
-        courseButtonInfo.check = !courseButtonInfo.check
-      }
-    }
-  },
+  openDrawer() {
+    store.courseAdmin.whatDay = props.whatDay as WhatDay
+    store.courseAdmin.whichLesson = props.whichLesson as WhichLesson
+    store.courseAdmin.dataOfTimetableBlockDetailDialog.filteredInfoContainers = filteredInfoContainers.value
+    store.courseAdmin.dataOfTimetableBlockDetailDialog.whetherShow = true
+  }
 }
 
 const occupiedPlans = computed<CoursePlan[]>(() => {
@@ -76,7 +69,7 @@ const plansOfSelectedCourses = computed<CoursePlan[]>(() =>
 const selectedPlans = computed<CoursePlan[]>(() =>
     apiToolkit.coursePlan.filter(plan => store.selectedPlanIds.indexOf(plan.plan_id) > -1))
 
-// 判断待操作的Plan是否和已有的Plan冲突
+// region 判断待操作的Plan是否和已有的Plan冲突
 function judgeWhetherThereIsConflict(occupiedPlans: CoursePlan[], candidatePlans: CoursePlan[]): boolean {
   if (whetherTwoArraysHaveSameElement(candidatePlans.map(p => p.plan_id),
       occupiedPlans.map(p => p.plan_id))) {
@@ -96,6 +89,7 @@ const whetherSelectedCoursesConflictWithExistingPlans = computed<boolean>(() =>
 
 const whetherSelectedPlansConflictWithExistingPlans = computed<boolean>(() =>
     judgeWhetherThereIsConflict(occupiedPlans.value, selectedPlans.value))
+// endregion
 
 // region button
 const canAdd = computed<boolean>(() =>
@@ -133,15 +127,7 @@ const timetableInfo = computed<string>(() => {
 <template>
   <el-scrollbar :height="timetableHeight">
     <div class="TimetableBlock">
-      <div class="TwoButtonsArea">
-        <el-button plain type="default" :icon="Finished" size="small" v-if="filteredCourseIds.length >= 2"
-                   @click="eventFunc.toSelectAll">全选
-        </el-button>
-        <el-button plain type="default" :icon="Switch" size="small" v-if="filteredCourseIds.length >= 2"
-                   @click="eventFunc.toMakeSelectionsOpposite">反选
-        </el-button>
-      </div>
-
+      <!-- region 功能按键 -->
       <el-tooltip
           class="box-item"
           effect="light"
@@ -163,24 +149,36 @@ const timetableInfo = computed<string>(() => {
         </el-button>
         <div style="display: none"></div>
       </el-tooltip>
+      <!--endregion-->
 
-      <template v-for="courseButtonInfo in store.courseAdmin.courseButtonInfos">
-        <div v-if="filteredCourseIds.indexOf(courseButtonInfo.course.course_id) > -1">
-          <el-tooltip
-              class="box-item"
-              effect="light"
-              :placement="placementName"
-          >
-            <template #content>
-              <course-card :course="courseButtonInfo.course"></course-card>
-            </template>
-            <div>
-              <el-checkbox
-                  v-model="courseButtonInfo.check" :label="courseButtonInfo.course.ch_name" size="small"></el-checkbox>
-            </div>
-          </el-tooltip>
-        </div>
+      <!-- 课程数量比较少的时候，直接显示按键 -->
+      <template v-if="filteredCourseIds.length <= 6">
+        <template v-for="courseButtonInfo in store.courseAdmin.courseButtonInfos">
+          <div v-if="filteredCourseIds.indexOf(courseButtonInfo.course.course_id) > -1">
+            <el-tooltip
+                class="box-item"
+                effect="light"
+                :placement="placementName"
+            >
+              <template #content>
+                <course-card :course="courseButtonInfo.course"></course-card>
+              </template>
+              <div>
+                <el-checkbox
+                    v-model="courseButtonInfo.check" :label="courseButtonInfo.course.ch_name" size="small"></el-checkbox>
+              </div>
+            </el-tooltip>
+          </div>
+        </template>
       </template>
+
+      <div class="SituationThatThereAreTooManyCourses" v-else>
+        <el-button plain type="default" :icon="Switch" size="small"
+                   @click="eventFunc.openDrawer()">查看详情
+        </el-button>
+
+        <div v-for="ic in filteredInfoContainers" :key="ic.courseInfo.info_id" class="CourseInfoChName">{{ ic.courseInfo.ch_name }}</div>
+      </div>
     </div>
   </el-scrollbar>
 </template>
@@ -215,12 +213,15 @@ const timetableInfo = computed<string>(() => {
   text-align: center;
 }
 
-.el-tree {
-  background-color: transparent;
+.SituationThatThereAreTooManyCourses {
+  display: flex;
   width: 100%;
+  flex-direction: column;
+  align-content: center;
 }
 
-.el-tree-node, .el-tree-node__children {
-  width: max-content;
+.CourseInfoChName {
+  text-align: center;
+  margin: 3px 0;
 }
 </style>
