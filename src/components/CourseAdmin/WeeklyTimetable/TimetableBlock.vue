@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {useApiToolkit, useStore} from "../../../store/counter";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import CourseCard from "../../CourseCard.vue";
 
 import {CoursePlan, WhatDay, WhichLesson} from "../../../types/api";
 import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
 
-import {Plus, DocumentCopy, Rank, Finished, Switch} from "@element-plus/icons-vue";
+import {Plus, DocumentCopy, Rank, Search} from "@element-plus/icons-vue";
 import {getFormalWhatDayString, getFormalWhichLessonString, whetherTwoArraysHaveSameElement} from "../../../utils/commonUtils";
 import {ElOption} from "../../../types/options";
 
@@ -122,6 +122,14 @@ const timetableInfo = computed<string>(() => {
   return `${getFormalWhatDayString(props.whatDay)} ${getFormalWhichLessonString(props.whichLesson)}`
 })
 
+function whetherThisInfoHasSelectedCourse(ic: CourseInfoContainer): boolean {
+  for (const pc of ic.coursePlans) {
+    if (pc.courses.filter(course => store.selectedCourses.map(sc => sc.course_id).indexOf(course.course_id) > -1).length > 0) {
+      return true
+    }
+  }
+  return false
+}
 </script>
 
 <template>
@@ -173,11 +181,18 @@ const timetableInfo = computed<string>(() => {
       </template>
 
       <div class="SituationThatThereAreTooManyCourses" v-else>
-        <el-button plain type="default" :icon="Switch" size="small"
+        <el-button plain type="default" :icon="Search" size="small"
                    @click="eventFunc.openDrawer()">查看详情
         </el-button>
 
-        <div v-for="ic in filteredInfoContainers" :key="ic.courseInfo.info_id" class="CourseInfoChName">{{ ic.courseInfo.ch_name }}</div>
+        <div
+            v-for="ic in filteredInfoContainers"
+            :key="ic.courseInfo.info_id"
+            class="CourseInfoChName"
+            :style="{color: whetherThisInfoHasSelectedCourse(ic) ? 'red' : 'black' }"
+        >
+          {{ ic.courseInfo.ch_name }}
+        </div>
       </div>
     </div>
   </el-scrollbar>
@@ -223,5 +238,6 @@ const timetableInfo = computed<string>(() => {
 .CourseInfoChName {
   text-align: center;
   margin: 3px 0;
+  font-size: 12px;
 }
 </style>

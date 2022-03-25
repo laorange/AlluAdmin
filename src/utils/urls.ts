@@ -1,11 +1,11 @@
 import {methodChoice} from "../types/api";
 
-export let SAME_SITE_AS_DJANGO = false;
+export let SAME_SITE_AS_DJANGO = true;
 
 function decorateUrl(relativeUrl: string): string {
     if (SAME_SITE_AS_DJANGO) {
         // return relativeUrl
-        return "https://siae.top" + relativeUrl
+        return relativeUrl
     } else {
         return "https://siae.top" + relativeUrl
     }
