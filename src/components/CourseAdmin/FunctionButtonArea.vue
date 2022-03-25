@@ -41,7 +41,7 @@ const clickFunc = {
     store.courseAdmin.operatingMode = 'Delete'
     store.courseAdmin.whetherShowDeletingDialog = true
   },
-  toClearselectedCourses() {
+  toClearSelectedCourses() {
     clickFunc.toInitializeOperatingMode()
     for (const cbi of store.courseAdmin.courseButtonInfos) {
       if (cbi.check) cbi.check = false
@@ -77,7 +77,7 @@ const clickFunc = {
       <el-button plain type="primary" :icon="Rank" @click="clickFunc.toCancelCut" v-else>取消调课</el-button>
 
       <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfselectedCourses }}节课程</el-button>
-      <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearselectedCourses()">清空选项</el-button>
+      <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourses()">清空选项</el-button>
     </template>
   </div>
 </template>

@@ -2,6 +2,9 @@
 import {useApiToolkit, useCounterStore} from "../../../store/counter";
 import {watch} from "vue";
 
+import GroupSelector from "../../GroupSelector.vue";
+
+
 const apiToolkit = useApiToolkit();
 const store = useCounterStore();
 
@@ -23,12 +26,16 @@ watch(() => store.selectedSemesters, (): void => {
       :append-to-body="true"
   >
     <div class="SelectPlanDialog">
-      <el-cascader-panel
-          v-model="store.courseAdmin.rawSelectedPlans"
-          :show-all-levels="true"
-          :options="store.courseAdmin.planOptions"
-          :props="multiple"
-          clearable/>
+      <group-selector></group-selector>
+
+      <div class="PlanPartSelectPlanDialog">
+        <el-cascader-panel
+            v-model="store.courseAdmin.rawSelectedPlans"
+            :show-all-levels="true"
+            :options="store.courseAdmin.planOptions"
+            :props="multiple"
+            clearable/>
+      </div>
     </div>
 
     <template #footer>
@@ -43,8 +50,13 @@ watch(() => store.selectedSemesters, (): void => {
 </template>
 
 <style>
-.SelectPlanDialog {
+.PlanPartSelectPlanDialog {
   display: flex;
   justify-content: center;
+}
+
+.SelectPlanDialog {
+  display: flex;
+  justify-content: space-around;
 }
 </style>

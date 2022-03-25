@@ -80,15 +80,15 @@ const selectedPlans = computed<CoursePlan[]>(() =>
 function judgeWhetherThereIsConflict(occupiedPlans: CoursePlan[], candidatePlans: CoursePlan[]): boolean {
   if (whetherTwoArraysHaveSameElement(candidatePlans.map(p => p.plan_id),
       occupiedPlans.map(p => p.plan_id))) {
-    return false
+    return true
   } else if (whetherTwoArraysHaveSameElement(candidatePlans.map(p => p.teacher), occupiedPlans.map(p => p.teacher))) {
-    return false
+    return true
   } else if (whetherTwoArraysHaveSameElement(
       candidatePlans.map(p => p.groups).reduce((result: number[], groups) => result.concat(groups), []),
       occupiedPlans.map(p => p.groups).reduce((result: number[], groups) => result.concat(groups), []))) {
-    return false
+    return true
   }
-  return true;
+  return false;
 }
 
 const whetherSelectedCoursesConflictWithExistingPlans = computed<boolean>(() =>
@@ -102,19 +102,19 @@ const canAdd = computed<boolean>(() =>
     store.courseAdmin.operatingMode === '' &&
     store.selectedCourses.length === 0 &&
     store.selectedPlanIds.length > 0
-    && whetherSelectedPlansConflictWithExistingPlans.value
+    && !whetherSelectedPlansConflictWithExistingPlans.value
 )
 
 const canCopy = computed<boolean>(() =>
     store.courseAdmin.operatingMode === 'Copy' &&
     store.selectedCourses.length > 0
-    && whetherSelectedCoursesConflictWithExistingPlans.value
+    && !whetherSelectedCoursesConflictWithExistingPlans.value
 )
 
 const canCut = computed<boolean>(() =>
     store.courseAdmin.operatingMode === 'Cut' &&
     store.selectedCourses.length > 0
-    && whetherSelectedCoursesConflictWithExistingPlans.value
+    && !whetherSelectedCoursesConflictWithExistingPlans.value
 )
 
 // endregion
@@ -161,6 +161,7 @@ const timetableInfo = computed<string>(() => {
         <el-button plain type="warning" :icon="Rank" size="small" v-if="canCut"
                    @click="eventFunc.toCutHere">调课至此
         </el-button>
+        <div style="display: none"></div>
       </el-tooltip>
 
       <template v-for="courseButtonInfo in store.courseAdmin.courseButtonInfos">
@@ -210,7 +211,7 @@ const timetableInfo = computed<string>(() => {
   margin: 0;
 }
 
-.tooltipH2{
+.tooltipH2 {
   text-align: center;
 }
 
