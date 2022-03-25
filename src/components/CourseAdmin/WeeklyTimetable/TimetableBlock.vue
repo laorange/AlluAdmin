@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useStore} from "../../../store/counter";
 import {computed} from "vue";
 import CourseCard from "../../CourseCard.vue";
 
@@ -10,7 +10,7 @@ import {Plus, DocumentCopy, Rank, Finished, Switch} from "@element-plus/icons-vu
 import {getFormalWhatDayString, getFormalWhichLessonString, whetherTwoArraysHaveSameElement} from "../../../utils/commonUtils";
 
 const apiToolkit = useApiToolkit()
-const store = useCounterStore()
+const store = useStore()
 
 const timetableHeight = '180px'
 

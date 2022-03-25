@@ -2,7 +2,7 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 
-import {useApiToolkit, useCounterStore} from "./store/counter";
+import {useApiToolkit, useStore} from "./store/counter";
 import LoadingMask from "./components/loadingMask.vue";
 import TopMenu from "./components/TopMenu.vue";
 
@@ -13,7 +13,7 @@ import 'element-plus/es/components/message/style/css'
 import {ElTreeOption} from "./types/courseAdmin";
 // import {ElMessage} from "element-plus/es";
 
-const store = useCounterStore()
+const store = useStore()
 const apiToolkit = useApiToolkit()
 const route = useRoute()
 

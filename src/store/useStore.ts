@@ -7,7 +7,7 @@ import {useApiToolkit} from "./counter";
 import {ElOption} from "../types/options";
 import {courseButtonInfos} from "../types/courseAdmin";
 
-type CounterStoreState = {
+type StoreState = {
     isLoading: boolean,
     alertInfo: {
         success: string,
@@ -50,8 +50,8 @@ type CounterStoreState = {
     }
 }
 
-export const useCounterStore = defineStore("counter", {
-    state: (): CounterStoreState => {
+export const useStore = defineStore("counter", {
+    state: (): StoreState => {
         return {
             isLoading: false,
             alertInfo: {
@@ -139,7 +139,6 @@ export const useCounterStore = defineStore("counter", {
         },
         updatePlanOptions() {
             const apiToolkit = useApiToolkit()
-            console.log("updateRawSelectedPlans")
 
             let planOptions = []
             for (const ic of apiToolkit.filter_infosBySemester) {

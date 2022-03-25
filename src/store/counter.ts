@@ -1,8 +1,8 @@
 // stores/counter.js
-import {useCounterStore} from "./useCounterStore";
+import {useStore} from "./useStore";
 import {useApiToolkit} from "./useApiToolkit";
 
 export {
-    useCounterStore,
+    useStore,
     useApiToolkit,
 }

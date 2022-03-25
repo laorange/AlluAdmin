@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useStore} from "../../../store/counter";
 import {watch} from "vue";
 
 import GroupSelector from "../../GroupSelector.vue";
 
 
 const apiToolkit = useApiToolkit();
-const store = useCounterStore();
+const store = useStore();
 
 const multiple = {multiple: true}
 

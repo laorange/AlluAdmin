@@ -1,8 +1,8 @@
 <script setup>
-import {useCounterStore} from "../store/counter";
+import {useStore} from "../store/counter";
 import {onMounted, reactive, watch} from "vue";
 
-const store = useCounterStore();
+const store = useStore();
 
 let data = reactive({
   isLoading: false,

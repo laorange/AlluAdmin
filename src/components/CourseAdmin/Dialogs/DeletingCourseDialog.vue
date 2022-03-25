@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useStore} from "../../../store/counter";
 import {computed} from "vue";
 import {Course} from "../../../types/api";
 import {Delete} from "@element-plus/icons-vue";
@@ -9,7 +9,7 @@ import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
 import {axiosDeleteCourse} from "../../../utils/axiosEditCourseMethods";
 import {getFormalWhatDayString, getFormalWhichLessonString} from "../../../utils/commonUtils";
 
-const store = useCounterStore();
+const store = useStore();
 const apiToolkit = useApiToolkit();
 
 const description = computed<string>(() => {

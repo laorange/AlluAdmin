@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {useCounterStore} from "./useCounterStore";
+import {useStore} from "./useStore";
 
 import {Classroom, Course, CourseChangeLog, CourseInfo, CoursePlan, CourseType, Group, Notice, SemesterConfig, Teacher} from "../types/api";
 import dayjs from "dayjs";
@@ -17,7 +17,7 @@ class ApiRequester<T> {
     }
 
     async requestData(parameters: { [key: string]: (string | number | undefined) } = {}) {
-        let store = useCounterStore()
+        let store = useStore()
         await store.axiosGet<T>(this._apiUrl, parameters).then(response => this._data = response)
     }
 
@@ -107,7 +107,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
             return _courseInfoHandler.infoList
         },
         selectedInfo(): SelectedInfo {
-            const store = useCounterStore();
+            const store = useStore();
             return new SelectedInfo(
                 store.selectedSemesters,
                 store.selectedGroups,

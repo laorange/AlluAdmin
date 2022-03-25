@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useApiToolkit, useCounterStore} from "../../store/counter";
+import {useApiToolkit, useStore} from "../../store/counter";
 import {computed, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
@@ -8,7 +8,7 @@ import {useRoute, useRouter} from "vue-router";
 import {Finished, Switch, Select, RefreshLeft, Coin, Scissor} from "@element-plus/icons-vue";
 
 const apiToolkit = useApiToolkit();
-const store = useCounterStore();
+const store = useStore();
 const route = useRoute()
 const router = useRouter()
 

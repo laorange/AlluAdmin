@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {computed} from "vue";
-import {useApiToolkit, useCounterStore} from "../../store/counter";
+import {useApiToolkit, useStore} from "../../store/counter";
 import {CourseInfo} from "../../types/api";
 import {CoursePlanContainer} from "../../utils/ApiDataHandlers/CourseInfoHandler";
 import {SAME_SITE_AS_DJANGO} from "../../utils/urls";
 
-const store = useCounterStore()
+const store = useStore()
 const apiToolkit = useApiToolkit()
 
 const maxWeek = computed<number>(() => apiToolkit.maxWeek)

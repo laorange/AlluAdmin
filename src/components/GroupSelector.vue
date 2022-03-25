@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useApiToolkit, useCounterStore} from "../store/counter";
+import {useApiToolkit, useStore} from "../store/counter";
 import {computed, ref, watch} from "vue";
 import {getSemesterOptionsByPeriod} from "../utils/getSemesterOptionsByPeriod";
 import {useRoute, useRouter} from "vue-router";
@@ -10,7 +10,7 @@ import {ElOption} from "../types/options";
 const multiple = {multiple: true}
 
 const apiToolkit = useApiToolkit()
-const store = useCounterStore()
+const store = useStore()
 const route = useRoute()
 const router = useRouter()
 

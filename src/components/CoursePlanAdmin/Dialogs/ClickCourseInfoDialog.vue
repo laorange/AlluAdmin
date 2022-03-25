@@ -1,9 +1,9 @@
 <script setup lang="ts">
 
-import {useCounterStore} from "../../../store/counter";
+import {useStore} from "../../../store/counter";
 import urls from "../../../utils/urls";
 
-const store = useCounterStore()
+const store = useStore()
 
 const redirect = (url: string) => {
   store.coursePlanAdmin.clickCourseInfoDialog.whetherShow = false

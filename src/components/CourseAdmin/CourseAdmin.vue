@@ -8,10 +8,10 @@ import SelectPlanDialog from "./Dialogs/SelectPlanDialog.vue";
 import AddingCourseDialog from "./Dialogs/AddingCourseDialog.vue";
 import DeletingCourseDialog from "./Dialogs/DeletingCourseDialog.vue";
 
-import {useCounterStore} from "../../store/counter";
+import {useStore} from "../../store/counter";
 import {SAME_SITE_AS_DJANGO} from "../../utils/urls";
 
-const store = useCounterStore()
+const store = useStore()
 </script>
 
 <template>

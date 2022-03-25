@@ -2,13 +2,13 @@
 import dayjs from "dayjs";
 
 import {computed} from "vue";
-import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useStore} from "../../../store/counter";
 import {Course, WhatDay, WhichLesson} from "../../../types/api";
 import {getIsoWeekDay, getWeeksBetweenTwoDayFrom0} from "../../../utils/dateUtils";
 import CourseCard from "../../CourseCard.vue";
 
 
-const store = useCounterStore();
+const store = useStore();
 const apiToolkit = useApiToolkit()
 
 const week = computed<number>(() => store.coursePlanAdmin.clickWeeklyHoursDialog.week)

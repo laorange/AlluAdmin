@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {useCounterStore} from "../store/counter";
+import {useStore} from "../store/counter";
 import {watch} from "vue";
 
-const store = useCounterStore()
+const store = useStore()
 
 const initAlertInfo = {
   success: "",

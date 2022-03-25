@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import {useApiToolkit, useCounterStore} from "../../store/counter";
+import {useApiToolkit, useStore} from "../../store/counter";
 import {computed} from "vue";
 
 import {Delete, CirclePlus, DocumentCopy, Rank, Edit, RefreshLeft} from "@element-plus/icons-vue";
 import urls from "../../utils/urls";
 
-const store = useCounterStore();
+const store = useStore();
 const apiToolkit = useApiToolkit()
 
 const AmountOfSelectedPlan = computed<number>(() => store.courseAdmin.rawSelectedPlans.length)
-const AmountOfselectedCourses = computed<number>(() => store.selectedCourses.length)
+const AmountOfSelectedCourses = computed<number>(() => store.selectedCourses.length)
 
-const whetherShowAddPlanButton = computed<boolean>(() => AmountOfselectedCourses.value == 0)
-const whetherShowEditCourseButton = computed<boolean>(() => AmountOfselectedCourses.value == 1)
-const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfselectedCourses.value >= 1)
+const whetherShowAddPlanButton = computed<boolean>(() => AmountOfSelectedCourses.value == 0)
+const whetherShowEditCourseButton = computed<boolean>(() => AmountOfSelectedCourses.value == 1)
+const whetherShowOtherCourseFunctionalButton = computed<boolean>(() => AmountOfSelectedCourses.value >= 1)
 
 const clickFunc = {
   toSelectPlan() {
@@ -76,7 +76,7 @@ const clickFunc = {
       <el-button plain type="warning" :icon="Rank" @click="clickFunc.toCut()" v-if="store.courseAdmin.operatingMode!=='Cut'">调课</el-button>
       <el-button plain type="primary" :icon="Rank" @click="clickFunc.toCancelCut" v-else>取消调课</el-button>
 
-      <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfselectedCourses }}节课程</el-button>
+      <el-button plain type="danger" :icon="Delete" @click="clickFunc.toDelete()">删除选中的{{ AmountOfSelectedCourses }}节课程</el-button>
       <el-button plain type="default" :icon="RefreshLeft" @click="clickFunc.toClearSelectedCourses()">清空选项</el-button>
     </template>
   </div>

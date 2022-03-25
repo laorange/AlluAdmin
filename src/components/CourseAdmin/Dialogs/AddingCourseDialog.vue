@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useStore} from "../../../store/counter";
 import {ref, computed, watch} from "vue";
 import {CoursePlan} from "../../../types/api";
 import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHandler";
@@ -17,7 +17,7 @@ const dates = computed<dayjs.Dayjs[]>(() => {
   })
 })
 
-const store = useCounterStore();
+const store = useStore();
 const apiToolkit = useApiToolkit();
 
 const description = computed<string>(() => {

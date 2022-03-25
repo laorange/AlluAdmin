@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
-import {useApiToolkit, useCounterStore} from "../../../store/counter";
+import {useApiToolkit, useStore} from "../../../store/counter";
 import urls from "../../../utils/urls";
 import {computed} from "vue";
 
-const store = useCounterStore()
+const store = useStore()
 const apiToolkit = useApiToolkit()
 
 const redirect = (url: string) => {
