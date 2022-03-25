@@ -23,7 +23,7 @@ type StoreState = {
         planOptions: ElOption[],
         rawSelectedPlans: [number, number][],
         courseButtonInfos: courseButtonInfos[],
-        // courseIdSelected: number[],
+
         operatingMode: 'Delete' | 'Cut' | 'Copy' | '',
         whetherShowDeletingDialog: boolean,
         whetherShowAddingDialog: boolean,
@@ -145,9 +145,21 @@ export const useStore = defineStore("counter", {
             this.isLoading = false;
             return response.data as T[];
         },
+
+        initializeCourseButtonInfos() {
+            const apiToolkit = useApiToolkit()
+            this.courseAdmin.courseButtonInfos = apiToolkit.course.data.map(course => {
+                return {
+                    course: course,
+                    check: false
+                }
+            })
+        },
+
         getWeeksString(): string {
             return this.weeksString
         },
+
         updatePlanOptions() {
             const apiToolkit = useApiToolkit()
 

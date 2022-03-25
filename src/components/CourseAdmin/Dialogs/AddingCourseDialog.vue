@@ -7,7 +7,7 @@ import {CourseInfoContainer} from "../../../utils/ApiDataHandlers/CourseInfoHand
 import {Delete} from "@element-plus/icons-vue";
 import LazyWeekSelectBar from "../LazyWeekSelectBar.vue";
 import {SAME_SITE_AS_DJANGO} from "../../../utils/urls";
-import {axiosAddCourse} from "../../../utils/axiosEditCourseMethods";
+import {axiosAddCourse, axiosDeleteCourse} from "../../../utils/axiosEditCourseMethods";
 import dayjs from "dayjs";
 import {getFormalWhatDayString} from "../../../utils/commonUtils";
 
@@ -81,12 +81,12 @@ const occupiedClassroomIds = computed<number[]>(() => {
   return occupiedClassroomIds
 })
 
-const whetherCanSubmit = computed<boolean>(() => {
-  if (formInfos.value.length === 0) return false
+const whetherThereIsBlank = computed<boolean>(() => {
+  if (formInfos.value.length === 0) return true
   for (const formInfo of formInfos.value) {
-    if (formInfo.classroomId === undefined) return false
+    if (formInfo.classroomId === undefined) return true
   }
-  return true
+  return false
 })
 
 const eventFunc = {
@@ -105,11 +105,19 @@ const eventFunc = {
     store.courseAdmin.whetherShowAddingDialog = false
     store.courseAdmin.whetherShowSelectPlanDialog = true
   },
-  submit() {
+  clickConfirm() {
+    eventFunc.submit(true)
+    whetherShowConfirmDialog.value = false
+  },
+  submit(whetherConfirm: boolean = false) {
+    if (!whetherConfirm && whetherThereIsBlank.value) {
+      whetherShowConfirmDialog.value = true
+      return null
+    }
     if (SAME_SITE_AS_DJANGO) {
+      console.log("axios提交信息")
       for (const date of dates.value) {
         for (const formInfo of formInfos.value) {
-          if (formInfo.classroomId) {
             axiosAddCourse({
               plan: formInfo.plan.plan_id,
               room: formInfo.classroomId,
@@ -117,20 +125,30 @@ const eventFunc = {
               which_lesson: store.courseAdmin.whichLesson,
               note: formInfo.note,
             }, () => undefined)
-          }
         }
-        store.isLoading = true
-        store.alertInfo.success = "提交成功，页面将于3秒后自动刷新";
-        setTimeout(() => location.reload(), 3000)
+      }
+
+      // 如果是调课，则删除原来的课程
+      if (store.courseAdmin.operatingMode === "Cut") {
+        for (const course of store.selectedCourses) {
+          axiosDeleteCourse(course.course_id, () => undefined)
+        }
       }
     } else {
       store.alertInfo.success = "提交成功(预览模式不会产生实际效果)";
     }
-    console.log("formInfos", formInfos.value);
+
     store.courseAdmin.whetherShowAddingDialog = false
     store.courseAdmin.operatingMode = ""
+
+    store.isLoading = true
+    store.alertInfo.success = "提交完成，页面将于3秒后自动刷新";
+    setTimeout(() => location.reload(), 3000)
   },
 }
+
+
+const whetherShowConfirmDialog = ref<boolean>(false)
 </script>
 
 <template>
@@ -189,12 +207,26 @@ const eventFunc = {
       </div>
 
       <template #footer>
-        <el-button @click="eventFunc.submit" :disabled="!whetherCanSubmit" type="success">确认添加</el-button>
-        <el-button @click="eventFunc.clickCancelButton" type="default">取消</el-button>
-        <el-button @click="eventFunc.clickReselectPlanButton" type="primary" v-if="store.courseAdmin.operatingMode!=='Cut'">重新选择教学计划</el-button>
+        <el-button @click="eventFunc.submit()" type="success">确认添加</el-button>
+        <el-button @click="eventFunc.clickCancelButton()" type="default">取消</el-button>
+        <el-button @click="eventFunc.clickReselectPlanButton()" type="primary" v-if="store.courseAdmin.operatingMode!=='Cut'">重新选择教学计划</el-button>
       </template>
     </ElDrawer>
   </div>
+
+  <el-dialog
+      v-model="whetherShowConfirmDialog"
+      title="空教室警告"
+      width="30%"
+  >
+    <span>有的课没有对应的教室。虽然系统允许空教室，但您确认要这样提交吗？</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="eventFunc.clickConfirm()">确定</el-button>
+        <el-button @click="whetherShowConfirmDialog = false">取消</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

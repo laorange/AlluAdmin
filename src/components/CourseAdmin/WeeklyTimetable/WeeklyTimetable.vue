@@ -7,12 +7,7 @@ const apiToolkit = useApiToolkit()
 const store = useStore()
 
 watch(() => apiToolkit.course.data, () => {
-  store.courseAdmin.courseButtonInfos = apiToolkit.course.data.map(course => {
-    return {
-      course: course,
-      check: false
-    }
-  })
+  store.initializeCourseButtonInfos()
 }, {deep:true, immediate: true})
 
 </script>

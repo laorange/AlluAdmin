@@ -6,7 +6,7 @@ import {formatDate} from "./dateUtils";
 
 interface CourseForPost {
     plan: number,
-    room: number,
+    room: number | undefined,
     date: dayjs.Dayjs,
     which_lesson: number,
     note?: string,
@@ -21,9 +21,10 @@ export function axiosAddCourse(postData: CourseForPost,
     axios.post(urls.api.courseForPostAdd, finalPostData).then(
         response => {
             callbackFunction(response)
+            console.log(response)
         },
         error => {
-            console.warn(error.message);
+            console.warn(error);
         },
     );
 }
@@ -33,6 +34,7 @@ export function axiosDeleteCourse(courseId: number,
     axios.delete(urls.api.courseForPostDelete(courseId)).then(
         response => {
             callbackFunction(response)
+            console.log(response)
         },
         error => {
             console.warn(error.message);
