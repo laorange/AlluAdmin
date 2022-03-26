@@ -101,7 +101,8 @@ const eventFunc = {
     </div>
 
     <template #footer>
-      <el-button @click="eventFunc.submit" type="danger">确认删除</el-button>
+      <el-button @click="eventFunc.submit" type="primary" v-if="store.courseAdmin.operatingMode === 'Cut'">确认调课</el-button>
+      <el-button @click="eventFunc.submit" type="danger" v-else>确认删除</el-button>
       <el-button @click="eventFunc.clickCancelButton" type="default">取消</el-button>
     </template>
   </ElDrawer>

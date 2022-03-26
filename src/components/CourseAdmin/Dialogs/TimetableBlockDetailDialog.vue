@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // TimetableBlockDetailDialog
-import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {ElOption} from "../../../types/options";
 import {getFormalWhatDayString, getFormalWhichLessonString} from "../../../utils/commonUtils";
 import {useApiToolkit, useStore} from "../../../store/counter";
@@ -25,7 +25,7 @@ const courseOptionsInPanel = computed<ElOption[]>(() => {
     }
     for (const pc of filteredInfoContainer.coursePlans) {
       option.children?.push({
-        label: `${apiToolkit.getNameOfGroups(pc.coursePlan.groups)} ${pc.coursePlan.teacher_name}`,
+        label: `${apiToolkit.getNameOfGroups(pc.coursePlan.groups)} ${pc.coursePlan.teacher_name} ${pc.coursePlan.method}`,
         value: pc.coursePlan.plan_id,
         children: pc.courses.map((course): ElOption => {
           return {
