@@ -27,7 +27,7 @@ const urls = {
         courseForPostAdd: decorateUrl(`/course/api/CourseForPost/`),
         courseForPostDelete: (courseId: number): string => decorateUrl(`/course/api/CourseForPost/${courseId}/`)
     },
-    docs: "https://laorange.gitee.io/alludocs/",
+    docs: "http://docs.siae.top",
     admin: {
         changeCourseInfo(infoId?: number): string {
             if (infoId === undefined) {
