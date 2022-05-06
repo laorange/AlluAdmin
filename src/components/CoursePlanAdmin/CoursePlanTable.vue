@@ -51,7 +51,7 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
     <template v-for="(infoContainer) in apiToolkit.filter_infosBySemester" :key="`info${infoContainer.courseInfo.info_id}`">
 
       <!-- region 如果某个Info没有教学计划(Plan)，则忽略Group的筛选 -->
-      <tr v-if="infoContainer.coursePlans.length === 0" :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
+      <tr v-if="infoContainer.coursePlans.length === 0" :style="{backgroundColor:infoContainer.courseInfo.color}">
 
         <!--课程名称，需要加点击事件-->
         <td class="InfoChName" @click="openClickCourseInfoDialog(infoContainer.courseInfo)">
@@ -65,8 +65,9 @@ const openClickWeeklyHoursDialog = (inputtedPlan: CoursePlanContainer, inputtedW
       </tr>
       <!-- endregion -->
 
-      <tr v-for="(planContainer, planIndex) in apiToolkit.filter_plansForSelectedGroup(infoContainer, false)" :key="`plan${planContainer.coursePlan.plan_id}`"
-          :style="{backgroundColor:'#'+infoContainer.courseInfo.color}">
+      <tr v-for="(planContainer, planIndex) in apiToolkit.filter_plansForSelectedGroup(infoContainer, false)"
+          :key="`plan${planContainer.coursePlan.plan_id}`"
+          :style="{backgroundColor:infoContainer.courseInfo.color}">
         <template v-if="apiToolkit.judge_whetherUserDoesNotCareGroup || apiToolkit.judge_whetherPdcIsEmpty()">
 
           <!--课程名称，需要加点击事件-->

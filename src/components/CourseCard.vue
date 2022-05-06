@@ -9,7 +9,7 @@ const apiToolkit = useApiToolkit()
 </script>
 
 <template>
-  <div class="CourseCard" :style="{backgroundColor: '#' + course.color}">
+  <div class="CourseCard" :style="{backgroundColor: course.color}">
     <div v-show="course.ch_name">{{ course.ch_name }}</div>
     <!--    <div v-show="course.en_name">{{ course.en_name }}</div>-->
     <!--    <div v-show="course.fr_name">{{ course.fr_name }}</div>-->
