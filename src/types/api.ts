@@ -28,7 +28,7 @@ export type Course = {
     "en_name": string | null,
     "fr_name": string | null,
     "method": methodChoice,
-    "group_ids": string,
+    "groups_name": string | null,
     "teacher_name": string | null,
     "room_name": string | null
 }
@@ -47,7 +47,7 @@ export type CourseChangeLog = {
     "en_name": string | null,
     "fr_name": string | null,
     "method": methodChoice,
-    "group_ids": string | null,
+    "groups_name": string | null,
     "teacher_name": string | null
 }
 

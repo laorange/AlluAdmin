@@ -200,11 +200,6 @@ export const useApiToolkit = defineStore("apiToolkit", {
             }, []).join('&')
         },
 
-        getGroupNameOfCourse(course: Course): string {
-            let groups = JSON.parse(course?.group_ids ?? '') as number[]
-            return this.getNameOfGroups(groups)
-        },
-
         getWeekOfOneCourse(course: Course): number {
             return getWeeksBetweenTwoDayFrom0(dayjs(course.date), this.week1Monday) + 1
         },
@@ -253,7 +248,7 @@ export const useApiToolkit = defineStore("apiToolkit", {
         },
 
         filter__infosByWhatDayAndWhichLesson(whatDay: number, whichLesson: number,
-                                                courseInfoContainers: CourseInfoContainer[] | undefined = undefined): CourseInfoContainer[] {
+                                             courseInfoContainers: CourseInfoContainer[] | undefined = undefined): CourseInfoContainer[] {
             if (!courseInfoContainers) {
                 courseInfoContainers = this.filter_infosByWeekWithNoEmptyPlanContainer
             }

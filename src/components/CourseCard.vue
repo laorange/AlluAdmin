@@ -6,21 +6,18 @@ const props = defineProps<{ course: Course }>()
 
 const apiToolkit = useApiToolkit()
 
-const groupIds: number[] = JSON.parse(props.course.group_ids) as number[]
-const groupName = apiToolkit.getNameOfGroups(groupIds)
-
 </script>
 
 <template>
   <div class="CourseCard" :style="{backgroundColor: '#' + course.color}">
     <div v-show="course.ch_name">{{ course.ch_name }}</div>
-<!--    <div v-show="course.en_name">{{ course.en_name }}</div>-->
-<!--    <div v-show="course.fr_name">{{ course.fr_name }}</div>-->
+    <!--    <div v-show="course.en_name">{{ course.en_name }}</div>-->
+    <!--    <div v-show="course.fr_name">{{ course.fr_name }}</div>-->
     <div>{{ course.date }}</div>
-    <div>第{{apiToolkit.getWeekOfOneCourse(course)}}周</div>
+    <div>第{{ apiToolkit.getWeekOfOneCourse(course) }}周</div>
     <div v-show="course.method">{{ course.method }}</div>
     <div v-show="course.teacher_name">{{ course.teacher_name }}</div>
-    <div v-show="groupName">{{ groupName }}</div>
+    <div v-show="props.course.groups_name">{{ props.course.groups_name }}</div>
     <div v-show="course.room_name">{{ course.room_name }}</div>
     <div v-show="course.note">{{ course.note }}</div>
     <!--  <div>which_lesson: {{ course.data.which_lesson }}</div>-->

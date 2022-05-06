@@ -90,7 +90,7 @@ const eventFunc = {
         <div>{{ course.ch_name }}</div>
         <div>{{ course.method }}</div>
         <div>{{ course.teacher_name ? course.teacher_name : "" }}</div>
-        <div>{{ course.group_ids ? apiToolkit.getGroupNameOfCourse(course) : "" }}</div>
+        <div>{{ course.groups_name ? course.groups_name : "" }}</div>
         <div>{{ course.room ? course.room_name : "" }}</div>
         <div class="FormNote">{{ course.note ? course.note : "" }}</div>
 
